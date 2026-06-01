@@ -1,7 +1,7 @@
 @charset "UTF-8";
 
 .logo {
-    width: 220px;
+    width: 203px;
     height: auto;
 }
 
@@ -36,5 +36,6 @@
 .buttons-container {
     display: flex;
     flex-direction: column;
+    margin: auto;
     gap: 12px;
 }

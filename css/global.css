@@ -19,6 +19,7 @@
     --dark-green: #016e58;
     --blue: #172a3a;
     --cream: #f6f7eb;
+    --cream-light: rgba(246, 247, 235, 0.45);
 }
 
 * {

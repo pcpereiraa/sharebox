@@ -1,12 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/components.css">
     <link rel="stylesheet" href="css/register.css">
+
     <link rel="manifest" href="manifest.json">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     <script src="js/supabase.js"></script>
@@ -16,38 +18,57 @@
 <body>
     <main class="register-screen">
         <div class="logo-container">
-            <img src="images/logo_white.png" alt="Logo Sharebox" class="logo">
+            <img src="images/logo_name.png" alt="Logo Sharebox" class="logo">
         </div>
         
         <form action="" method="post" class="register-form">
-            <caption>Criar conta</caption>
+            <legend class="form-caption">
+                Criar conta
+            </legend>
 
             <p>
-                <input type="text" name="name" id="input-name" placeholder="Nome" required>
-                <input type="text" name="surname" id="input-surname" placeholder="Apelido" required>
+                <input type="text" name="name" id="input-name" class="form-box input-name" placeholder="Nome" required>
+                <input type="text" name="surname" id="input-surname" class="form-box input-name" placeholder="Apelido" required>
             </p>
 
             <p>
-                <input type="email" name="email" id="input-email" placeholder="Email" required>
+                <input type="email" name="email" id="input-email" class="form-box" placeholder="Email" required>
             </p>
 
             <p>
-                <input type="tel" name="tel" id="input-tel" placeholder="Telemóvel (opcional)">
+                <input type="tel" name="tel" id="input-tel" class="form-box" placeholder="Telemóvel (opcional)">
             </p>
 
             <p>
-                <input type="password" name="pwd" id="input-pwd" placeholder="Palavra-Passe" required>
+                <input type="password" name="pwd" id="input-pwd" class="form-box" placeholder="Palavra-Passe" required>
             </p>
 
             <p>
-                <input type="password" name="pwd2" id="input-pwd2" placeholder="Confirmar palavra-passe" required>
+                <input type="password" name="pwd2" id="input-pwd2" class="form-box" placeholder="Confirmar palavra-passe" required>
             </p>
+
+            <div class="separator-container">
+                <hr class="line">
+                <span class="text-or">ou</span>
+                <hr class="line">
+            </div>
+
+            <div class="login-btns">
+                <button class="login-btn">
+                    Facebook
+                </button>
+                <button class="login-btn">
+                    Apple
+                </button>
+            </div>
+
+            <div class="buttons-container">
+                <button type="submit" class="btn btn-primary">Criar conta</button>
+                <a href="login.html" class="btn btn-secondary">Já tenho uma conta</a>
+            </div>
         </form>
 
-        <div class="buttons-container">
-            <a href="register.html" class="btn btn-primary">Criar conta</a>
-            <a href="login.html" class="btn btn-secondary">Já tenho uma conta</a>
-        </div>
+        
     </main>
 </body>
 </html>
