@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>ShareBox — Home</title>
+<link rel="stylesheet" href="css/global.css">
+<link rel="stylesheet" href="css/home.css">
+</head>
+<body>
+<div class="page">
+
+  <!-- Top Bar: logo + notificações -->
+  <header class="top-bar">
+    <a class="logo-wrap" href="#">
+      <img class="logo-img" src="images/logoinicial.png" alt="ShareBox">
+      <span class="logo-name">ShareBox</span>
+    </a>
+    <button class="notif-btn" aria-label="Notificações">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6V11c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+      <span class="notif-dot"></span>
+    </button>
+  </header>
+
+  <!-- Conteúdo com scroll -->
+  <main class="scroll-content">
+
+    <!-- Search Bar -->
+    <div class="search-wrap">
+      <div class="search-bar">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+        <input type="text" placeholder="Buscar itens, categorias ou comunidades" readonly>
+        <span class="search-filter">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 6l4 6v8l4-3V12L15 6H3zm16-1h-8l8 11h-4v5h-2v-5H7L15 5h4V4h-4V2h4v1h2z" opacity="0"/><path d="M4.5 6.375a4.125 4.125 0 1 1 8.25 0 4.125 4.125 0 0 1-8.25 0zM14.25 8.625a3.375 3.375 0 1 1 6.75 0 3.375 3.375 0 0 1-6.75 0zM1.5 19.125a7.125 7.125 0 0 1 14.212-.929.75.75 0 0 0 1.498.092c.085-.58.13-1.17.13-1.768a5.625 5.625 0 1 0-11.19.929 7.125 7.125 0 0 1-4.65.676z" opacity="0"/><path d="M3 4h18M3 9h14M3 14h9" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
+        </span>
+      </div>
+    </div>
+
+    <!-- Banner -->
+    <div class="banner-wrap">
+      <div class="banner">
+        <span class="banner-tag">Partilha &amp; Sustentabilidade</span>
+        <div class="banner-title">Partilha mais.<br>Desperdiça menos.</div>
+        <div class="banner-sub">Dá uma segunda vida aos teus itens</div>
+      </div>
+    </div>
+    <div class="banner-dots">
+      <div class="banner-dot active"></div>
+      <div class="banner-dot"></div>
+      <div class="banner-dot"></div>
+      <div class="banner-dot"></div>
+    </div>
+
+    <!-- Categorias -->
+    <div class="section-header">
+      <span class="section-title">Categorias</span>
+      <a class="section-link" href="#">Ver todas</a>
+    </div>
+    <div class="categories-wrap">
+      <div class="categories">
+        <div class="cat-card"><div class="cat-thumb">👕</div><span class="cat-label">Roupas</span></div>
+        <div class="cat-card"><div class="cat-thumb">📚</div><span class="cat-label">Livros</span></div>
+        <div class="cat-card"><div class="cat-thumb">🏠</div><span class="cat-label">Casa</span></div>
+        <div class="cat-card"><div class="cat-thumb">📱</div><span class="cat-label">Electrónicos</span></div>
+        <div class="cat-card"><div class="cat-thumb">⚽</div><span class="cat-label">Desporto</span></div>
+        <div class="cat-card"><div class="cat-thumb">🌱</div><span class="cat-label">Plantas</span></div>
+        <div class="cat-card"><div class="cat-thumb">🎮</div><span class="cat-label">Gaming</span></div>
+      </div>
+    </div>
+
+    <!-- Recomendações -->
+    <div class="section-header">
+      <span class="section-title">Recomendações para ti</span>
+      <a class="section-link" href="#">Ver todas</a>
+    </div>
+    <div class="scroll-row-wrap">
+      <div class="scroll-row">
+        <div class="donation-card">
+          <div class="donation-card-img">🌿<div class="fav-btn">♡</div></div>
+          <div class="donation-card-info">
+            <div class="donation-name">Planta jiboia</div>
+            <div class="donation-meta">
+              <span class="donation-location"><svg viewBox="0 0 10 13"><path d="M5 0C2.24 0 0 2.24 0 5c0 3.75 5 8 5 8s5-4.25 5-8c0-2.76-2.24-5-5-5zm0 6.5c-.83 0-1.5-.67-1.5-1.5S4.17 3.5 5 3.5 6.5 4.17 6.5 5 5.83 6.5 5 6.5z" fill-rule="evenodd"/></svg>Porto</span>
+              <span class="donation-badge">Doação</span>
+            </div>
+          </div>
+        </div>
+        <div class="donation-card">
+          <div class="donation-card-img">📖<div class="fav-btn">♡</div></div>
+          <div class="donation-card-info">
+            <div class="donation-name">Livros Infantis</div>
+            <div class="donation-meta">
+              <span class="donation-location"><svg viewBox="0 0 10 13"><path d="M5 0C2.24 0 0 2.24 0 5c0 3.75 5 8 5 8s5-4.25 5-8c0-2.76-2.24-5-5-5zm0 6.5c-.83 0-1.5-.67-1.5-1.5S4.17 3.5 5 3.5 6.5 4.17 6.5 5 5.83 6.5 5 6.5z" fill-rule="evenodd"/></svg>Lisboa</span>
+              <span class="donation-badge">Doação</span>
+            </div>
+          </div>
+        </div>
+        <div class="donation-card">
+          <div class="donation-card-img">👗<div class="fav-btn">♡</div></div>
+          <div class="donation-card-info">
+            <div class="donation-name">Casaco de inverno</div>
+            <div class="donation-meta">
+              <span class="donation-location"><svg viewBox="0 0 10 13"><path d="M5 0C2.24 0 0 2.24 0 5c0 3.75 5 8 5 8s5-4.25 5-8c0-2.76-2.24-5-5-5zm0 6.5c-.83 0-1.5-.67-1.5-1.5S4.17 3.5 5 3.5 6.5 4.17 6.5 5 5.83 6.5 5 6.5z" fill-rule="evenodd"/></svg>Braga</span>
+              <span class="donation-badge">Troca</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Como Funciona -->
+    <div class="how-section">
+      <div class="section-title" style="margin-bottom:14px">Como Funciona?</div>
+      <div class="how-cards">
+        <div class="how-card">
+          <div class="how-icon">
+            <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg>
+          </div>
+          <div class="how-card-title">Publica um item</div>
+          <div class="how-card-sub">Fotografa e descreve o que tens</div>
+        </div>
+        <div class="how-divider"></div>
+        <div class="how-card">
+          <div class="how-icon">
+            <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
+          </div>
+          <div class="how-card-title">Conecta com alguém</div>
+          <div class="how-card-sub">Fala com quem está interessado</div>
+        </div>
+        <div class="how-divider"></div>
+        <div class="how-card">
+          <div class="how-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+          </div>
+          <div class="how-card-title">Faz a entrega</div>
+          <div class="how-card-sub">Combina à mão ou por correio</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Novas Comunidades -->
+    <div class="section-header" style="margin-top:28px">
+      <span class="section-title">Novas Comunidades</span>
+      <a class="section-link" href="#">Ver todas</a>
+    </div>
+    <div class="comm-scroll-wrap">
+      <div class="comm-scroll">
+        <div class="comm-card">
+          <div class="comm-card-img">📚</div>
+          <div class="comm-card-info">
+            <div class="comm-card-name">Troca de Livros</div>
+            <div class="comm-card-meta">
+              <span class="comm-location"><svg viewBox="0 0 10 13"><path d="M5 0C2.24 0 0 2.24 0 5c0 3.75 5 8 5 8s5-4.25 5-8c0-2.76-2.24-5-5-5zm0 6.5c-.83 0-1.5-.67-1.5-1.5S4.17 3.5 5 3.5 6.5 4.17 6.5 5 5.83 6.5 5 6.5z" fill-rule="evenodd"/></svg>Bolhão, Porto</span>
+              <span class="comm-people"><svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>133 pessoas</span>
+            </div>
+            <img class="comm-add-icon" src="images/add_circle.png" alt="Aderir">
+          </div>
+        </div>
+        <div class="comm-card">
+          <div class="comm-card-img">🎮</div>
+          <div class="comm-card-info">
+            <div class="comm-card-name">Clube Gaming</div>
+            <div class="comm-card-meta">
+              <span class="comm-location"><svg viewBox="0 0 10 13"><path d="M5 0C2.24 0 0 2.24 0 5c0 3.75 5 8 5 8s5-4.25 5-8c0-2.76-2.24-5-5-5zm0 6.5c-.83 0-1.5-.67-1.5-1.5S4.17 3.5 5 3.5 6.5 4.17 6.5 5 5.83 6.5 5 6.5z" fill-rule="evenodd"/></svg>Lisboa</span>
+              <span class="comm-people"><svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>43 pessoas</span>
+            </div>
+            <img class="comm-add-icon" src="images/add_circle.png" alt="Aderir">
+          </div>
+        </div>
+        <div class="comm-card">
+          <div class="comm-card-img">👗</div>
+          <div class="comm-card-info">
+            <div class="comm-card-name">Roupas Femininas</div>
+            <div class="comm-card-meta">
+              <span class="comm-location"><svg viewBox="0 0 10 13"><path d="M5 0C2.24 0 0 2.24 0 5c0 3.75 5 8 5 8s5-4.25 5-8c0-2.76-2.24-5-5-5zm0 6.5c-.83 0-1.5-.67-1.5-1.5S4.17 3.5 5 3.5 6.5 4.17 6.5 5 5.83 6.5 5 6.5z" fill-rule="evenodd"/></svg>Porto</span>
+              <span class="comm-people"><svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>133 pessoas</span>
+            </div>
+            <img class="comm-add-icon" src="images/add_circle.png" alt="Aderir">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Espaço para a navbar não tapar conteúdo -->
+    <div style="height: 109px"></div>
+  </main>
+
+  <!-- Navbar fixa -->
+  <nav class="navbar">
+    <a class="nav-item active" href="#">
+      <img src="images/family_home.png" alt="Home">
+    </a>
+    <a class="nav-item" href="#">
+      <img src="images/icone2@4x-8.png" alt="Comunidades">
+    </a>
+    <a class="nav-item nav-add" href="#">
+      <img src="images/add_circle.png" alt="Adicionar">
+    </a>
+    <a class="nav-item" href="#">
+      <img src="images/business_messages.png" alt="Mensagens">
+    </a>
+    <a class="nav-item" href="#">
+      <img src="images/icone5@4x-8.png" alt="Perfil">
+    </a>
+  </nav>
+
+</div>
+</body>
+</html>

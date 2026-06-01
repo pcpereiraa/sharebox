@@ -1,0 +1,503 @@
+/* ─────────────────────────────────────────────────────
+   ShareBox — home.css  (Figma-aligned)
+───────────────────────────────────────────────────── */
+
+:root {
+  --bg:       #f5f5eb;
+  --cat-bg:   #e6e4d5;
+  --pad:      26px;
+  --r-sm:     5px;
+  --r-md:     10px;
+  --r-lg:     12px;
+  --shadow-sm:0 2px 8px rgba(23,42,58,0.07);
+}
+
+/* ── Layout geral ──────────────────────────────────── */
+body {
+  background: var(--blue);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+}
+
+.page {
+  width: 100%;
+  max-width: 402px;
+  min-height: 100vh;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  margin: 0 auto;
+}
+
+/* ── Status Bar ─────────────────────────────────────── */
+.status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px 4px 44px;
+  background: var(--bg);
+  flex-shrink: 0;
+  height: 36px;
+}
+.status-time {
+  font-family: "Berlin", sans-serif;
+  font-size: 14px;
+  color: var(--blue);
+  font-weight: 600;
+}
+.status-icons {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.status-icons svg { width: 16px; height: 12px; fill: var(--blue); }
+.battery-icon {
+  width: 18px; height: 10px;
+  border: 1.5px solid var(--blue);
+  border-radius: 2px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 1px;
+}
+.battery-icon::after {
+  content: '';
+  position: absolute;
+  right: -4px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2px;
+  height: 5px;
+  background: var(--blue);
+  border-radius: 0 1px 1px 0;
+}
+.battery-fill {
+  height: 100%;
+  width: 75%;
+  background: var(--blue);
+  border-radius: 1px;
+}
+
+/* ── Scroll content ────────────────────────────────── */
+.scroll-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-bottom: 4px;
+}
+.scroll-content::-webkit-scrollbar { display: none; }
+
+/* ── Top Bar ────────────────────────────────────────── */
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px var(--pad) 10px;
+  background: var(--bg);
+  flex-shrink: 0;
+}
+
+.logo-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+}
+.logo-img {
+  width: 40px;
+  height: 43px;
+  object-fit: contain;
+  border-radius: 8px;
+}
+.logo-name {
+  font-family: "Berlin", sans-serif;
+  font-size: 20px;
+  color: var(--blue);
+  letter-spacing: 0.01em;
+}
+
+.notif-btn {
+  width: 36px; height: 36px;
+  background: transparent;
+  border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+  color: var(--dark-green);
+}
+.notif-btn svg { width: 26px; height: 26px; }
+.notif-dot {
+  position: absolute; top: 5px; right: 5px;
+  width: 8px; height: 8px;
+  background: #e74c3c;
+  border-radius: 50%;
+  border: 2px solid var(--bg);
+}
+
+/* ── Search Bar ─────────────────────────────────────── */
+.search-wrap { padding: 0 var(--pad) 14px; }
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fff;
+  border: 1px solid rgba(23,42,58,0.41);
+  border-radius: var(--r-sm);
+  padding: 0 12px;
+  height: 38px;
+  box-shadow: var(--shadow-sm);
+}
+.search-icon { width: 20px; height: 20px; flex-shrink: 0; fill: var(--blue); opacity: 0.75; }
+.search-bar input {
+  flex: 1; border: none; outline: none; background: transparent;
+  font-family: "Berlin", sans-serif;
+  font-size: 11px; color: var(--blue); opacity: 0.45;
+}
+.search-bar input::placeholder { color: var(--blue); }
+.search-filter { margin-left: auto; cursor: pointer; display: flex; align-items: center; color: var(--blue); opacity: 0.6; }
+.search-filter svg { width: 18px; height: 18px; }
+
+/* ── Banner ─────────────────────────────────────────── */
+.banner-wrap { padding: 0 var(--pad); margin-bottom: 12px; }
+.banner {
+  width: 100%; height: 172px;
+  border-radius: var(--r-md);
+  background: linear-gradient(135deg, var(--blue) 0%, #1f3d50 55%, var(--dark-green) 100%);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 16px;
+}
+.banner::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(circle at 85% 20%, rgba(0,154,125,0.18) 0%, transparent 55%),
+    radial-gradient(circle at 10% 90%, rgba(1,110,88,0.14) 0%, transparent 50%);
+}
+.banner-tag {
+  font-family: "Berlin", sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.07em;
+  color: var(--light-green);
+  background: rgba(0,154,125,0.15);
+  border: 1px solid rgba(0,154,125,0.30);
+  border-radius: 20px;
+  padding: 3px 10px;
+  width: fit-content;
+  margin-bottom: 8px;
+  position: relative;
+}
+.banner-title {
+  font-family: "Berlin", sans-serif;
+  font-size: 20px;
+  color: #fff;
+  line-height: 1.25;
+  position: relative;
+}
+.banner-sub {
+  font-family: "Berlin", sans-serif;
+  font-size: 12px;
+  color: rgba(255,255,255,0.60);
+  position: relative;
+  margin-top: 4px;
+}
+
+.banner-dots {
+  display: flex; align-items: center; justify-content: center;
+  gap: 6px; padding: 8px 0 16px;
+}
+.banner-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #67bea2; transition: background 0.2s;
+}
+.banner-dot.active { background: var(--dark-green); }
+
+/* ── Section header ─────────────────────────────────── */
+.section-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 var(--pad);
+  margin-bottom: 14px;
+}
+.section-title {
+  font-family: "Berlin", sans-serif;
+  font-size: 22px;
+  color: var(--blue);
+  letter-spacing: 0.01em;
+}
+.section-link {
+  font-family: "Berlin", sans-serif;
+  font-size: 15px;
+  color: var(--dark-green);
+  text-decoration: none;
+}
+
+/* ── Categorias ─────────────────────────────────────── */
+.categories-wrap {
+  padding: 0 var(--pad);
+  margin-bottom: 28px;
+}
+.categories {
+  display: flex; gap: 9px;
+  overflow-x: auto; scrollbar-width: none;
+}
+.categories::-webkit-scrollbar { display: none; }
+
+.cat-card {
+  flex-shrink: 0;
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  width: 63px; cursor: pointer;
+}
+.cat-thumb {
+  width: 63px; height: 63px;
+  background: var(--cat-bg);
+  border-radius: var(--r-md);
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.15s ease;
+}
+.cat-thumb svg { width: 26px; height: 26px; fill: var(--blue); opacity: 0.7; }
+.cat-card:hover .cat-thumb { transform: scale(1.06); }
+.cat-label {
+  font-family: "Berlin", sans-serif;
+  font-size: 12px;
+  color: var(--blue);
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* ── Donation Cards (Figma style) ─────────────────── */
+.scroll-row-wrap {
+  padding: 0 0 0 var(--pad);
+  margin-bottom: 28px;
+  overflow: hidden;
+}
+.scroll-row {
+  display: flex; gap: 5px;
+  overflow-x: auto; scrollbar-width: none;
+  padding-right: var(--pad);
+  -webkit-overflow-scrolling: touch;
+}
+.scroll-row::-webkit-scrollbar { display: none; }
+
+.donation-card {
+  flex-shrink: 0;
+  width: 140px;
+  background: #fff;
+  border-radius: var(--r-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.donation-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(23,42,58,0.12);
+}
+.donation-card-img {
+  width: 100%; height: 72px;
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+  border-radius: var(--r-md) var(--r-md) 0 0;
+}
+.fav-btn {
+  position: absolute; top: 6px; right: 6px;
+  width: 20px; height: 20px;
+  background: rgba(255,255,255,0.88);
+  border: none;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; cursor: pointer;
+  color: var(--blue);
+}
+
+.donation-card-info { padding: 6px 6px 8px; }
+.donation-name {
+  font-family: "Berlin", sans-serif;
+  font-size: 12px; font-weight: 600;
+  color: var(--blue);
+  margin-bottom: 5px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* New meta row: user avatar + name on left, distance on right */
+.donation-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.donation-user {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.user-avatar {
+  width: 16px; height: 16px;
+  background: #d9d9d9;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: "Berlin", sans-serif;
+  font-size: 9px;
+  color: var(--blue);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.user-name {
+  font-family: "Berlin", sans-serif;
+  font-size: 8px;
+  color: rgba(0,0,0,0.5);
+  white-space: nowrap;
+}
+.donation-dist {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-family: "Berlin", sans-serif;
+  font-size: 8px;
+  color: rgba(0,0,0,0.5);
+}
+.donation-dist svg {
+  width: 8px; height: 10px;
+  fill: rgba(23,42,58,0.55);
+  flex-shrink: 0;
+}
+
+/* ── Como Funciona ──────────────────────────────────── */
+.how-section { padding: 0 var(--pad); margin-bottom: 28px; }
+.how-cards { display: flex; }
+.how-card {
+  flex: 1; background: #fff;
+  padding: 12px 8px;
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  text-align: center;
+}
+.how-card:first-child { border-radius: var(--r-md) 0 0 var(--r-md); }
+.how-card:last-child  { border-radius: 0 var(--r-md) var(--r-md) 0; }
+.how-icon {
+  width: 36px; height: 36px;
+  background: rgba(1,110,88,0.09);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+.how-icon svg { width: 22px; height: 22px; fill: var(--dark-green); }
+.how-card-title {
+  font-family: "Berlin", sans-serif;
+  font-size: 13px; color: var(--blue); line-height: 1.2;
+}
+.how-card-sub {
+  font-family: "Berlin", sans-serif;
+  font-size: 10px; color: rgba(23,42,58,0.50); line-height: 1.4;
+}
+.how-divider { width: 1px; background: rgba(23,42,58,0.08); flex-shrink: 0; }
+
+/* ── Community Cards ────────────────────────────────── */
+.comm-scroll-wrap {
+  padding: 0 0 0 var(--pad);
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+.comm-scroll {
+  display: flex; gap: 10px;
+  overflow-x: auto; scrollbar-width: none;
+  padding-right: var(--pad);
+  -webkit-overflow-scrolling: touch;
+}
+.comm-scroll::-webkit-scrollbar { display: none; }
+
+.comm-card {
+  flex-shrink: 0;
+  width: 140px; height: 123px;
+  background: #fff;
+  border-radius: var(--r-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+  position: relative;
+}
+.comm-card:hover { transform: translateY(-2px); }
+.comm-card-img {
+  width: 100%; height: 75px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px;
+}
+.comm-card-info { padding: 5px 6px 4px; position: relative; }
+.comm-card-name {
+  font-family: "Berlin", sans-serif;
+  font-size: 12px; font-weight: 600;
+  color: var(--blue); margin-bottom: 4px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.comm-card-meta { display: flex; align-items: center; justify-content: space-between; }
+.comm-location, .comm-people {
+  display: flex; align-items: center; gap: 3px;
+  font-family: "Berlin", sans-serif;
+  font-size: 8px; color: rgba(23,42,58,0.6);
+}
+.comm-location svg { width: 8px; height: 10px; fill: rgba(23,42,58,0.6); }
+.comm-people svg   { width: 10px; height: 10px; fill: rgba(23,42,58,0.6); }
+
+.comm-add-icon {
+  position: absolute;
+  top: 4px; right: 6px;
+  width: 18px; height: 18px;
+  object-fit: contain;
+}
+
+/* ── NAVBAR ─────────────────────────────────────────── */
+.navbar {
+  position: fixed;
+  bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 100%; max-width: 402px;
+  height: 109px;
+  background: var(--blue);
+  border-radius: 30px 30px 0 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-around;
+  padding: 20px 25px 0;
+  z-index: 1000;
+  flex-shrink: 0;
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  flex: 1;
+  cursor: pointer;
+  text-decoration: none;
+  padding-top: 4px;
+}
+
+.nav-item img {
+  width: 45px;
+  height: 45px;
+  object-fit: contain;
+  opacity: 0.45;
+  filter: brightness(0) invert(1);
+  transition: opacity 0.15s ease;
+}
+
+.nav-item.active img {
+  opacity: 1;
+  filter: brightness(0) saturate(100%)
+          invert(48%) sepia(79%) saturate(476%)
+          hue-rotate(120deg) brightness(95%) contrast(91%);
+}
+
+.nav-add img {
+  width: 45px;
+  height: 45px;
+  opacity: 1;
+  filter: brightness(0) saturate(100%)
+          invert(48%) sepia(79%) saturate(476%)
+          hue-rotate(120deg) brightness(95%) contrast(91%);
+}
