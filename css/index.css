@@ -1,0 +1,21 @@
+.index-screen {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 100px;
+    padding-bottom: 90px;
+}
+
+.logo-container {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    color: var(--cream);
+}
+
+.slogan {
+    font-size: 17px;
+}

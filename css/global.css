@@ -1,0 +1,42 @@
+@charset "UTF-8";
+
+@font-face {
+    font-family: "Berlin";
+    src: url(../fonts/BRLNSR.TTF) format("truetype");
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Berlin Bold";
+    src: url(../fonts/BRLNSB.TTF) format("truetype");
+    font-weight: 700;
+    font-style: normal;
+}
+
+:root {
+    --light-green: #009a7d;
+    --dark-green: #016e58;
+    --blue: #172a3a;
+    --cream: #f6f7eb;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--blue);
+    font-family: "Berlin", sans-serif;
+}
+
+a {
+    text-decoration: none;
+}
+
+img {
+    display: block;
+    max-width: 100%;
+}

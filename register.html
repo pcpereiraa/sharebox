@@ -4,22 +4,49 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/register.css">
     <link rel="manifest" href="manifest.json">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-    <style>
-        .logo {
-            width: 300px;
-        }
-    </style>
     <script src="js/supabase.js"></script>
 
     <title>ShareBox - Registo</title>
 </head>
 <body>
-    <main class="login-screen" style="padding-top: 90px;">
+    <main class="register-screen">
         <div class="logo-container">
             <img src="images/logo_white.png" alt="Logo Sharebox" class="logo">
+        </div>
+        
+        <form action="" method="post" class="register-form">
+            <caption>Criar conta</caption>
+
+            <p>
+                <input type="text" name="name" id="input-name" placeholder="Nome" required>
+                <input type="text" name="surname" id="input-surname" placeholder="Apelido" required>
+            </p>
+
+            <p>
+                <input type="email" name="email" id="input-email" placeholder="Email" required>
+            </p>
+
+            <p>
+                <input type="tel" name="tel" id="input-tel" placeholder="Telemóvel (opcional)">
+            </p>
+
+            <p>
+                <input type="password" name="pwd" id="input-pwd" placeholder="Palavra-Passe" required>
+            </p>
+
+            <p>
+                <input type="password" name="pwd2" id="input-pwd2" placeholder="Confirmar palavra-passe" required>
+            </p>
+        </form>
+
+        <div class="buttons-container">
+            <a href="register.html" class="btn btn-primary">Criar conta</a>
+            <a href="login.html" class="btn btn-secondary">Já tenho uma conta</a>
         </div>
     </main>
 </body>

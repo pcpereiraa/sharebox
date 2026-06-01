@@ -1,0 +1,40 @@
+@charset "UTF-8";
+
+.logo {
+    width: 220px;
+    height: auto;
+}
+
+
+
+.btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 80vw;
+    padding: 10px;
+
+    border: none;
+    border-radius: 25px;
+
+    color: var(--cream);
+    text-decoration: none;
+    font-size: 19px;
+
+    cursor: pointer;
+}
+
+.btn-primary {
+    background-color: var(--light-green);
+}
+
+.btn-secondary {
+    background-color: var(--dark-green);
+}
+
+.buttons-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
