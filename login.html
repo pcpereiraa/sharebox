@@ -7,6 +7,10 @@
     <link rel="stylesheet" href="css/components.css">
     <link rel="stylesheet" href="css/login.css">
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script src="js/supabase.js"></script>
+    <script src="js/auth.js" defer></script>
+
     <title>ShareBox - Login</title>
 </head>
 <body>
@@ -15,17 +19,17 @@
             <img src="images/logo_name.png" alt="Logo Sharebox" class="logo">
         </div>
 
-        <form action="" method="post" class="login-form">
+        <form method="post" id="login-form" class="login-form">
             <legend class="form-caption">
                 Entrar
             </legend>
 
             <p>
-                <input type="text" name="name" id="name-login" class="input" placeholder="Email ou telemóvel" required>
+                <input type="text" name="name" id="login-email" class="input" placeholder="Email ou telemóvel" required>
             </p>
 
             <p>
-                <input type="text" class="input" placeholder="Palavra-passe">
+                <input type="password" id="login-pwd" class="input" placeholder="Palavra-passe">
             </p>
 
             <a href="#" class="rec-pwd">Esqueceste a palavra-passe?</a>
