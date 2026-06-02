@@ -5,14 +5,18 @@
     height: auto;
 }
 
-
+/* BOTÕES */
 
 .btn {
     display: flex;
     justify-content: center;
     align-items: center;
 
-    width: 80vw;
+    width: 100%;
+    max-width: 429px;
+
+    height: 52px;
+
     padding: 10px;
 
     border: none;
@@ -36,6 +40,100 @@
 .buttons-container {
     display: flex;
     flex-direction: column;
-    margin: auto;
+    align-items: center;
+
+    width: 100%;
+
     gap: 12px;
+}
+
+.input {
+    width: 100%;
+    max-width: 429px;
+
+    height: 60px;
+
+    padding: 12px 20px;
+
+    border-radius: 25px;
+    border: 2px solid transparent;
+
+    background-color: rgba(255, 255, 255, 0.1);
+
+    color: var(--cream);
+
+    transition: all 0.2s ease;
+}
+
+.input:focus {
+    border-color: var(--dark-green);
+    outline: none;
+}
+
+.input::placeholder {
+    color: rgba(246, 247, 235, 0.45);
+    font-family: "Berlin";
+    font-size: 15px;
+}
+
+.separator-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 20px 10px;
+}
+
+.line {
+    flex-grow: 1;
+    border: none;
+    height: 1px;
+    background-color: var(--cream-light);
+    margin-left: 3px;
+}
+
+.text-or {
+    padding: 0 15px;
+    color: var(--cream-light);
+    font-size: 16px;
+}
+
+.name-input {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.input-name {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Google / Apple */
+
+.login-btns {
+    display: flex;
+    gap: 10px;
+
+    width: calc(100% - 20px);
+    max-width: 429px;
+
+    height: 60px;
+
+    margin: 0 auto;
+}
+
+.login-btn {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 25px;
+    padding: 10px;
+
+    flex: 1;
+
+    color: var(--cream);
+    text-align: center;
+    border: 0;
+    font-family: "Berlin";
+    font-size: 16px;
+
+    margin-bottom: 15px;
 }
