@@ -3,34 +3,115 @@
 ───────────────────────────────────────────────────── */
 
 :root {
-  --bg:       #f5f5eb;
-  --cat-bg:   #e6e4d5;
-  --pad:      26px;
-  --r-sm:     5px;
-  --r-md:     10px;
-  --r-lg:     12px;
-  --shadow-sm:0 2px 8px rgba(23,42,58,0.07);
+  --bg:        #f5f5eb;
+  --cat-bg:    #e6e4d5;
+  --pad:       20px;
+  --r-sm:      8px;
+  --r-md:      12px;
+  --r-lg:      16px;
+  --shadow-sm: 0 2px 10px rgba(23,42,58,0.08);
 }
 
-/* ── Layout geral ──────────────────────────────────── */
+/* ── Responsive layout ─────────────────────────────── */
 body {
-  background: var(--blue);
+  background: var(--bg);
   display: flex;
   justify-content: center;
-  align-items: flex-start;
   min-height: 100vh;
 }
-
 .page {
   width: 100%;
-  max-width: 402px;
   min-height: 100vh;
   background: var(--bg);
   display: flex;
   flex-direction: column;
   position: relative;
   overflow: hidden;
-  margin: 0 auto;
+}
+
+/* Mobile: app centrada com largura de frame */
+@media (max-width: 767px) {
+  body { background: var(--blue); }
+  .page { max-width: 402px; margin: 0 auto; box-shadow: 0 0 60px rgba(0,0,0,0.35); }
+  .navbar { max-width: 402px; }
+}
+
+/* Desktop: ocupa toda a largura, elementos escalam */
+@media (min-width: 768px) {
+  body { background: var(--bg); }
+  :root {
+    --pad: 40px;
+    --r-md: 16px;
+    --r-lg: 20px;
+  }
+  .page { max-width: 100%; }
+
+  .top-bar { padding: 16px var(--pad) 16px; }
+  .logo-img { width: 60px; height: 60px; }
+
+  .search-bar { height: 54px; }
+  .search-bar input { font-size: 15px; }
+
+
+  .section-title { font-size: 30px; }
+  .section-link { font-size: 18px; }
+
+  .cat-card { width: 90px; }
+  .cat-thumb { width: 90px; height: 90px; }
+  .cat-thumb img, .cat-thumb svg { width: 50px; height: 50px; }
+  .cat-label { font-size: 14px; }
+  .categories { gap: 14px; }
+
+  /* Donation cards - muito maiores no desktop */
+  .scroll-row-wrap { padding: 0 var(--pad); }
+  .scroll-row {
+    gap: 24px;
+    flex-wrap: wrap;
+    overflow-x: visible;
+    padding-right: 0;
+  }
+  .donation-card { width: calc(33.333% - 16px); min-width: 280px; }
+  .donation-card-img { height: 220px; }
+  .donation-card-info { padding: 16px 18px 18px; }
+  .donation-name { font-size: 20px; margin-bottom: 10px; }
+  .user-name { font-size: 14px; }
+  .donation-dist { font-size: 14px; }
+  .user-avatar { width: 30px; height: 30px; font-size: 14px; }
+  .donation-dist svg { width: 12px !important; height: 14px !important; min-width: 12px !important; max-width: 12px !important; }
+  .fav-btn { width: 38px; height: 38px; top: 12px; right: 12px; }
+
+  /* Como Funciona - mantém layout original escalado */
+  .how-section { padding: 0 var(--pad); }
+  .how-icon { width: 90px; height: 90px; }
+  .how-icon img { width: 90px; height: 90px; }
+  .how-card-title { font-size: 24px; }
+  .how-card-sub { font-size: 16px; }
+
+  /* Community cards - muito maiores no desktop */
+  .comm-scroll-wrap { padding: 0 var(--pad); }
+  .comm-scroll {
+    gap: 24px;
+    flex-wrap: wrap;
+    overflow-x: visible;
+    padding-right: 0;
+  }
+  .comm-card { width: calc(33.333% - 16px); min-width: 280px; }
+  .comm-card-img { height: 200px; }
+  .comm-card-info { padding: 16px 18px 14px; }
+  .comm-card-name { font-size: 20px; margin-bottom: 8px; padding-right: 36px; }
+  .comm-location { font-size: 14px; }
+  .comm-people { font-size: 14px; }
+  .comm-add-icon { width: 32px; height: 32px; top: 12px; right: 12px; }
+
+  .navbar {
+    max-width: 100%;
+    height: 72px;
+    border-radius: 0;
+    left: 0; transform: none;
+    padding: 0 60px;
+  }
+  .nav-item img { width: 30px; height: 30px; }
+  .nav-add img { width: 36px; height: 36px; }
 }
 
 /* ── Status Bar ─────────────────────────────────────── */
@@ -38,49 +119,64 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 16px 4px 44px;
+  padding: 10px 20px 4px 28px;
   background: var(--bg);
   flex-shrink: 0;
-  height: 36px;
 }
 .status-time {
   font-family: "Berlin", sans-serif;
-  font-size: 14px;
+  font-size: 15px;
   color: var(--blue);
   font-weight: 600;
 }
-.status-icons {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-.status-icons svg { width: 16px; height: 12px; fill: var(--blue); }
+.status-icons { display: flex; align-items: center; gap: 5px; }
 .battery-icon {
-  width: 18px; height: 10px;
+  display: flex; align-items: center; gap: 1px;
+  position: relative;
+}
+.battery-fill {
+  width: 20px; height: 10px;
   border: 1.5px solid var(--blue);
   border-radius: 2px;
   position: relative;
-  display: flex;
-  align-items: center;
-  padding: 1px;
+  padding: 2px;
+  display: flex; align-items: center;
 }
-.battery-icon::after {
+.battery-fill::before {
   content: '';
-  position: absolute;
-  right: -4px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 2px;
-  height: 5px;
-  background: var(--blue);
-  border-radius: 0 1px 1px 0;
-}
-.battery-fill {
-  height: 100%;
-  width: 75%;
+  display: block;
+  width: 75%; height: 100%;
   background: var(--blue);
   border-radius: 1px;
 }
+.battery-fill::after {
+  content: '';
+  position: absolute;
+  right: -4px; top: 50%;
+  transform: translateY(-50%);
+  width: 2px; height: 5px;
+  background: var(--blue);
+  border-radius: 0 1px 1px 0;
+}
+
+/* ── Top Bar ────────────────────────────────────────── */
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px var(--pad) 12px;
+  background: var(--bg);
+  flex-shrink: 0;
+}
+.logo-wrap { display: flex; align-items: center; text-decoration: none; }
+.logo-img { width: 52px; height: 52px; object-fit: contain; }
+.notif-btn {
+  width: 46px; height: 46px;
+  background: transparent;
+  border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+.notif-btn img { width: 40px; height: 40px; object-fit: contain; }
 
 /* ── Scroll content ────────────────────────────────── */
 .scroll-content {
@@ -89,134 +185,63 @@ body {
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
-  padding-bottom: 4px;
 }
 .scroll-content::-webkit-scrollbar { display: none; }
 
-/* ── Top Bar ────────────────────────────────────────── */
-.top-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px var(--pad) 10px;
-  background: var(--bg);
-  flex-shrink: 0;
-}
-
-.logo-wrap {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  text-decoration: none;
-}
-.logo-img {
-  width: 40px;
-  height: 43px;
-  object-fit: contain;
-  border-radius: 8px;
-}
-.logo-name {
-  font-family: "Berlin", sans-serif;
-  font-size: 20px;
-  color: var(--blue);
-  letter-spacing: 0.01em;
-}
-
-.notif-btn {
-  width: 36px; height: 36px;
-  background: transparent;
-  border: none; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  position: relative;
-  color: var(--dark-green);
-}
-.notif-btn svg { width: 26px; height: 26px; }
-.notif-dot {
-  position: absolute; top: 5px; right: 5px;
-  width: 8px; height: 8px;
-  background: #e74c3c;
-  border-radius: 50%;
-  border: 2px solid var(--bg);
-}
-
 /* ── Search Bar ─────────────────────────────────────── */
-.search-wrap { padding: 0 var(--pad) 14px; }
+.search-wrap { padding: 0 var(--pad) 16px; }
 .search-bar {
   display: flex;
   align-items: center;
   gap: 8px;
   background: #fff;
-  border: 1px solid rgba(23,42,58,0.41);
-  border-radius: var(--r-sm);
-  padding: 0 12px;
-  height: 38px;
+  border: 1.5px solid rgba(23,42,58,0.25);
+  border-radius: 50px;
+  padding: 0 14px;
+  height: 46px;
   box-shadow: var(--shadow-sm);
 }
-.search-icon { width: 20px; height: 20px; flex-shrink: 0; fill: var(--blue); opacity: 0.75; }
+.search-icon { width: 20px; height: 20px; flex-shrink: 0; }
 .search-bar input {
   flex: 1; border: none; outline: none; background: transparent;
   font-family: "Berlin", sans-serif;
-  font-size: 11px; color: var(--blue); opacity: 0.45;
+  font-size: 13px; color: rgba(23,42,58,0.5);
 }
-.search-bar input::placeholder { color: var(--blue); }
-.search-filter { margin-left: auto; cursor: pointer; display: flex; align-items: center; color: var(--blue); opacity: 0.6; }
-.search-filter svg { width: 18px; height: 18px; }
+.search-bar input::placeholder { color: rgba(23,42,58,0.45); }
+.search-filter { margin-left: auto; cursor: pointer; display: flex; align-items: center; }
 
 /* ── Banner ─────────────────────────────────────────── */
-.banner-wrap { padding: 0 var(--pad); margin-bottom: 12px; }
+.banner-wrap { padding: 0 var(--pad); margin-bottom: 10px; }
 .banner {
-  width: 100%; height: 172px;
-  border-radius: var(--r-md);
-  background: linear-gradient(135deg, var(--blue) 0%, #1f3d50 55%, var(--dark-green) 100%);
-  position: relative;
+  width: 100%;
+  border-radius: var(--r-lg);
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding: 16px;
 }
-.banner::before {
-  content: '';
-  position: absolute; inset: 0;
-  background:
-    radial-gradient(circle at 85% 20%, rgba(0,154,125,0.18) 0%, transparent 55%),
-    radial-gradient(circle at 10% 90%, rgba(1,110,88,0.14) 0%, transparent 50%);
-}
-.banner-tag {
-  font-family: "Berlin", sans-serif;
-  font-size: 10px;
-  letter-spacing: 0.07em;
-  color: var(--light-green);
-  background: rgba(0,154,125,0.15);
-  border: 1px solid rgba(0,154,125,0.30);
-  border-radius: 20px;
-  padding: 3px 10px;
-  width: fit-content;
-  margin-bottom: 8px;
-  position: relative;
-}
-.banner-title {
-  font-family: "Berlin", sans-serif;
-  font-size: 20px;
-  color: #fff;
-  line-height: 1.25;
-  position: relative;
-}
-.banner-sub {
-  font-family: "Berlin", sans-serif;
-  font-size: 12px;
-  color: rgba(255,255,255,0.60);
-  position: relative;
-  margin-top: 4px;
+.banner img {
+  width: 100%;
+  height: auto;
+  display: block;
 }
 
+@media (min-width: 768px) {
+  .banner-wrap {
+    display: flex;
+    justify-content: center;
+  }
+  .banner {
+    max-width: 600px;
+    width: 100%;
+  }
+}
+
+/* Dots */
 .banner-dots {
   display: flex; align-items: center; justify-content: center;
-  gap: 6px; padding: 8px 0 16px;
+  gap: 5px; padding: 10px 0 18px;
 }
 .banner-dot {
   width: 8px; height: 8px; border-radius: 50%;
-  background: #67bea2; transition: background 0.2s;
+  background: rgba(1,110,88,0.3);
 }
 .banner-dot.active { background: var(--dark-green); }
 
@@ -224,46 +249,42 @@ body {
 .section-header {
   display: flex; align-items: center; justify-content: space-between;
   padding: 0 var(--pad);
-  margin-bottom: 14px;
+  margin-bottom: 16px;
 }
 .section-title {
   font-family: "Berlin", sans-serif;
-  font-size: 22px;
+  font-size: 24px;
   color: var(--blue);
-  letter-spacing: 0.01em;
 }
 .section-link {
   font-family: "Berlin", sans-serif;
-  font-size: 15px;
+  font-size: 16px;
   color: var(--dark-green);
   text-decoration: none;
 }
 
-/* ── Categorias ─────────────────────────────────────── */
-.categories-wrap {
-  padding: 0 var(--pad);
-  margin-bottom: 28px;
-}
+/* ── Categories ─────────────────────────────────────── */
+.categories-wrap { padding: 0 var(--pad); margin-bottom: 28px; }
 .categories {
-  display: flex; gap: 9px;
+  display: flex; gap: 10px;
   overflow-x: auto; scrollbar-width: none;
 }
 .categories::-webkit-scrollbar { display: none; }
-
 .cat-card {
   flex-shrink: 0;
-  display: flex; flex-direction: column; align-items: center; gap: 10px;
-  width: 63px; cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  width: 68px; cursor: pointer;
 }
 .cat-thumb {
-  width: 63px; height: 63px;
+  width: 68px; height: 68px;
   background: var(--cat-bg);
   border-radius: var(--r-md);
   display: flex; align-items: center; justify-content: center;
   transition: transform 0.15s ease;
 }
-.cat-thumb svg { width: 26px; height: 26px; fill: var(--blue); opacity: 0.7; }
-.cat-card:hover .cat-thumb { transform: scale(1.06); }
+.cat-thumb img { width: 38px; height: 38px; object-fit: contain; opacity: 0.75; }
+.cat-thumb svg { width: 38px; height: 38px; fill: var(--blue); opacity: 0.7; }
+.cat-card:hover .cat-thumb { transform: scale(1.05); }
 .cat-label {
   font-family: "Berlin", sans-serif;
   font-size: 12px;
@@ -272,14 +293,14 @@ body {
   white-space: nowrap;
 }
 
-/* ── Donation Cards (Figma style) ─────────────────── */
+/* ── Donation Cards ──────────────────────────────────── */
 .scroll-row-wrap {
   padding: 0 0 0 var(--pad);
   margin-bottom: 28px;
   overflow: hidden;
 }
 .scroll-row {
-  display: flex; gap: 5px;
+  display: flex; gap: 12px;
   overflow-x: auto; scrollbar-width: none;
   padding-right: var(--pad);
   -webkit-overflow-scrolling: touch;
@@ -288,131 +309,114 @@ body {
 
 .donation-card {
   flex-shrink: 0;
-  width: 140px;
+  width: 150px;
   background: #fff;
   border-radius: var(--r-md);
   overflow: hidden;
   box-shadow: var(--shadow-sm);
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: transform 0.15s ease;
 }
-.donation-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(23,42,58,0.12);
-}
+.donation-card:hover { transform: translateY(-2px); }
+
 .donation-card-img {
-  width: 100%; height: 72px;
-  display: flex; align-items: center; justify-content: center;
+  width: 100%; height: 110px;
   position: relative;
-  border-radius: var(--r-md) var(--r-md) 0 0;
+  overflow: hidden;
+}
+.donation-card-img img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
 }
 .fav-btn {
-  position: absolute; top: 6px; right: 6px;
-  width: 20px; height: 20px;
-  background: rgba(255,255,255,0.88);
-  border: none;
-  border-radius: 50%;
+  position: absolute; top: 8px; right: 8px;
+  width: 28px; height: 28px;
+  background: rgba(255,255,255,0.95);
+  border: none; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  font-size: 11px; cursor: pointer;
-  color: var(--blue);
+  cursor: pointer; padding: 5px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.12);
 }
+.fav-btn img { width: 100%; height: 100%; object-fit: contain; }
 
-.donation-card-info { padding: 6px 6px 8px; }
+.donation-card-info { padding: 8px 10px 10px; }
 .donation-name {
   font-family: "Berlin", sans-serif;
-  font-size: 12px; font-weight: 600;
+  font-size: 13px; font-weight: 600;
   color: var(--blue);
-  margin-bottom: 5px;
+  margin-bottom: 6px;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-
-/* New meta row: user avatar + name on left, distance on right */
 .donation-meta-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  display: flex; align-items: center; justify-content: space-between;
 }
-.donation-user {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
+.donation-user { display: flex; align-items: center; gap: 4px; }
 .user-avatar {
-  width: 16px; height: 16px;
-  background: #d9d9d9;
+  width: 18px; height: 18px;
+  background: var(--cat-bg);
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
   font-family: "Berlin", sans-serif;
-  font-size: 9px;
-  color: var(--blue);
-  font-weight: 700;
+  font-size: 9px; color: var(--blue); font-weight: 700;
   flex-shrink: 0;
 }
 .user-name {
   font-family: "Berlin", sans-serif;
-  font-size: 8px;
-  color: rgba(0,0,0,0.5);
-  white-space: nowrap;
+  font-size: 10px; color: rgba(0,0,0,0.5);
 }
 .donation-dist {
-  display: flex;
-  align-items: center;
-  gap: 2px;
+  display: flex; align-items: center; gap: 2px;
   font-family: "Berlin", sans-serif;
-  font-size: 8px;
-  color: rgba(0,0,0,0.5);
+  font-size: 10px; color: rgba(0,0,0,0.5);
 }
 .donation-dist svg {
-  width: 8px; height: 10px;
-  fill: rgba(23,42,58,0.55);
-  flex-shrink: 0;
+  width: 8px !important; height: 10px !important;
+  min-width: 8px !important; max-width: 8px !important;
+  fill: rgba(23,42,58,0.55); flex-shrink: 0; display: block;
 }
 
 /* ── Como Funciona ──────────────────────────────────── */
-.how-section { padding: 0 var(--pad); margin-bottom: 28px; }
-.how-cards { display: flex; }
-.how-card {
-  flex: 1; background: #fff;
-  padding: 12px 8px;
-  display: flex; flex-direction: column; align-items: center; gap: 6px;
-  text-align: center;
+.how-section { padding: 0 var(--pad); margin-bottom: 8px; }
+.how-cards {
+  display: flex;
+  justify-content: space-around;
+  gap: 8px;
 }
-.how-card:first-child { border-radius: var(--r-md) 0 0 var(--r-md); }
-.how-card:last-child  { border-radius: 0 var(--r-md) var(--r-md) 0; }
+.how-card {
+  flex: 1;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 8px; text-align: center;
+}
 .how-icon {
-  width: 36px; height: 36px;
-  background: rgba(1,110,88,0.09);
-  border-radius: 50%;
+  width: 62px; height: 62px;
   display: flex; align-items: center; justify-content: center;
 }
-.how-icon svg { width: 22px; height: 22px; fill: var(--dark-green); }
+.how-icon img { width: 62px; height: 62px; object-fit: contain; }
 .how-card-title {
   font-family: "Berlin", sans-serif;
-  font-size: 13px; color: var(--blue); line-height: 1.2;
+  font-size: 16px; color: var(--blue); font-weight: 600;
 }
 .how-card-sub {
   font-family: "Berlin", sans-serif;
-  font-size: 10px; color: rgba(23,42,58,0.50); line-height: 1.4;
+  font-size: 12px; color: rgba(23,42,58,0.55); line-height: 1.5;
 }
-.how-divider { width: 1px; background: rgba(23,42,58,0.08); flex-shrink: 0; }
 
 /* ── Community Cards ────────────────────────────────── */
 .comm-scroll-wrap {
   padding: 0 0 0 var(--pad);
-  margin-bottom: 24px;
-  overflow: hidden;
+  margin-bottom: 24px; overflow: hidden;
 }
 .comm-scroll {
-  display: flex; gap: 10px;
+  display: flex; gap: 12px;
   overflow-x: auto; scrollbar-width: none;
   padding-right: var(--pad);
   -webkit-overflow-scrolling: touch;
 }
 .comm-scroll::-webkit-scrollbar { display: none; }
-
 .comm-card {
   flex-shrink: 0;
-  width: 140px; height: 123px;
+  width: 150px;
   background: #fff;
   border-radius: var(--r-md);
   overflow: hidden;
@@ -423,81 +427,163 @@ body {
 }
 .comm-card:hover { transform: translateY(-2px); }
 .comm-card-img {
-  width: 100%; height: 75px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 28px;
+  width: 100%; height: 100px;
+  overflow: hidden;
 }
-.comm-card-info { padding: 5px 6px 4px; position: relative; }
+.comm-card-img img {
+  width: 100%; height: 100%;
+  object-fit: cover; display: block;
+}
+.comm-card-info { padding: 8px 10px 8px; position: relative; }
 .comm-card-name {
   font-family: "Berlin", sans-serif;
-  font-size: 12px; font-weight: 600;
-  color: var(--blue); margin-bottom: 4px;
+  font-size: 13px; font-weight: 600;
+  color: var(--blue); margin-bottom: 5px;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  padding-right: 22px;
 }
-.comm-card-meta { display: flex; align-items: center; justify-content: space-between; }
+.comm-card-meta { display: flex; flex-direction: column; gap: 3px; }
 .comm-location, .comm-people {
   display: flex; align-items: center; gap: 3px;
   font-family: "Berlin", sans-serif;
-  font-size: 8px; color: rgba(23,42,58,0.6);
+  font-size: 10px; color: rgba(23,42,58,0.6);
 }
-.comm-location svg { width: 8px; height: 10px; fill: rgba(23,42,58,0.6); }
-.comm-people svg   { width: 10px; height: 10px; fill: rgba(23,42,58,0.6); }
-
+.comm-location svg { flex-shrink: 0; }
 .comm-add-icon {
-  position: absolute;
-  top: 4px; right: 6px;
-  width: 18px; height: 18px;
-  object-fit: contain;
+  position: absolute; top: 8px; right: 8px;
+  width: 22px; height: 22px; object-fit: contain;
 }
 
 /* ── NAVBAR ─────────────────────────────────────────── */
 .navbar {
   position: fixed;
   bottom: 0; left: 50%; transform: translateX(-50%);
-  width: 100%; max-width: 402px;
-  height: 109px;
+  width: 100%;
+  height: 80px;
   background: var(--blue);
-  border-radius: 30px 30px 0 0;
+  border-radius: 24px 24px 0 0;
   display: flex;
-  align-items: flex-start;
-  justify-content: space-around;
-  padding: 20px 25px 0;
-  z-index: 1000;
-  flex-shrink: 0;
-}
-
-.nav-item {
-  display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
-  flex: 1;
-  cursor: pointer;
-  text-decoration: none;
-  padding-top: 4px;
+  justify-content: space-around;
+  padding: 0 20px;
+  z-index: 1000;
 }
-
+.nav-item {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  flex: 1; cursor: pointer; text-decoration: none;
+}
 .nav-item img {
-  width: 45px;
-  height: 45px;
-  object-fit: contain;
+  width: 32px; height: 32px; object-fit: contain;
   opacity: 0.45;
   filter: brightness(0) invert(1);
   transition: opacity 0.15s ease;
 }
-
-.nav-item.active img {
+.nav-item.active img { opacity: 1; filter: none; }
+.nav-add img {
+  width: 40px; height: 40px;
   opacity: 1;
-  filter: brightness(0) saturate(100%)
-          invert(48%) sepia(79%) saturate(476%)
-          hue-rotate(120deg) brightness(95%) contrast(91%);
+  filter: brightness(0) saturate(100%) invert(48%) sepia(79%)
+          saturate(476%) hue-rotate(120deg) brightness(95%) contrast(91%);
 }
 
-.nav-add img {
-  width: 45px;
-  height: 45px;
-  opacity: 1;
-  filter: brightness(0) saturate(100%)
-          invert(48%) sepia(79%) saturate(476%)
-          hue-rotate(120deg) brightness(95%) contrast(91%);
+/* ══════════════════════════════════════════════════════
+   BOTTOM SHEETS
+══════════════════════════════════════════════════════ */
+.sheet-overlay {
+  position: fixed; inset: 0;
+  background: rgba(23,42,58,0.5);
+  z-index: 2000; opacity: 0; pointer-events: none;
+  transition: opacity 0.3s ease;
+  backdrop-filter: blur(2px);
+}
+.sheet-overlay.active { opacity: 1; pointer-events: all; }
+
+.bottom-sheet {
+  position: fixed;
+  bottom: 0; left: 50%; transform: translateX(-50%) translateY(100%);
+  width: 100%; max-width: 402px;
+  max-height: 85vh;
+  background: var(--bg);
+  border-radius: 24px 24px 0 0;
+  z-index: 2100;
+  display: flex; flex-direction: column;
+  transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+  box-shadow: 0 -8px 40px rgba(23,42,58,0.18);
+}
+.bottom-sheet.active { transform: translateX(-50%) translateY(0); }
+
+@media (min-width: 600px) {
+  .bottom-sheet { max-width: 402px; }
+}
+
+.sheet-handle {
+  width: 40px; height: 4px;
+  background: rgba(23,42,58,0.2);
+  border-radius: 2px;
+  margin: 12px auto 0; flex-shrink: 0;
+}
+.sheet-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 20px 12px; flex-shrink: 0;
+  border-bottom: 1px solid rgba(23,42,58,0.08);
+}
+.sheet-title {
+  font-family: "Berlin", sans-serif;
+  font-size: 18px; color: var(--blue);
+}
+.sheet-close {
+  width: 32px; height: 32px;
+  background: rgba(23,42,58,0.07);
+  border: none; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--blue);
+}
+.sheet-close svg { width: 18px; height: 18px; }
+.sheet-body {
+  overflow-y: auto; flex: 1;
+  padding: 18px 20px 32px; scrollbar-width: none;
+}
+.sheet-body::-webkit-scrollbar { display: none; }
+
+.sheet-grid-cats {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
+  gap: 14px 10px; justify-items: center;
+}
+.sheet-grid-donations {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 14px;
+}
+.sheet-grid-donations .donation-card { width: 100%; }
+
+.sheet-list-comms { display: flex; flex-direction: column; gap: 10px; }
+.comm-list-item {
+  display: flex; align-items: center; gap: 12px;
+  background: #fff; border-radius: var(--r-md);
+  padding: 10px 12px; box-shadow: var(--shadow-sm);
+  cursor: pointer; position: relative;
+  transition: transform 0.12s ease;
+}
+.comm-list-item:hover { transform: translateX(3px); }
+.comm-list-thumb {
+  width: 48px; height: 48px;
+  border-radius: 10px; overflow: hidden; flex-shrink: 0;
+}
+.comm-list-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.comm-list-info { flex: 1; min-width: 0; }
+.comm-list-name {
+  font-family: "Berlin", sans-serif;
+  font-size: 14px; font-weight: 600; color: var(--blue);
+  margin-bottom: 3px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.comm-list-meta {
+  display: flex; gap: 10px;
+  font-family: "Berlin", sans-serif;
+  font-size: 11px; color: rgba(23,42,58,0.55);
+}
+.comm-add-icon-sm {
+  width: 24px; height: 24px; object-fit: contain; flex-shrink: 0;
 }
