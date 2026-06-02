@@ -10,28 +10,25 @@
 <body>
 <div class="page">
 
-  <!-- Top Bar: logo + notificações -->
+  <!-- Top Bar -->
   <header class="top-bar">
     <a class="logo-wrap" href="#">
-      <img class="logo-img" src="images/logoinicial.png" alt="ShareBox">
-      <span class="logo-name">ShareBox</span>
+      <img class="logo-img" src="images/Logo/logoinicial.png" alt="ShareBox">
     </a>
     <button class="notif-btn" aria-label="Notificações">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6V11c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
-      <span class="notif-dot"></span>
+      <img src="images/Icons/notifications_unread.png" alt="Notificações">
     </button>
   </header>
 
-  <!-- Conteúdo com scroll -->
   <main class="scroll-content">
 
     <!-- Search Bar -->
     <div class="search-wrap">
       <div class="search-bar">
-        <svg class="search-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
         <input type="text" placeholder="Buscar itens, categorias ou comunidades" readonly>
         <span class="search-filter">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 6l4 6v8l4-3V12L15 6H3zm16-1h-8l8 11h-4v5h-2v-5H7L15 5h4V4h-4V2h4v1h2z" opacity="0"/><path d="M4.5 6.375a4.125 4.125 0 1 1 8.25 0 4.125 4.125 0 0 1-8.25 0zM14.25 8.625a3.375 3.375 0 1 1 6.75 0 3.375 3.375 0 0 1-6.75 0zM1.5 19.125a7.125 7.125 0 0 1 14.212-.929.75.75 0 0 0 1.498.092c.085-.58.13-1.17.13-1.768a5.625 5.625 0 1 0-11.19.929 7.125 7.125 0 0 1-4.65.676z" opacity="0"/><path d="M3 4h18M3 9h14M3 14h9" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" width="20" height="20"><rect x="3" y="5" width="18" height="2" rx="1" fill="var(--blue)"/><rect x="3" y="11" width="13" height="2" rx="1" fill="var(--blue)"/><rect x="3" y="17" width="8" height="2" rx="1" fill="var(--blue)"/><circle cx="19" cy="17" r="3" fill="var(--blue)"/><circle cx="19" cy="17" r="1.5" fill="var(--bg)"/></svg>
         </span>
       </div>
     </div>
@@ -39,9 +36,7 @@
     <!-- Banner -->
     <div class="banner-wrap">
       <div class="banner">
-        <span class="banner-tag">Partilha &amp; Sustentabilidade</span>
-        <div class="banner-title">Partilha mais.<br>Desperdiça menos.</div>
-        <div class="banner-sub">Dá uma segunda vida aos teus itens</div>
+        <img src="images/Banner/Billboard.png" alt="ShareBox Banner">
       </div>
     </div>
     <div class="banner-dots">
@@ -54,156 +49,234 @@
     <!-- Categorias -->
     <div class="section-header">
       <span class="section-title">Categorias</span>
-      <a class="section-link" href="#">Ver todas</a>
+      <a class="section-link" href="#" onclick="openSheet('sheet-categorias'); return false;">Ver todas</a>
     </div>
     <div class="categories-wrap">
       <div class="categories">
-        <div class="cat-card"><div class="cat-thumb">👕</div><span class="cat-label">Roupas</span></div>
-        <div class="cat-card"><div class="cat-thumb">📚</div><span class="cat-label">Livros</span></div>
-        <div class="cat-card"><div class="cat-thumb">🏠</div><span class="cat-label">Casa</span></div>
-        <div class="cat-card"><div class="cat-thumb">📱</div><span class="cat-label">Electrónicos</span></div>
-        <div class="cat-card"><div class="cat-thumb">⚽</div><span class="cat-label">Desporto</span></div>
-        <div class="cat-card"><div class="cat-thumb">🌱</div><span class="cat-label">Plantas</span></div>
-        <div class="cat-card"><div class="cat-thumb">🎮</div><span class="cat-label">Gaming</span></div>
+        <div class="cat-card"><div class="cat-thumb"><img src="images/Icons/apparel.png" alt="Roupas"></div><span class="cat-label">Roupas</span></div>
+        <div class="cat-card"><div class="cat-thumb"><img src="images/Icons/auto_stories.png" alt="Livros"></div><span class="cat-label">Livros</span></div>
+        <div class="cat-card"><div class="cat-thumb"><img src="images/Icons/bed.png" alt="Casa"></div><span class="cat-label">Casa</span></div>
+        <div class="cat-card"><div class="cat-thumb"><img src="images/Icons/desktop_windows.png" alt="Eletrónicos"></div><span class="cat-label">Eletrónicos</span></div>
+        <div class="cat-card"><div class="cat-thumb"><img src="images/Icons/sports_football.png" alt="Esportes"></div><span class="cat-label">Esportes</span></div>
       </div>
     </div>
 
     <!-- Recomendações -->
     <div class="section-header">
       <span class="section-title">Recomendações para ti</span>
-      <a class="section-link" href="#">Ver todas</a>
+      <a class="section-link" href="#" onclick="openSheet('sheet-recomendacoes'); return false;">Ver todas</a>
     </div>
     <div class="scroll-row-wrap">
       <div class="scroll-row">
+
         <div class="donation-card">
-          <div class="donation-card-img">🌿<div class="fav-btn">♡</div></div>
+          <div class="donation-card-img">
+            <img src="https://images.unsplash.com/photo-1598880940080-ff9a29891b85?w=300&h=180&fit=crop" alt="Planta jiboia">
+            <button class="fav-btn"><img src="images/Icons/favorite.png" alt="Favorito"></button>
+          </div>
           <div class="donation-card-info">
             <div class="donation-name">Planta jiboia</div>
-            <div class="donation-meta">
-              <span class="donation-location"><svg viewBox="0 0 10 13"><path d="M5 0C2.24 0 0 2.24 0 5c0 3.75 5 8 5 8s5-4.25 5-8c0-2.76-2.24-5-5-5zm0 6.5c-.83 0-1.5-.67-1.5-1.5S4.17 3.5 5 3.5 6.5 4.17 6.5 5 5.83 6.5 5 6.5z" fill-rule="evenodd"/></svg>Porto</span>
-              <span class="donation-badge">Doação</span>
+            <div class="donation-meta-row">
+              <div class="donation-user"><div class="user-avatar">L</div><span class="user-name">por Lucas</span></div>
+              <div class="donation-dist"><svg viewBox="0 0 10 13" width="8" height="10" style="width:8px;height:10px;flex-shrink:0"><path d="M5 0C2.24 0 0 2.24 0 5c0 3.75 5 8 5 8s5-4.25 5-8c0-2.76-2.24-5-5-5zm0 6.5c-.83 0-1.5-.67-1.5-1.5S4.17 3.5 5 3.5 6.5 4.17 6.5 5 5.83 6.5 5 6.5z" fill="currentColor"/></svg>1,3 km</div>
             </div>
           </div>
         </div>
+
         <div class="donation-card">
-          <div class="donation-card-img">📖<div class="fav-btn">♡</div></div>
+          <div class="donation-card-img">
+            <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=300&h=180&fit=crop" alt="Livros Infantis">
+            <button class="fav-btn"><img src="images/Icons/favorite.png" alt="Favorito"></button>
+          </div>
           <div class="donation-card-info">
             <div class="donation-name">Livros Infantis</div>
-            <div class="donation-meta">
-              <span class="donation-location"><svg viewBox="0 0 10 13"><path d="M5 0C2.24 0 0 2.24 0 5c0 3.75 5 8 5 8s5-4.25 5-8c0-2.76-2.24-5-5-5zm0 6.5c-.83 0-1.5-.67-1.5-1.5S4.17 3.5 5 3.5 6.5 4.17 6.5 5 5.83 6.5 5 6.5z" fill-rule="evenodd"/></svg>Lisboa</span>
-              <span class="donation-badge">Doação</span>
+            <div class="donation-meta-row">
+              <div class="donation-user"><div class="user-avatar">L</div><span class="user-name">por Mariana</span></div>
+              <div class="donation-dist"><svg viewBox="0 0 10 13" width="8" height="10" style="width:8px;height:10px;flex-shrink:0"><path d="M5 0C2.24 0 0 2.24 0 5c0 3.75 5 8 5 8s5-4.25 5-8c0-2.76-2.24-5-5-5zm0 6.5c-.83 0-1.5-.67-1.5-1.5S4.17 3.5 5 3.5 6.5 4.17 6.5 5 5.83 6.5 5 6.5z" fill="currentColor"/></svg>0,4 km</div>
             </div>
           </div>
         </div>
+
         <div class="donation-card">
-          <div class="donation-card-img">👗<div class="fav-btn">♡</div></div>
+          <div class="donation-card-img">
+            <img src="https://images.unsplash.com/photo-1542272604-787c3835535d?w=300&h=180&fit=crop" alt="Planta jiboia">
+            <button class="fav-btn"><img src="images/Icons/favorite.png" alt="Favorito"></button>
+          </div>
           <div class="donation-card-info">
-            <div class="donation-name">Casaco de inverno</div>
-            <div class="donation-meta">
-              <span class="donation-location"><svg viewBox="0 0 10 13"><path d="M5 0C2.24 0 0 2.24 0 5c0 3.75 5 8 5 8s5-4.25 5-8c0-2.76-2.24-5-5-5zm0 6.5c-.83 0-1.5-.67-1.5-1.5S4.17 3.5 5 3.5 6.5 4.17 6.5 5 5.83 6.5 5 6.5z" fill-rule="evenodd"/></svg>Braga</span>
-              <span class="donation-badge">Troca</span>
+            <div class="donation-name">Planta jiboia</div>
+            <div class="donation-meta-row">
+              <div class="donation-user"><div class="user-avatar">L</div><span class="user-name">por Lucas</span></div>
+              <div class="donation-dist"><svg viewBox="0 0 10 13" width="8" height="10" style="width:8px;height:10px;flex-shrink:0"><path d="M5 0C2.24 0 0 2.24 0 5c0 3.75 5 8 5 8s5-4.25 5-8c0-2.76-2.24-5-5-5zm0 6.5c-.83 0-1.5-.67-1.5-1.5S4.17 3.5 5 3.5 6.5 4.17 6.5 5 5.83 6.5 5 6.5z" fill="currentColor"/></svg>1,3 km</div>
             </div>
           </div>
         </div>
+
       </div>
     </div>
 
     <!-- Como Funciona -->
     <div class="how-section">
-      <div class="section-title" style="margin-bottom:14px">Como Funciona?</div>
+      <div class="section-title" style="margin-bottom:28px">Como Funciona?</div>
       <div class="how-cards">
         <div class="how-card">
-          <div class="how-icon">
-            <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg>
-          </div>
-          <div class="how-card-title">Publica um item</div>
-          <div class="how-card-sub">Fotografa e descreve o que tens</div>
+          <div class="how-icon"><img src="images/Icons/arrow_circle_up.png" alt="Publique"></div>
+          <div class="how-card-title">Publique</div>
+          <div class="how-card-sub">o que você<br>deseja trocar</div>
         </div>
-        <div class="how-divider"></div>
         <div class="how-card">
-          <div class="how-icon">
-            <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
-          </div>
-          <div class="how-card-title">Conecta com alguém</div>
-          <div class="how-card-sub">Fala com quem está interessado</div>
+          <div class="how-icon"><img src="images/Icons/topic.png" alt="Encontre"></div>
+          <div class="how-card-title">Encontre</div>
+          <div class="how-card-sub">algo que<br>você precisa</div>
         </div>
-        <div class="how-divider"></div>
         <div class="how-card">
-          <div class="how-icon">
-            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-          </div>
-          <div class="how-card-title">Faz a entrega</div>
-          <div class="how-card-sub">Combina à mão ou por correio</div>
+          <div class="how-icon"><img src="images/Icons/icone4@4x-8.png" alt="Doe"></div>
+          <div class="how-card-title">Doe</div>
+          <div class="how-card-sub">e cria novas<br>conexões</div>
         </div>
       </div>
     </div>
 
     <!-- Novas Comunidades -->
-    <div class="section-header" style="margin-top:28px">
+    <div class="section-header" style="margin-top:32px">
       <span class="section-title">Novas Comunidades</span>
-      <a class="section-link" href="#">Ver todas</a>
+      <a class="section-link" href="#" onclick="openSheet('sheet-comunidades'); return false;">Ver todas</a>
     </div>
     <div class="comm-scroll-wrap">
       <div class="comm-scroll">
+
         <div class="comm-card">
-          <div class="comm-card-img">📚</div>
+          <div class="comm-card-img">
+            <img src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=300&h=160&fit=crop" alt="Troca de Livros">
+          </div>
           <div class="comm-card-info">
             <div class="comm-card-name">Troca de Livros</div>
             <div class="comm-card-meta">
-              <span class="comm-location"><svg viewBox="0 0 10 13"><path d="M5 0C2.24 0 0 2.24 0 5c0 3.75 5 8 5 8s5-4.25 5-8c0-2.76-2.24-5-5-5zm0 6.5c-.83 0-1.5-.67-1.5-1.5S4.17 3.5 5 3.5 6.5 4.17 6.5 5 5.83 6.5 5 6.5z" fill-rule="evenodd"/></svg>Bolhão, Porto</span>
-              <span class="comm-people"><svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>133 pessoas</span>
+              <span class="comm-location"><svg viewBox="0 0 10 13" width="10" height="12" style="flex-shrink:0"><path d="M5 0C2.24 0 0 2.24 0 5c0 3.75 5 8 5 8s5-4.25 5-8c0-2.76-2.24-5-5-5zm0 6.5c-.83 0-1.5-.67-1.5-1.5S4.17 3.5 5 3.5 6.5 4.17 6.5 5 5.83 6.5 5 6.5z" fill="rgba(23,42,58,0.6)"/></svg>Bolhão, Porto</span>
+              <span class="comm-people"><img src="images/Icons/icone2@4x-8.png" style="width:13px;height:13px;object-fit:contain">133 pessoas</span>
             </div>
-            <img class="comm-add-icon" src="images/add_circle.png" alt="Aderir">
+            <img class="comm-add-icon" src="images/Icons/add_circle.png" alt="Aderir">
           </div>
         </div>
+
         <div class="comm-card">
-          <div class="comm-card-img">🎮</div>
+          <div class="comm-card-img">
+            <img src="https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=300&h=160&fit=crop" alt="Clube Gaming">
+          </div>
           <div class="comm-card-info">
             <div class="comm-card-name">Clube Gaming</div>
             <div class="comm-card-meta">
-              <span class="comm-location"><svg viewBox="0 0 10 13"><path d="M5 0C2.24 0 0 2.24 0 5c0 3.75 5 8 5 8s5-4.25 5-8c0-2.76-2.24-5-5-5zm0 6.5c-.83 0-1.5-.67-1.5-1.5S4.17 3.5 5 3.5 6.5 4.17 6.5 5 5.83 6.5 5 6.5z" fill-rule="evenodd"/></svg>Lisboa</span>
-              <span class="comm-people"><svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>43 pessoas</span>
+              <span class="comm-location"><svg viewBox="0 0 10 13" width="10" height="12" style="flex-shrink:0"><path d="M5 0C2.24 0 0 2.24 0 5c0 3.75 5 8 5 8s5-4.25 5-8c0-2.76-2.24-5-5-5zm0 6.5c-.83 0-1.5-.67-1.5-1.5S4.17 3.5 5 3.5 6.5 4.17 6.5 5 5.83 6.5 5 6.5z" fill="rgba(23,42,58,0.6)"/></svg>Lisboa</span>
+              <span class="comm-people"><img src="images/Icons/icone2@4x-8.png" style="width:13px;height:13px;object-fit:contain">43 pessoas</span>
             </div>
-            <img class="comm-add-icon" src="images/add_circle.png" alt="Aderir">
+            <img class="comm-add-icon" src="images/Icons/add_circle.png" alt="Aderir">
           </div>
         </div>
+
         <div class="comm-card">
-          <div class="comm-card-img">👗</div>
+          <div class="comm-card-img">
+            <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=300&h=160&fit=crop" alt="Roupas Femininas">
+          </div>
           <div class="comm-card-info">
-            <div class="comm-card-name">Roupas Femininas</div>
+            <div class="comm-card-name">Roupas Femin...</div>
             <div class="comm-card-meta">
-              <span class="comm-location"><svg viewBox="0 0 10 13"><path d="M5 0C2.24 0 0 2.24 0 5c0 3.75 5 8 5 8s5-4.25 5-8c0-2.76-2.24-5-5-5zm0 6.5c-.83 0-1.5-.67-1.5-1.5S4.17 3.5 5 3.5 6.5 4.17 6.5 5 5.83 6.5 5 6.5z" fill-rule="evenodd"/></svg>Porto</span>
-              <span class="comm-people"><svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>133 pessoas</span>
+              <span class="comm-location"><svg viewBox="0 0 10 13" width="10" height="12" style="flex-shrink:0"><path d="M5 0C2.24 0 0 2.24 0 5c0 3.75 5 8 5 8s5-4.25 5-8c0-2.76-2.24-5-5-5zm0 6.5c-.83 0-1.5-.67-1.5-1.5S4.17 3.5 5 3.5 6.5 4.17 6.5 5 5.83 6.5 5 6.5z" fill="rgba(23,42,58,0.6)"/></svg>Porto</span>
+              <span class="comm-people"><img src="images/Icons/icone2@4x-8.png" style="width:13px;height:13px;object-fit:contain">133 pessoas</span>
             </div>
-            <img class="comm-add-icon" src="images/add_circle.png" alt="Aderir">
+            <img class="comm-add-icon" src="images/Icons/add_circle.png" alt="Aderir">
           </div>
         </div>
+
       </div>
     </div>
 
-    <!-- Espaço para a navbar não tapar conteúdo -->
-    <div style="height: 109px"></div>
+    <div style="height:90px"></div>
   </main>
 
-  <!-- Navbar fixa -->
+  <!-- Navbar -->
   <nav class="navbar">
-    <a class="nav-item active" href="#">
-      <img src="images/family_home.png" alt="Home">
-    </a>
-    <a class="nav-item" href="#">
-      <img src="images/icone2@4x-8.png" alt="Comunidades">
-    </a>
-    <a class="nav-item nav-add" href="#">
-      <img src="images/add_circle.png" alt="Adicionar">
-    </a>
-    <a class="nav-item" href="#">
-      <img src="images/business_messages.png" alt="Mensagens">
-    </a>
-    <a class="nav-item" href="#">
-      <img src="images/icone5@4x-8.png" alt="Perfil">
-    </a>
+    <a class="nav-item active" href="#"><img src="images/Icons/family_home.png" alt="Home"></a>
+    <a class="nav-item" href="#"><img src="images/Icons/icone2@4x-8.png" alt="Comunidades"></a>
+    <a class="nav-item nav-add" href="#"><img src="images/Icons/add_circle.png" alt="Adicionar"></a>
+    <a class="nav-item" href="#"><img src="images/Icons/Ativo 11@4x-8.png" alt="Trocas"></a>
+    <a class="nav-item" href="#"><img src="images/Icons/icone5@4x-8.png" alt="Perfil"></a>
   </nav>
 
 </div>
+
+<!-- Overlay -->
+<div class="sheet-overlay" id="sheet-overlay" onclick="closeSheet()"></div>
+
+<!-- Sheet: Categorias -->
+<div class="bottom-sheet" id="sheet-categorias">
+  <div class="sheet-handle"></div>
+  <div class="sheet-header">
+    <span class="sheet-title">Todas as Categorias</span>
+    <button class="sheet-close" onclick="closeSheet()"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
+  </div>
+  <div class="sheet-body">
+    <div class="sheet-grid-cats">
+      <div class="cat-card"><div class="cat-thumb"><img src="images/Icons/apparel.png" alt="Roupas"></div><span class="cat-label">Roupas</span></div>
+      <div class="cat-card"><div class="cat-thumb"><img src="images/Icons/auto_stories.png" alt="Livros"></div><span class="cat-label">Livros</span></div>
+      <div class="cat-card"><div class="cat-thumb"><img src="images/Icons/bed.png" alt="Casa"></div><span class="cat-label">Casa</span></div>
+      <div class="cat-card"><div class="cat-thumb"><img src="images/Icons/desktop_windows.png" alt="Eletrónicos"></div><span class="cat-label">Eletrónicos</span></div>
+      <div class="cat-card"><div class="cat-thumb"><img src="images/Icons/sports_football.png" alt="Esportes"></div><span class="cat-label">Esportes</span></div>
+      <div class="cat-card"><div class="cat-thumb"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/></svg></div><span class="cat-label">Jardim</span></div>
+      <div class="cat-card"><div class="cat-thumb"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 3c-1.74 0-3.41.81-4.5 2.09C10.91 3.81 9.24 3 7.5 3 4.42 3 2 5.42 2 8.5c0 3.78 3.4 6.86 8.55 11.54L12 21.35l1.45-1.32C18.6 15.36 22 12.28 22 8.5 22 5.42 19.58 3 16.5 3zm-4.4 15.55l-.1.1-.1-.1C7.14 14.24 4 11.39 4 8.5 4 6.5 5.5 5 7.5 5c1.54 0 3.04.99 3.57 2.36h1.87C13.46 5.99 14.96 5 16.5 5c2 0 3.5 1.5 3.5 3.5 0 2.89-3.14 5.74-7.9 10.05z"/></svg></div><span class="cat-label">Brinquedos</span></div>
+      <div class="cat-card"><div class="cat-thumb"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/></svg></div><span class="cat-label">Eventos</span></div>
+      <div class="cat-card"><div class="cat-thumb"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3L1 9l4 2.18V17h2v-4.82l2 1.09V17c0 2.21 1.79 4 4 4s4-1.79 4-4v-3.73l2-1.09V17h2v-5.82L23 9 12 3zm4 14c0 1.1-.9 2-2 2s-2-.9-2-2v-2.73l2 1.09 2-1.09V17z"/></svg></div><span class="cat-label">Educação</span></div>
+      <div class="cat-card"><div class="cat-thumb"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg></div><span class="cat-label">Serviços</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- Sheet: Recomendações -->
+<div class="bottom-sheet" id="sheet-recomendacoes">
+  <div class="sheet-handle"></div>
+  <div class="sheet-header">
+    <span class="sheet-title">Recomendações para ti</span>
+    <button class="sheet-close" onclick="closeSheet()"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
+  </div>
+  <div class="sheet-body">
+    <div class="sheet-grid-donations">
+      <div class="donation-card"><div class="donation-card-img"><img src="https://images.unsplash.com/photo-1598880940080-ff9a29891b85?w=300&h=180&fit=crop" alt="Planta jiboia"><button class="fav-btn"><img src="images/Icons/favorite.png" alt="Favorito"></button></div><div class="donation-card-info"><div class="donation-name">Planta jiboia</div><div class="donation-meta-row"><div class="donation-user"><div class="user-avatar">L</div><span class="user-name">por Lucas</span></div><div class="donation-dist"><svg viewBox="0 0 10 13" width="8" height="10" style="width:8px;height:10px;flex-shrink:0"><path d="M5 0C2.24 0 0 2.24 0 5c0 3.75 5 8 5 8s5-4.25 5-8c0-2.76-2.24-5-5-5zm0 6.5c-.83 0-1.5-.67-1.5-1.5S4.17 3.5 5 3.5 6.5 4.17 6.5 5 5.83 6.5 5 6.5z" fill="currentColor"/></svg>1,3 km</div></div></div></div>
+      <div class="donation-card"><div class="donation-card-img"><img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=300&h=180&fit=crop" alt="Livros Infantis"><button class="fav-btn"><img src="images/Icons/favorite.png" alt="Favorito"></button></div><div class="donation-card-info"><div class="donation-name">Livros Infantis</div><div class="donation-meta-row"><div class="donation-user"><div class="user-avatar">M</div><span class="user-name">por Mariana</span></div><div class="donation-dist"><svg viewBox="0 0 10 13" width="8" height="10" style="width:8px;height:10px;flex-shrink:0"><path d="M5 0C2.24 0 0 2.24 0 5c0 3.75 5 8 5 8s5-4.25 5-8c0-2.76-2.24-5-5-5zm0 6.5c-.83 0-1.5-.67-1.5-1.5S4.17 3.5 5 3.5 6.5 4.17 6.5 5 5.83 6.5 5 6.5z" fill="currentColor"/></svg>0,4 km</div></div></div></div>
+      <div class="donation-card"><div class="donation-card-img"><img src="https://images.unsplash.com/photo-1542272604-787c3835535d?w=300&h=180&fit=crop" alt="Jeans"><button class="fav-btn"><img src="images/Icons/favorite.png" alt="Favorito"></button></div><div class="donation-card-info"><div class="donation-name">Planta jiboia</div><div class="donation-meta-row"><div class="donation-user"><div class="user-avatar">L</div><span class="user-name">por Lucas</span></div><div class="donation-dist"><svg viewBox="0 0 10 13" width="8" height="10" style="width:8px;height:10px;flex-shrink:0"><path d="M5 0C2.24 0 0 2.24 0 5c0 3.75 5 8 5 8s5-4.25 5-8c0-2.76-2.24-5-5-5zm0 6.5c-.83 0-1.5-.67-1.5-1.5S4.17 3.5 5 3.5 6.5 4.17 6.5 5 5.83 6.5 5 6.5z" fill="currentColor"/></svg>1,3 km</div></div></div></div>
+      <div class="donation-card"><div class="donation-card-img"><img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=300&h=180&fit=crop" alt="Cadeira"><button class="fav-btn"><img src="images/Icons/favorite.png" alt="Favorito"></button></div><div class="donation-card-info"><div class="donation-name">Cadeira escritório</div><div class="donation-meta-row"><div class="donation-user"><div class="user-avatar">R</div><span class="user-name">por Rui</span></div><div class="donation-dist"><svg viewBox="0 0 10 13" width="8" height="10" style="width:8px;height:10px;flex-shrink:0"><path d="M5 0C2.24 0 0 2.24 0 5c0 3.75 5 8 5 8s5-4.25 5-8c0-2.76-2.24-5-5-5zm0 6.5c-.83 0-1.5-.67-1.5-1.5S4.17 3.5 5 3.5 6.5 4.17 6.5 5 5.83 6.5 5 6.5z" fill="currentColor"/></svg>0,8 km</div></div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Sheet: Comunidades -->
+<div class="bottom-sheet" id="sheet-comunidades">
+  <div class="sheet-handle"></div>
+  <div class="sheet-header">
+    <span class="sheet-title">Todas as Comunidades</span>
+    <button class="sheet-close" onclick="closeSheet()"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
+  </div>
+  <div class="sheet-body">
+    <div class="sheet-list-comms">
+      <div class="comm-list-item"><div class="comm-list-thumb"><img src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=100&h=100&fit=crop" alt=""></div><div class="comm-list-info"><div class="comm-list-name">Troca de Livros</div><div class="comm-list-meta"><span>📍 Bolhão, Porto</span><span>👥 133 pessoas</span></div></div><img class="comm-add-icon-sm" src="images/Icons/add_circle.png" alt="Aderir"></div>
+      <div class="comm-list-item"><div class="comm-list-thumb"><img src="https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=100&h=100&fit=crop" alt=""></div><div class="comm-list-info"><div class="comm-list-name">Clube Gaming</div><div class="comm-list-meta"><span>📍 Lisboa</span><span>👥 43 pessoas</span></div></div><img class="comm-add-icon-sm" src="images/Icons/add_circle.png" alt="Aderir"></div>
+      <div class="comm-list-item"><div class="comm-list-thumb"><img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=100&h=100&fit=crop" alt=""></div><div class="comm-list-info"><div class="comm-list-name">Roupas Femininas</div><div class="comm-list-meta"><span>📍 Porto</span><span>👥 133 pessoas</span></div></div><img class="comm-add-icon-sm" src="images/Icons/add_circle.png" alt="Aderir"></div>
+      <div class="comm-list-item"><div class="comm-list-thumb"><img src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=100&h=100&fit=crop" alt=""></div><div class="comm-list-info"><div class="comm-list-name">Horta Urbana</div><div class="comm-list-meta"><span>📍 Matosinhos</span><span>👥 67 pessoas</span></div></div><img class="comm-add-icon-sm" src="images/Icons/add_circle.png" alt="Aderir"></div>
+      <div class="comm-list-item"><div class="comm-list-thumb"><img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=100&h=100&fit=crop" alt=""></div><div class="comm-list-info"><div class="comm-list-name">Equipamento Fitness</div><div class="comm-list-meta"><span>📍 Braga</span><span>👥 89 pessoas</span></div></div><img class="comm-add-icon-sm" src="images/Icons/add_circle.png" alt="Aderir"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+function openSheet(id) {
+  document.getElementById('sheet-overlay').classList.add('active');
+  document.getElementById(id).classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function closeSheet() {
+  document.getElementById('sheet-overlay').classList.remove('active');
+  document.querySelectorAll('.bottom-sheet').forEach(s => s.classList.remove('active'));
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheet(); });
+</script>
+
 </body>
 </html>
