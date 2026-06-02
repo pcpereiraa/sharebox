@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="css/register.css">
 
     <link rel="manifest" href="manifest.json">
+    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     <script src="js/supabase.js"></script>
 
@@ -26,25 +27,29 @@
                 Criar conta
             </legend>
 
+            
             <p>
-                <input type="text" name="name" id="input-name" class="form-box input-name" placeholder="Nome" required>
-                <input type="text" name="surname" id="input-surname" class="form-box input-name" placeholder="Apelido" required>
+                <input type="text" name="name" id="input-name" class="input input-name" placeholder="Nome" required>
             </p>
 
             <p>
-                <input type="email" name="email" id="input-email" class="form-box" placeholder="Email" required>
+                <input type="text" name="surname" id="input-surname" class="input input-name" placeholder="Apelido" required>
             </p>
 
             <p>
-                <input type="tel" name="tel" id="input-tel" class="form-box" placeholder="Telemóvel (opcional)">
+                <input type="email" name="email" id="input-email" class="input" placeholder="Email" required>
             </p>
 
             <p>
-                <input type="password" name="pwd" id="input-pwd" class="form-box" placeholder="Palavra-Passe" required>
+                <input type="tel" name="tel" id="input-tel" class="input" placeholder="Telemóvel (opcional)">
             </p>
 
             <p>
-                <input type="password" name="pwd2" id="input-pwd2" class="form-box" placeholder="Confirmar palavra-passe" required>
+                <input type="password" name="pwd" id="input-pwd" class="input" placeholder="Palavra-Passe" required>
+            </p>
+
+            <p>
+                <input type="password" name="pwd2" id="input-pwd2" class="input" placeholder="Confirmar palavra-passe" required>
             </p>
 
             <div class="separator-container">
