@@ -38,8 +38,7 @@ if (registerForm) {
 }
 
 
-// 2. LÓGICA DA PÁGINA DE LOGIN
-
+// 2. LÓGICA DA PÁGINA DE LOGIN 
 const loginForm = document.getElementById("login-form");
 
 if (loginForm) {
@@ -60,6 +59,6 @@ if (loginForm) {
         }
 
         alert("Login efetuado com sucesso!");
-        window.location.href = "dashboard.html"; 
+        window.location.href = "home.html"; 
     });
 }
