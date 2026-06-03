@@ -1,0 +1,57 @@
+.logo-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 20px;
+}
+
+.login-screen {
+    margin-bottom: 15px;
+}
+
+.form-caption {
+    font-size: 24px;
+    color: var(--cream);
+    margin-left: 16px;
+}
+
+.login-form {
+    width: 100%;
+    max-width: 450px;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.rec-pwd {
+    color: var(--dark-green);
+    text-align: right;
+    margin-right: 25px;
+}
+
+/* Botões principais */
+
+.buttons-container {
+    margin: auto;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Desktop */
+
+@media (min-width: 768px) {
+
+    .login-screen {
+        max-width: 550px;
+        margin: 0 auto;
+    }
+
+    .logo {
+        width: 280px;
+    }
+
+}
