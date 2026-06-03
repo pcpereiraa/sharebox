@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>ShareBox — Adicionar Item</title>
+<link rel="stylesheet" href="css/global.css">
+<link rel="stylesheet" href="css/add_item.css">
+</head>
+<body>
+<div class="page">
+
+  <!-- Top Bar -->
+  <header class="top-bar">
+    <a class="btn-back" href="home.html">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+    </a>
+    <h1 class="page-title">Adicionar Item</h1>
+    <button class="btn-salvar" onclick="submitForm()">Salvar</button>
+  </header>
+
+  <main class="scroll-content">
+
+    <!-- Fotos do item -->
+    <div class="form-section">
+      <div class="section-title">Fotos do item</div>
+      <div class="section-sub">Adiciona até 4 fotos. A primeira será a capa.</div>
+      <div class="photo-grid">
+        <div class="photo-slot" onclick="triggerUpload(this)">
+          <input type="file" accept="image/*" class="file-input" onchange="previewPhoto(this)">
+          <div class="photo-placeholder">
+            <span class="photo-plus">+</span>
+            <span class="photo-label">Foto</span>
+          </div>
+          <img class="photo-preview" src="" alt="">
+        </div>
+        <div class="photo-slot" onclick="triggerUpload(this)">
+          <input type="file" accept="image/*" class="file-input" onchange="previewPhoto(this)">
+          <div class="photo-placeholder">
+            <span class="photo-plus">+</span>
+            <span class="photo-label">Foto</span>
+          </div>
+          <img class="photo-preview" src="" alt="">
+        </div>
+        <div class="photo-slot" onclick="triggerUpload(this)">
+          <input type="file" accept="image/*" class="file-input" onchange="previewPhoto(this)">
+          <div class="photo-placeholder">
+            <span class="photo-plus">+</span>
+            <span class="photo-label">Foto</span>
+          </div>
+          <img class="photo-preview" src="" alt="">
+        </div>
+        <div class="photo-slot" onclick="triggerUpload(this)">
+          <input type="file" accept="image/*" class="file-input" onchange="previewPhoto(this)">
+          <div class="photo-placeholder">
+            <span class="photo-plus">+</span>
+            <span class="photo-label">Foto</span>
+          </div>
+          <img class="photo-preview" src="" alt="">
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Detalhes do item -->
+    <div class="form-section">
+      <div class="section-title">Detalhes do item</div>
+
+      <div class="field-group">
+        <label class="field-label">Nome do item</label>
+        <input class="field-input" type="text" placeholder="Ver todas">
+      </div>
+
+      <div class="field-group">
+        <div class="field-label-row">
+          <label class="field-label">Descrição</label>
+          <span class="field-optional">Opcional</span>
+        </div>
+        <textarea class="field-textarea" placeholder="Ver todas" rows="4"></textarea>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Categoria</label>
+        <div class="field-select-wrap">
+          <select class="field-select">
+            <option value="" disabled selected>Ver todas</option>
+            <option>Roupas</option>
+            <option>Livros</option>
+            <option>Casa</option>
+            <option>Eletrónicos</option>
+            <option>Esportes</option>
+            <option>Jardim</option>
+            <option>Brinquedos</option>
+            <option>Eventos</option>
+            <option>Educação</option>
+            <option>Serviços</option>
+          </select>
+          <svg class="select-chevron" viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Estado do item -->
+    <div class="form-section">
+      <div class="section-title">Estado do item</div>
+      <div class="chips-wrap">
+        <button class="chip active" onclick="selectChip(this, 'estado')">Novo — nunca usado</button>
+        <button class="chip" onclick="selectChip(this, 'estado')">Bom — usado sem defeitos</button>
+        <button class="chip" onclick="selectChip(this, 'estado')">Usado — sinais de uso</button>
+        <button class="chip" onclick="selectChip(this, 'estado')">Avariado</button>
+      </div>
+    </div>
+
+
+    <div class="divider"></div>
+
+    <!-- Localização -->
+    <div class="form-section">
+      <div class="section-title">Localização</div>
+
+      <div class="field-group">
+        <label class="field-label">Cidade</label>
+        <input class="field-input" type="text" placeholder="Ver todas">
+      </div>
+
+      <div class="field-group">
+        <div class="field-label-row">
+          <label class="field-label">Bairro</label>
+          <span class="field-optional">Opcional</span>
+        </div>
+        <input class="field-input" type="text" placeholder="Ver todas">
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Adicionar a uma comunidade -->
+    <div class="form-section">
+      <div class="section-title">Adicionar a uma comunidade</div>
+      <div class="section-sub">Opcional — o item fica visível para todos de qualquer forma.</div>
+
+      <div class="community-list">
+
+        <label class="community-option">
+          <div class="community-thumb" style="background:#c8e6d4"></div>
+          <div class="community-info">
+            <div class="community-name">Nome da comunidade</div>
+            <div class="community-meta">Local · 00 membros</div>
+          </div>
+          <input type="radio" name="community" class="radio-input">
+          <div class="radio-custom"></div>
+        </label>
+
+        <div class="comm-divider"></div>
+
+        <label class="community-option">
+          <div class="community-thumb" style="background:#d4e4f0"></div>
+          <div class="community-info">
+            <div class="community-name">Nome da comunidade</div>
+            <div class="community-meta">Local · 00 membros</div>
+          </div>
+          <input type="radio" name="community" class="radio-input">
+          <div class="radio-custom"></div>
+        </label>
+
+        <div class="comm-divider"></div>
+
+        <label class="community-option">
+          <div class="community-thumb" style="background:#e8d5e8"></div>
+          <div class="community-info">
+            <div class="community-name">Nome da comunidade</div>
+            <div class="community-meta">Local · 00 membros</div>
+          </div>
+          <input type="radio" name="community" class="radio-input">
+          <div class="radio-custom"></div>
+        </label>
+
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Preferência de entrega -->
+    <div class="form-section">
+      <div class="section-title">Preferência de entrega</div>
+      <div class="chips-wrap">
+        <button class="chip active" onclick="selectChip(this, 'entrega')">À mão</button>
+        <button class="chip" onclick="selectChip(this, 'entrega')">Correio</button>
+        <button class="chip" onclick="selectChip(this, 'entrega')">Ambas as opções</button>
+      </div>
+    </div>
+
+    <!-- Botão Adicionar item -->
+    <div class="submit-wrap">
+      <button class="btn-submit" onclick="submitForm()">Adicionar item</button>
+    </div>
+
+    <div style="height: 90px"></div>
+
+  </main>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <a class="nav-item" href="home.html"><img src="images/Icons/family_home.png" alt="Home"></a>
+    <a class="nav-item" href="communities.html"><img src="images/Icons/icone2@4x-8.png" alt="Comunidades"></a>
+    <a class="nav-item nav-add active" href="#"><img src="images/Icons/add_circle.png" alt="Adicionar"></a>
+    <a class="nav-item" href="#"><img src="images/Icons/business_messages.png" alt="Trocas"></a>
+    <a class="nav-item" href="profile.html"><img src="images/Icons/icone5@4x-8.png" alt="Perfil"></a>
+  </nav>
+
+</div>
+
+<script>
+function triggerUpload(slot) {
+  slot.querySelector('.file-input').click();
+}
+function previewPhoto(input) {
+  const slot = input.closest('.photo-slot');
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const preview = slot.querySelector('.photo-preview');
+    preview.src = e.target.result;
+    preview.style.display = 'block';
+    slot.querySelector('.photo-placeholder').style.display = 'none';
+    slot.classList.add('has-photo');
+  };
+  reader.readAsDataURL(file);
+}
+function selectChip(btn, group) {
+  btn.closest('.chips-wrap').querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+}
+function submitForm() {
+  alert('Item adicionado com sucesso!');
+}
+</script>
+</body>
+</html>
