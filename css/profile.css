@@ -1,0 +1,286 @@
+/* ─────────────────────────────────────────────────────
+   ShareBox — profile.css
+───────────────────────────────────────────────────── */
+
+:root {
+  --bg:        #f5f5eb;
+  --pad:       20px;
+  --r-sm:      8px;
+  --r-md:      12px;
+  --r-lg:      16px;
+  --shadow-sm: 0 2px 10px rgba(23,42,58,0.08);
+}
+
+/* ── Responsive layout ─────────────────────────────── */
+body {
+  background: var(--bg);
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+}
+.page {
+  width: 100%;
+  min-height: 100vh;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+@media (max-width: 767px) {
+  body { background: var(--blue); }
+  .page { max-width: 402px; margin: 0 auto; box-shadow: 0 0 60px rgba(0,0,0,0.35); }
+  .navbar { max-width: 402px; }
+}
+
+@media (min-width: 768px) {
+  body { background: var(--bg); }
+  :root { --pad: 40px; }
+  .page { max-width: 100%; }
+  .profile-hero { padding: 48px var(--pad) 32px; }
+  .profile-stats { margin: 0 var(--pad) 32px; }
+  .menu-group { max-width: 760px; }
+  .section-header { max-width: 800px; }
+  .profile-body { padding: 28px var(--pad) 0; }
+  .navbar { border-radius: 0; left: 0; transform: none; padding: 0 60px; height: 72px; }
+  .nav-item img { width: 28px; height: 28px; }
+  .nav-add img { width: 34px; height: 34px; }
+}
+
+/* ── Scroll ────────────────────────────────────────── */
+.scroll-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.scroll-content::-webkit-scrollbar { display: none; }
+
+/* ── Profile Hero ───────────────────────────────────── */
+.profile-hero {
+  background: var(--blue);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 36px var(--pad) 28px;
+  gap: 6px;
+}
+
+.profile-avatar {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  border: 3px solid var(--light-green);
+  overflow: hidden;
+  background: var(--dark-green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 6px;
+}
+.profile-avatar img {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+  opacity: 0.8;
+}
+
+.profile-name {
+  font-family: "Berlin", sans-serif;
+  font-size: 22px;
+  color: #fff;
+  font-weight: 600;
+}
+.profile-email {
+  font-family: "Berlin", sans-serif;
+  font-size: 14px;
+  color: rgba(255,255,255,0.55);
+}
+.profile-edit-btn {
+  margin-top: 8px;
+  background: transparent;
+  border: 1.5px solid rgba(255,255,255,0.35);
+  color: #fff;
+  font-family: "Berlin", sans-serif;
+  font-size: 14px;
+  padding: 8px 24px;
+  border-radius: 50px;
+  text-decoration: none;
+  transition: background 0.15s, border-color 0.15s;
+}
+.profile-edit-btn:hover {
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.6);
+}
+
+/* ── Stats bar ──────────────────────────────────────── */
+.profile-stats {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 0 0 var(--r-lg) var(--r-lg);
+  margin: 0 0 28px 0;
+  padding: 18px 0;
+  box-shadow: var(--shadow-sm);
+}
+.stat-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.stat-value {
+  font-family: "Berlin", sans-serif;
+  font-size: 24px;
+  color: var(--blue);
+  font-weight: 600;
+  line-height: 1;
+}
+.stat-star {
+  color: var(--light-green);
+  font-size: 20px;
+}
+.stat-label {
+  font-family: "Berlin", sans-serif;
+  font-size: 12px;
+  color: rgba(23,42,58,0.5);
+}
+.stat-divider {
+  width: 1px;
+  height: 36px;
+  background: rgba(23,42,58,0.1);
+  flex-shrink: 0;
+}
+
+/* ── Profile body ───────────────────────────────────── */
+.profile-body {
+  padding: 0 var(--pad);
+}
+
+/* ── Section header ─────────────────────────────────── */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.section-title {
+  font-family: "Berlin", sans-serif;
+  font-size: 20px;
+  color: var(--blue);
+}
+.section-link {
+  font-family: "Berlin", sans-serif;
+  font-size: 14px;
+  color: var(--dark-green);
+  text-decoration: none;
+}
+
+/* ── Menu groups ────────────────────────────────────── */
+.menu-group {
+  background: #fff;
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 16px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.menu-item:hover { background: rgba(23,42,58,0.03); }
+
+.menu-item-text { flex: 1; min-width: 0; }
+.menu-item-title {
+  font-family: "Berlin", sans-serif;
+  font-size: 15px;
+  color: var(--blue);
+  margin-bottom: 3px;
+}
+.menu-item-sub {
+  font-family: "Berlin", sans-serif;
+  font-size: 12px;
+  color: rgba(23,42,58,0.45);
+}
+
+.menu-chevron {
+  width: 20px;
+  height: 20px;
+  fill: rgba(23,42,58,0.25);
+  flex-shrink: 0;
+}
+
+.menu-divider {
+  height: 1px;
+  background: rgba(23,42,58,0.07);
+  margin: 0 16px;
+}
+
+/* ── Logout button ──────────────────────────────────── */
+.logout-btn {
+  display: block;
+  width: 100%;
+  margin-top: 28px;
+  padding: 18px;
+  background: rgba(220, 60, 60, 0.07);
+  border-radius: var(--r-md);
+  text-align: center;
+  font-family: "Berlin", sans-serif;
+  font-size: 17px;
+  color: #c0392b;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+.logout-btn:hover { background: rgba(220, 60, 60, 0.13); }
+
+/* ── NAVBAR ─────────────────────────────────────────── */
+.navbar {
+  position: sticky;
+  bottom: 0;
+  width: 100%;
+  height: 80px;
+  background: var(--blue);
+  border-radius: 24px 24px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 20px;
+  z-index: 1000;
+  flex-shrink: 0;
+  margin-top: auto;
+}
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  cursor: pointer;
+  text-decoration: none;
+}
+.nav-item img {
+  width: 32px; height: 32px;
+  object-fit: contain;
+  opacity: 0.45;
+  filter: brightness(0) invert(1);
+  transition: opacity 0.15s ease;
+}
+.nav-item.active img {
+  opacity: 1;
+  filter: brightness(0) saturate(100%) invert(48%) sepia(79%)
+          saturate(476%) hue-rotate(120deg) brightness(95%) contrast(91%);
+}
+.nav-add img {
+  width: 40px; height: 40px;
+  opacity: 1;
+  filter: brightness(0) saturate(100%) invert(48%) sepia(79%)
+          saturate(476%) hue-rotate(120deg) brightness(95%) contrast(91%);
+}
