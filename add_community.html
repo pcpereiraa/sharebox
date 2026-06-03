@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>ShareBox — Criar Comunidade</title>
+<link rel="stylesheet" href="css/global.css">
+<link rel="stylesheet" href="css/add_community.css">
+</head>
+<body>
+<div class="page">
+
+  <!-- Top Bar -->
+  <header class="top-bar">
+    <a class="btn-back" href="communities.html">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+    </a>
+    <h1 class="page-title">Criar comunidade</h1>
+    <div style="width:36px"></div>
+  </header>
+
+  <main class="scroll-content">
+
+    <!-- Foto de capa -->
+    <div class="form-section">
+      <div class="section-title">Foto de capa</div>
+      <div class="section-sub">Dá uma cara à tua comunidade. Podes alterar depois.</div>
+      <div class="cover-upload" id="cover-upload" onclick="triggerCoverUpload()">
+        <input type="file" accept="image/*" id="cover-input" style="display:none" onchange="previewCover(this)">
+        <div class="cover-placeholder" id="cover-placeholder">
+          <div class="cover-avatar-preview"></div>
+          <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28" style="color:var(--blue);opacity:0.4"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" opacity="0"/><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" opacity="0"/><path d="M20 4h-3.17L15 2H9L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V6h4.05l1.83-2h4.24l1.83 2H20v12zM12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zm0 8c-1.65 0-3-1.35-3-3s1.35-3 3-3 3 1.35 3 3-1.35 3-3 3z"/></svg>
+          <span class="cover-upload-text">Adicionar foto de capa</span>
+          <span class="cover-upload-hint">Recomendado: 1200×400px</span>
+        </div>
+        <img class="cover-preview" id="cover-preview" src="" alt="">
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Informações básicas -->
+    <div class="form-section">
+      <div class="section-title">Informações básicas</div>
+
+      <div class="field-group">
+        <label class="field-label">Nome da comunidade</label>
+        <input class="field-input" type="text" placeholder="Ver todas">
+      </div>
+
+      <div class="field-group">
+        <div class="field-label-row">
+          <label class="field-label">Descrição</label>
+          <span class="field-optional">Opcional</span>
+        </div>
+        <textarea class="field-textarea" placeholder="Ver todas" rows="4"></textarea>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Categoria -->
+    <div class="form-section">
+      <div class="section-title">Categoria</div>
+      <div class="field-select-wrap">
+        <select class="field-select">
+          <option value="" disabled selected>Ver todas</option>
+          <option>Roupas</option>
+          <option>Livros</option>
+          <option>Casa</option>
+          <option>Eletrónicos</option>
+          <option>Esportes</option>
+          <option>Jardim</option>
+          <option>Brinquedos</option>
+          <option>Eventos</option>
+          <option>Educação</option>
+          <option>Serviços</option>
+        </select>
+        <svg class="select-chevron" viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Localização -->
+    <div class="form-section">
+      <div class="section-title">Localização</div>
+
+      <div class="field-group">
+        <label class="field-label">Cidade</label>
+        <input class="field-input" type="text" placeholder="Ver todas">
+      </div>
+
+      <div class="field-group">
+        <div class="field-label-row">
+          <label class="field-label">Bairro / Zona</label>
+          <span class="field-optional">Opcional</span>
+        </div>
+        <input class="field-input" type="text" placeholder="Ver todas">
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Privacidade & acesso -->
+    <div class="form-section">
+      <div class="section-title">Privacidade & acesso</div>
+      <div class="section-sub">Define quem pode ver e entrar na comunidade.</div>
+
+      <div class="toggle-group">
+
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <div class="toggle-title">Comunidade pública</div>
+            <div class="toggle-sub">Qualquer pessoa pode encontrar e aderir</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" checked onchange="handleToggle(this)">
+            <span class="toggle-track"></span>
+          </label>
+        </div>
+
+        <div class="toggle-divider"></div>
+
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <div class="toggle-title">Aprovação de membros</div>
+            <div class="toggle-sub">Novos membros precisam de aprovação</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" checked onchange="handleToggle(this)">
+            <span class="toggle-track"></span>
+          </label>
+        </div>
+
+        <div class="toggle-divider"></div>
+
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <div class="toggle-title">Publicações moderadas</div>
+            <div class="toggle-sub">As publicações são revistas antes de aparecer</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" checked onchange="handleToggle(this)">
+            <span class="toggle-track"></span>
+          </label>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Regras da comunidade -->
+    <div class="form-section">
+      <div class="section-title">Regras da comunidade</div>
+      <div class="section-sub">Opcional — define as regras para os membros.</div>
+
+      <div class="field-group">
+        <div class="field-label-row">
+          <label class="field-label">Regra 1</label>
+          <span class="field-optional">Opcional</span>
+        </div>
+        <input class="field-input" type="text" placeholder="Ver todas">
+      </div>
+
+      <div class="field-group">
+        <div class="field-label-row">
+          <label class="field-label">Regra 2</label>
+          <span class="field-optional">Opcional</span>
+        </div>
+        <input class="field-input" type="text" placeholder="Ver todas">
+      </div>
+
+      <button class="btn-add-rule" onclick="addRule()">+ Adicionar regra</button>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Convidar membros -->
+    <div class="form-section">
+      <div class="section-title">Convidar membros</div>
+      <div class="section-sub">Opcional — podes convidar membros depois de criar.</div>
+
+      <div class="field-group">
+        <input class="field-input" type="text" placeholder="Ver todas" id="invite-input">
+      </div>
+
+      <div class="invite-list">
+
+        <div class="invite-row">
+          <div class="invite-avatar" style="background:#c8e6d4"></div>
+          <div class="invite-info">
+            <div class="invite-name">Ana Rodrigues</div>
+            <div class="invite-email">ana.rodrigues@email.com</div>
+          </div>
+          <button class="btn-convidar">Convidar</button>
+        </div>
+
+        <div class="invite-divider"></div>
+
+        <div class="invite-row">
+          <div class="invite-avatar" style="background:#d4e4f0"></div>
+          <div class="invite-info">
+            <div class="invite-name">João Silva</div>
+            <div class="invite-email">joao.silva@email.com</div>
+          </div>
+          <button class="btn-convidar">Convidar</button>
+        </div>
+
+        <div class="invite-divider"></div>
+
+        <div class="invite-row">
+          <div class="invite-avatar" style="background:#e8d5e8"></div>
+          <div class="invite-info">
+            <div class="invite-name">Sofia Costa</div>
+            <div class="invite-email">sofia.costa@email.com</div>
+          </div>
+          <button class="btn-convidar">Convidar</button>
+        </div>
+
+      </div>
+
+      <!-- Link de partilha -->
+      <div class="share-link-box">
+        <span class="share-link-text">sharebox.app/comunidade/link...</span>
+        <button class="btn-copiar" onclick="copyLink()">Copiar</button>
+      </div>
+
+    </div>
+
+    <!-- Botão criar -->
+    <div class="submit-wrap">
+      <button class="btn-submit" onclick="submitForm()">Criar comunidade</button>
+    </div>
+
+    <div style="height: 90px"></div>
+
+  </main>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <a class="nav-item" href="home.html"><img src="images/Icons/family_home.png" alt="Home"></a>
+    <a class="nav-item active" href="communities.html"><img src="images/Icons/icone2@4x-8.png" alt="Comunidades"></a>
+    <a class="nav-item nav-add" href="#"><img src="images/Icons/add_circle.png" alt="Adicionar"></a>
+    <a class="nav-item" href="#"><img src="images/Icons/business_messages.png" alt="Trocas"></a>
+    <a class="nav-item" href="profile.html"><img src="images/Icons/icone5@4x-8.png" alt="Perfil"></a>
+  </nav>
+
+</div>
+
+<script>
+function triggerCoverUpload() {
+  document.getElementById('cover-input').click();
+}
+function previewCover(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const preview = document.getElementById('cover-preview');
+    preview.src = e.target.result;
+    preview.style.display = 'block';
+    document.getElementById('cover-placeholder').style.display = 'none';
+    document.getElementById('cover-upload').classList.add('has-photo');
+  };
+  reader.readAsDataURL(file);
+}
+let ruleCount = 2;
+function addRule() {
+  ruleCount++;
+  const btn = document.querySelector('.btn-add-rule');
+  const group = document.createElement('div');
+  group.className = 'field-group';
+  group.innerHTML = `
+    <div class="field-label-row">
+      <label class="field-label">Regra ${ruleCount}</label>
+      <span class="field-optional">Opcional</span>
+    </div>
+    <input class="field-input" type="text" placeholder="Ver todas">
+  `;
+  btn.parentNode.insertBefore(group, btn);
+}
+function handleToggle(input) {
+  // handled by CSS
+}
+function copyLink() {
+  navigator.clipboard?.writeText('https://sharebox.app/comunidade/link').then(() => {
+    const btn = document.querySelector('.btn-copiar');
+    btn.textContent = 'Copiado!';
+    setTimeout(() => btn.textContent = 'Copiar', 2000);
+  });
+}
+function submitForm() {
+  alert('Comunidade criada com sucesso!');
+}
+</script>
+</body>
+</html>

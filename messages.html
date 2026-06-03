@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>ShareBox — Mensagens</title>
+<link rel="stylesheet" href="css/global.css">
+<link rel="stylesheet" href="css/messages.css">
+</head>
+<body>
+<div class="page">
+
+  <!-- Top Bar (dark) -->
+  <header class="top-bar">
+    <h1 class="page-title">Mensagens</h1>
+    <a class="btn-nova" href="#">+ Nova</a>
+  </header>
+
+  <main class="scroll-content">
+
+    <!-- Search Bar -->
+    <div class="search-wrap">
+      <div class="search-bar">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="text" placeholder="Buscar itens, categorias ou comunidades" readonly>
+        <span class="search-filter">
+          <svg viewBox="0 0 24 24" fill="none" width="20" height="20"><rect x="3" y="5" width="18" height="2" rx="1" fill="var(--blue)"/><rect x="3" y="11" width="13" height="2" rx="1" fill="var(--blue)"/><rect x="3" y="17" width="8" height="2" rx="1" fill="var(--blue)"/><circle cx="19" cy="17" r="3" fill="var(--blue)"/><circle cx="19" cy="17" r="1.5" fill="var(--bg)"/></svg>
+        </span>
+      </div>
+    </div>
+
+    <!-- Conversation list -->
+    <div class="conv-list">
+
+      <a class="conv-item unread" href="chat.html">
+        <div class="conv-avatar-wrap">
+          <div class="conv-avatar" style="background:#b2dfdb"></div>
+          <span class="online-dot"></span>
+        </div>
+        <div class="conv-info">
+          <div class="conv-name">Ana Rodrigues</div>
+          <div class="conv-preview">Boa! Posso ir buscar amanhã?</div>
+        </div>
+        <div class="conv-meta">
+          <span class="conv-time">14:32</span>
+          <span class="conv-unread-dot"></span>
+        </div>
+      </a>
+      <div class="conv-divider"></div>
+
+      <a class="conv-item" href="chat.html">
+        <div class="conv-avatar-wrap">
+          <div class="conv-avatar" style="background:#b2dfdb"></div>
+          <span class="online-dot"></span>
+        </div>
+        <div class="conv-info">
+          <div class="conv-name">João Silva</div>
+          <div class="conv-preview">Obrigado pela doação 🙏</div>
+        </div>
+        <div class="conv-meta">
+          <span class="conv-time">13:15</span>
+        </div>
+      </a>
+      <div class="conv-divider"></div>
+
+      <a class="conv-item unread" href="chat.html">
+        <div class="conv-avatar-wrap">
+          <div class="conv-avatar" style="background:#b2dfdb"></div>
+          <span class="online-dot"></span>
+        </div>
+        <div class="conv-info">
+          <div class="conv-name">Sofia Costa</div>
+          <div class="conv-preview">Ainda tens a planta disponível?</div>
+        </div>
+        <div class="conv-meta">
+          <span class="conv-time">Ontem</span>
+          <span class="conv-unread-dot"></span>
+        </div>
+      </a>
+      <div class="conv-divider"></div>
+
+      <a class="conv-item" href="chat.html">
+        <div class="conv-avatar-wrap">
+          <div class="conv-avatar" style="background:#b2dfdb"></div>
+          <span class="online-dot"></span>
+        </div>
+        <div class="conv-info">
+          <div class="conv-name">Miguel Ferreira</div>
+          <div class="conv-preview">Perfeito, até logo então!</div>
+        </div>
+        <div class="conv-meta">
+          <span class="conv-time">Ontem</span>
+        </div>
+      </a>
+      <div class="conv-divider"></div>
+
+      <a class="conv-item unread" href="chat.html">
+        <div class="conv-avatar-wrap">
+          <div class="conv-avatar" style="background:#b2dfdb"></div>
+          <span class="online-dot"></span>
+        </div>
+        <div class="conv-info">
+          <div class="conv-name">Carla Mendes</div>
+          <div class="conv-preview">Onde fica exactamente?</div>
+        </div>
+        <div class="conv-meta">
+          <span class="conv-time">Seg</span>
+          <span class="conv-unread-dot"></span>
+        </div>
+      </a>
+      <div class="conv-divider"></div>
+
+      <a class="conv-item" href="chat.html">
+        <div class="conv-avatar-wrap">
+          <div class="conv-avatar" style="background:#b2dfdb"></div>
+          <span class="online-dot"></span>
+        </div>
+        <div class="conv-info">
+          <div class="conv-name">Rui Pereira</div>
+          <div class="conv-preview">Muito bem conservado, obrigado</div>
+        </div>
+        <div class="conv-meta">
+          <span class="conv-time">Dom</span>
+        </div>
+      </a>
+      <div class="conv-divider"></div>
+
+      <a class="conv-item" href="chat.html">
+        <div class="conv-avatar-wrap">
+          <div class="conv-avatar" style="background:#80cbc4"></div>
+          <span class="online-dot active"></span>
+        </div>
+        <div class="conv-info">
+          <div class="conv-name">Inês Gomes</div>
+          <div class="conv-preview">Posso trocar por um livro?</div>
+        </div>
+        <div class="conv-meta">
+          <span class="conv-time">Sáb</span>
+        </div>
+      </a>
+
+    </div>
+
+    <div style="height: 90px"></div>
+  </main>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <a class="nav-item" href="home.html"><img src="images/Icons/family_home.png" alt="Home"></a>
+    <a class="nav-item" href="communities.html"><img src="images/Icons/icone2@4x-8.png" alt="Comunidades"></a>
+    <a class="nav-item nav-add" href="add-item.html"><img src="images/Icons/add_circle.png" alt="Adicionar"></a>
+    <a class="nav-item active" href="#"><img src="images/Icons/business_messages.png" alt="Mensagens"></a>
+    <a class="nav-item" href="profile.html"><img src="images/Icons/icone5@4x-8.png" alt="Perfil"></a>
+  </nav>
+
+</div>
+</body>
+</html>
