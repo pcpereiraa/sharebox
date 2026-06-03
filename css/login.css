@@ -30,6 +30,20 @@
     margin-right: 25px;
 }
 
+a:hover {
+    text-decoration: underline;
+    color: var(--light-green);
+}
+
+.reset-screen {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
 /* Botões principais */
 
 .buttons-container {

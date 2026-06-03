@@ -62,3 +62,51 @@ if (loginForm) {
         window.location.href = "home.html"; 
     });
 }
+
+// 3. RECUPERAR PALAVRA-PASSE
+
+const resetLink = document.getElementById("link-reset");
+
+if (resetLink) {
+    resetLink.addEventListener("click", async (e) => {
+        e.preventDefault();
+
+        const email = document.getElementById("login-email").value;
+
+        if (!email) {
+            alert("Por favor, digita primeiro o teu email no campo de login!");
+            return;
+        }
+
+        const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+            redirectTo: window.location.origin + '/reset-password.html',
+        });
+
+        if (error) {
+            alert("Erro ao enviar email de recuperação: " + error.message);
+        } else {
+            alert("Email de recuperação enviado! Confere a tua caixa de entrada. ");
+        }
+    })
+}
+
+const resetForm = document.getElementById("reset-password-form");
+
+if (resetForm) {
+    resetForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const newPassword = document.getElementById("new-pwd").value;
+
+        const { error } = await supabaseClient.auth.updateUser({
+            password: newPassword
+        });
+
+        if (error) {
+            alert("Erro ao atualizar palavra-passe: " + error.message);
+        } else {
+            alert("Palavra-passe atualizada com sucesso! Já pode fazer login.");
+            window.location.href = 'login.html'
+        }
+    })
+}
