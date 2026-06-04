@@ -77,6 +77,7 @@ const registerForm = document.getElementById('register-form');
 if (registerForm) {
   requireGuest();
 
+
   registerForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -86,6 +87,7 @@ if (registerForm) {
     const email   = (document.getElementById('input-email')?.value || '').trim();
     const pwd     = (document.getElementById('input-pwd')?.value || '');
     const pwd2    = (document.getElementById('input-pwd2')?.value || '');
+
 
     // Validações
     if (!name || !surname || !email || !pwd) {
@@ -174,4 +176,6 @@ if (logoutBtn) {
     e.preventDefault();
     await logout();
   });
+
+
 }
