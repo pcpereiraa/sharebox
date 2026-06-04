@@ -22,7 +22,8 @@ if (registerForm) {
             password: pwd,
             options: {
                 data: {
-                    full_name: name + " " + surname
+                    full_name: name + " " + surname,
+                    username: email
                 }
             }
         });
