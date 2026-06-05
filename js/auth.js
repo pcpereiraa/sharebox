@@ -2,7 +2,6 @@
    ShareBox — auth.js
 ───────────────────────────────────────────────────── */
 
-// ── Funções de guard ─────────────────────────────────
 async function requireAuth() {
   const { data: { session } } = await supabaseClient.auth.getSession();
   if (!session) { window.location.href = 'login.html'; return null; }
@@ -17,11 +16,12 @@ async function requireGuest() {
 }
 
 async function checkIsAdmin(userId) {
-  const { data } = await supabaseClient
+  const { data, error } = await supabaseClient
     .from('profiles')
     .select('is_admin')
     .eq('id', userId)
     .single();
+  console.log('[Auth] checkIsAdmin →', data, error);
   return data?.is_admin === true;
 }
 
@@ -38,19 +38,18 @@ async function logout() {
   window.location.href = 'login.html';
 }
 
-// ── Helpers UI ───────────────────────────────────────
 function showError(elementId, message) {
   const el = document.getElementById(elementId);
   if (!el) return;
   el.textContent = message;
-  el.style.cssText = 'display:block;color:#c0392b;background:rgba(192,57,43,0.08);padding:10px 14px;border-radius:8px;margin-top:8px;font-family:"Berlin",sans-serif;font-size:14px;';
+  el.style.cssText = 'display:block;color:#c0392b;background:rgba(192,57,43,0.08);padding:10px 14px;border-radius:8px;margin-top:8px;font-family:sans-serif;font-size:14px;';
 }
 
 function showSuccess(elementId, message) {
   const el = document.getElementById(elementId);
   if (!el) return;
   el.textContent = message;
-  el.style.cssText = 'display:block;color:#016e58;background:rgba(1,110,88,0.08);padding:10px 14px;border-radius:8px;margin-top:8px;font-family:"Berlin",sans-serif;font-size:14px;';
+  el.style.cssText = 'display:block;color:#016e58;background:rgba(1,110,88,0.08);padding:10px 14px;border-radius:8px;margin-top:8px;font-family:sans-serif;font-size:14px;';
 }
 
 function setLoading(buttonId, loading, originalText) {
@@ -66,116 +65,81 @@ function translateError(msg) {
   if (msg.includes('User already registered'))   return 'Este email já está registado.';
   if (msg.includes('Password should be'))        return 'A password deve ter pelo menos 6 caracteres.';
   if (msg.includes('rate limit'))                return 'Demasiadas tentativas. Tenta mais tarde.';
-  if (msg.includes('422') || msg.includes('Unprocessable')) return 'Dados inválidos. Verifica o email e a password (mínimo 6 caracteres).';
   return msg;
 }
 
-// ═══════════════════════════════════════════════════
-// REGISTO
-// ═══════════════════════════════════════════════════
-const registerForm = document.getElementById('register-form');
-if (registerForm) {
-  requireGuest();
+document.addEventListener('DOMContentLoaded', function () {
 
-
-  registerForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    const name    = (document.getElementById('input-name')?.value || '').trim();
-    const surname = (document.getElementById('input-surname')?.value || '').trim();
-    const email   = (document.getElementById('input-email')?.value || '').trim();
-    const pwd     = (document.getElementById('input-pwd')?.value || '');
-    const pwd2    = (document.getElementById('input-pwd2')?.value || '');
-
-
-    // Validações
-    if (!name || !surname || !email || !pwd) {
-      showError('register-error', 'Preenche todos os campos obrigatórios.');
-      return;
-    }
-    if (pwd !== pwd2) {
-      showError('register-error', 'As passwords não coincidem.');
-      return;
-    }
-    if (pwd.length < 6) {
-      showError('register-error', 'A password deve ter pelo menos 6 caracteres.');
-      return;
-    }
-    if (!/\S+@\S+\.\S+/.test(email)) {
-      showError('register-error', 'Introduz um email válido.');
-      return;
-    }
-
-    setLoading('register-submit', true, 'Criar conta');
-
-    const { data, error } = await supabaseClient.auth.signUp({
-      email: email,
-      password: pwd,
-      options: {
-        data: {
-          full_name: name + ' ' + surname
-        }
-      }
+  // ── REGISTO ──────────────────────────────────────────
+  const registerForm = document.getElementById('register-form');
+  if (registerForm) {
+    requireGuest();
+    registerForm.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const name    = (document.getElementById('input-name')?.value || '').trim();
+      const surname = (document.getElementById('input-surname')?.value || '').trim();
+      const email   = (document.getElementById('input-email')?.value || '').trim();
+      const pwd     = (document.getElementById('input-pwd')?.value || '');
+      const pwd2    = (document.getElementById('input-pwd2')?.value || '');
+      if (!name || !surname || !email || !pwd) { showError('register-error', 'Preenche todos os campos.'); return; }
+      if (pwd !== pwd2) { showError('register-error', 'As passwords não coincidem.'); return; }
+      if (pwd.length < 6) { showError('register-error', 'Password com mínimo 6 caracteres.'); return; }
+      setLoading('register-submit', true, 'Criar conta');
+      const { error } = await supabaseClient.auth.signUp({
+        email, password: pwd,
+        options: { data: { full_name: name + ' ' + surname } }
+      });
+      setLoading('register-submit', false, 'Criar conta');
+      if (error) { showError('register-error', translateError(error.message)); return; }
+      showSuccess('register-error', 'Conta criada! Verifica o teu email.');
+      setTimeout(() => window.location.href = 'login.html', 2500);
     });
+  }
 
-    setLoading('register-submit', false, 'Criar conta');
+  // ── LOGIN ────────────────────────────────────────────
+  const loginForm = document.getElementById('login-form');
+  if (loginForm) {
+    requireGuest();
+    loginForm.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const email = (document.getElementById('login-email')?.value || '').trim();
+      const pwd   = (document.getElementById('login-pwd')?.value || '');
+      if (!email || !pwd) { showError('login-error', 'Preenche o email e a password.'); return; }
+      setLoading('login-submit', true, 'Entrar');
+      const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password: pwd });
+      setLoading('login-submit', false, 'Entrar');
+      if (error) { showError('login-error', translateError(error.message)); return; }
 
-    if (error) {
-      showError('register-error', translateError(error.message));
-      return;
-    }
+      const userId = data.user.id;
+      const { data: profile, error: profileError } = await supabaseClient
+        .from('profiles').select('is_admin').eq('id', userId).single();
 
-    showSuccess('register-error', 'Conta criada! Verifica o teu email para confirmar.');
-    setTimeout(() => window.location.href = 'login.html', 2500);
-  });
-}
+      const isAdmin = profile?.is_admin === true;
 
-// ═══════════════════════════════════════════════════
-// LOGIN
-// ═══════════════════════════════════════════════════
-const loginForm = document.getElementById('login-form');
-if (loginForm) {
-  requireGuest();
-
-  loginForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    const email = (document.getElementById('login-email')?.value || '').trim();
-    const pwd   = (document.getElementById('login-pwd')?.value || '');
-
-    if (!email || !pwd) {
-      showError('login-error', 'Preenche o email e a password.');
-      return;
-    }
-
-    setLoading('login-submit', true, 'Entrar');
-
-    const { data, error } = await supabaseClient.auth.signInWithPassword({
-      email: email,
-      password: pwd
+      // Debug temporário — mostra info antes de redirecionar
+      const debugDiv = document.createElement('div');
+      debugDiv.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:#fff;padding:40px;font-family:monospace;font-size:15px;z-index:9999;overflow:auto';
+      debugDiv.innerHTML = '<h2>Debug Auth</h2>' +
+        '<p><b>User ID:</b> ' + userId + '</p>' +
+        '<p><b>Profile:</b> ' + JSON.stringify(profile) + '</p>' +
+        '<p><b>Profile Error:</b> ' + JSON.stringify(profileError) + '</p>' +
+        '<p><b>isAdmin:</b> ' + isAdmin + '</p>' +
+        '<p><b>Vai para:</b> ' + (isAdmin ? 'admin/index.html' : 'home.html') + '</p>' +
+        '<br><button id="debug-go" style="padding:12px 28px;font-size:16px;cursor:pointer">Continuar</button>';
+      document.body.appendChild(debugDiv);
+      document.getElementById('debug-go').onclick = function() {
+        window.location.href = isAdmin ? 'admin/index.html' : 'home.html';
+      };
     });
+  }
 
-    setLoading('login-submit', false, 'Entrar');
+  // ── LOGOUT ───────────────────────────────────────────
+  const logoutBtn = document.getElementById('logout-btn');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', async function (e) {
+      e.preventDefault();
+      await logout();
+    });
+  }
 
-    if (error) {
-      showError('login-error', translateError(error.message));
-      return;
-    }
-
-    const isAdmin = await checkIsAdmin(data.user.id);
-    window.location.href = isAdmin ? 'admin/index.html' : 'home.html';
-  });
-}
-
-// ── Logout ───────────────────────────────────────────
-const logoutBtn = document.getElementById('logout-btn');
-if (logoutBtn) {
-  logoutBtn.addEventListener('click', async (e) => {
-    e.preventDefault();
-    await logout();
-  });
-
-
-}
+});
