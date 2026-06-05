@@ -116,17 +116,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
       const isAdmin = profile?.is_admin === true;
 
-      // Debug temporário — mostra info antes de redirecionar
-      const debugDiv = document.createElement('div');
-      debugDiv.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:#fff;padding:40px;font-family:monospace;font-size:15px;z-index:9999;overflow:auto';
-      debugDiv.innerHTML = '<h2>Debug Auth</h2>' +
-        '<p><b>User ID:</b> ' + userId + '</p>' +
-        '<p><b>Profile:</b> ' + JSON.stringify(profile) + '</p>' +
-        '<p><b>Profile Error:</b> ' + JSON.stringify(profileError) + '</p>' +
-        '<p><b>isAdmin:</b> ' + isAdmin + '</p>' +
-        '<p><b>Vai para:</b> ' + (isAdmin ? 'admin/index.html' : 'home.html') + '</p>' +
-        '<br><button id="debug-go" style="padding:12px 28px;font-size:16px;cursor:pointer">Continuar</button>';
-      document.body.appendChild(debugDiv);
+  
       document.getElementById('debug-go').onclick = function() {
         window.location.href = isAdmin ? 'admin/index.html' : 'home.html';
       };
