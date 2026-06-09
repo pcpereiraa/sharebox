@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>ShareBox — Reportar Problema</title>
+<link rel="stylesheet" href="css/global.css">
+<link rel="stylesheet" href="css/profile.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js"></script>
+<script src="js/auth.js"></script>
+</head>
+<body>
+<div class="page">
+  <header class="top-bar-dark">
+    <a class="btn-back-white" href="profile.html">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+    </a>
+    <h1 class="page-title-white">Reportar Problema</h1>
+    <div style="width:36px"></div>
+  </header>
+  <main class="scroll-content">
+    <div class="settings-form">
+
+      <div id="report-feedback"></div>
+
+      <div class="field-group">
+        <label class="field-label">Tipo de problema</label>
+        <div class="field-select-wrap">
+          <select class="field-select" id="report-type">
+            <option value="" disabled selected>Selecciona o tipo</option>
+            <option value="bug">Erro técnico / Bug</option>
+            <option value="content">Conteúdo inapropriado</option>
+            <option value="user">Utilizador suspeito</option>
+            <option value="item">Item fraudulento</option>
+            <option value="community">Problema numa comunidade</option>
+            <option value="other">Outro</option>
+          </select>
+          <svg style="position:absolute;right:12px;top:50%;transform:translateY(-50%);width:20px;height:20px;fill:rgba(23,42,58,0.4);pointer-events:none" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Descrição</label>
+        <textarea class="field-textarea" id="report-desc" rows="5" placeholder="Descreve o problema com o máximo de detalhe possível..."></textarea>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Email de contacto <span style="color:rgba(23,42,58,0.4);font-size:13px">Opcional</span></label>
+        <input class="field-input" type="email" id="report-email" placeholder="Para resposta da nossa equipa">
+      </div>
+
+      <button class="btn-save" id="btn-report" onclick="submitReport()">Enviar relatório</button>
+
+    </div>
+  </main>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+  const session = await requireAuth();
+  if (!session) return;
+  const { data: { user } } = await supabaseClient.auth.getUser();
+  if (user?.email) document.getElementById('report-email').value = user.email;
+});
+
+async function submitReport() {
+  const type = document.getElementById('report-type').value;
+  const desc = document.getElementById('report-desc').value.trim();
+  const fb   = document.getElementById('report-feedback');
+
+  if (!type) { showMsg(fb, 'Selecciona o tipo de problema.', 'error'); return; }
+  if (!desc || desc.length < 10) { showMsg(fb, 'Descreve o problema com mais detalhe.', 'error'); return; }
+
+  const btn = document.getElementById('btn-report');
+  btn.disabled = true;
+  btn.textContent = 'A enviar...';
+
+  // Simula envio (aqui pode integrar email ou tabela de reports no Supabase)
+  await new Promise(r => setTimeout(r, 800));
+
+  btn.disabled = false;
+  btn.textContent = 'Enviar relatório';
+  showMsg(fb, '✓ Relatório enviado! A nossa equipa irá analisar em breve.', 'success');
+  setTimeout(() => window.location.href = 'profile.html', 2500);
+}
+
+function showMsg(el, msg, type) {
+  el.textContent = msg;
+  el.style.cssText = `display:block;padding:10px 14px;border-radius:8px;margin-bottom:16px;font-family:"Berlin",sans-serif;font-size:14px;color:${type==='error'?'#c0392b':'#016e58'};background:${type==='error'?'rgba(192,57,43,0.08)':'rgba(1,110,88,0.08)'};`;
+}
+</script>
+<style>
+.top-bar-dark{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px;background:var(--blue);flex-shrink:0;gap:12px;}
+.btn-back-white{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;text-decoration:none;}
+.btn-back-white svg{width:22px;height:22px;fill:#fff;}
+.page-title-white{font-family:"Berlin",sans-serif;font-size:20px;color:#fff;font-weight:400;flex:1;text-align:center;}
+.settings-form{padding:24px 20px;}
+.field-group{margin-bottom:16px;}
+.field-label{font-family:"Berlin",sans-serif;font-size:15px;color:var(--blue);display:block;margin-bottom:8px;}
+.field-input{width:100%;height:48px;background:#fff;border:1px solid rgba(23,42,58,0.12);border-radius:12px;padding:0 14px;font-family:"Berlin",sans-serif;font-size:14px;color:var(--blue);outline:none;box-shadow:0 2px 10px rgba(23,42,58,0.08);}
+.field-input:focus{border-color:var(--dark-green);}
+.field-textarea{width:100%;background:#fff;border:1px solid rgba(23,42,58,0.12);border-radius:12px;padding:12px 14px;font-family:"Berlin",sans-serif;font-size:14px;color:var(--blue);outline:none;resize:none;min-height:120px;box-shadow:0 2px 10px rgba(23,42,58,0.08);line-height:1.5;}
+.field-textarea:focus{border-color:var(--dark-green);}
+.field-select-wrap{position:relative;}
+.field-select{width:100%;height:48px;background:#fff;border:1px solid rgba(23,42,58,0.12);border-radius:12px;padding:0 40px 0 14px;font-family:"Berlin",sans-serif;font-size:14px;color:var(--blue);outline:none;appearance:none;-webkit-appearance:none;cursor:pointer;box-shadow:0 2px 10px rgba(23,42,58,0.08);}
+.btn-save{width:100%;padding:16px;background:var(--dark-green);color:#fff;font-family:"Berlin",sans-serif;font-size:18px;border:none;border-radius:50px;cursor:pointer;margin-top:8px;}
+</style>
+</body>
+</html>

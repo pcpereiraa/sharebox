@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>ShareBox — Notificações</title>
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="css/global.css">
+<link rel="stylesheet" href="css/profile.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js"></script>
+<script src="js/auth.js"></script>
+</head>
+<body>
+<div class="page">
+
+  <header class="top-bar-dark">
+    <a class="btn-back-white" href="profile.html">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+    </a>
+    <h1 class="page-title-white">Notificações</h1>
+    <div style="width:36px"></div>
+  </header>
+
+  <main class="scroll-content">
+    <div class="settings-form">
+
+      <div class="toggle-group">
+
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <div class="toggle-title">Mensagens</div>
+            <div class="toggle-sub">Notificações de novas mensagens</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="notif-messages" checked>
+            <span class="toggle-track"></span>
+          </label>
+        </div>
+        <div class="toggle-divider"></div>
+
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <div class="toggle-title">Pedidos de itens</div>
+            <div class="toggle-sub">Quando alguém pede um dos teus itens</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="notif-requests" checked>
+            <span class="toggle-track"></span>
+          </label>
+        </div>
+        <div class="toggle-divider"></div>
+
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <div class="toggle-title">Comunidades</div>
+            <div class="toggle-sub">Actividade nas tuas comunidades</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="notif-communities" checked>
+            <span class="toggle-track"></span>
+          </label>
+        </div>
+        <div class="toggle-divider"></div>
+
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <div class="toggle-title">Novos itens</div>
+            <div class="toggle-sub">Itens novos nas tuas categorias favoritas</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="notif-items">
+            <span class="toggle-track"></span>
+          </label>
+        </div>
+
+      </div>
+
+      <button class="btn-save" onclick="saveNotifications()">Guardar preferências</button>
+      <div id="notif-feedback"></div>
+
+    </div>
+  </main>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', async function () {
+  const session = await requireAuth();
+  if (!session) return;
+
+  // Carregar preferências actuais da BD
+  const { data: profile } = await supabaseClient
+    .from('profiles')
+    .select('notif_messages, notif_requests, notif_communities, notif_items')
+    .eq('id', session.user.id)
+    .maybeSingle();
+
+  if (profile) {
+    document.getElementById('notif-messages').checked    = profile.notif_messages    !== false;
+    document.getElementById('notif-requests').checked    = profile.notif_requests    !== false;
+    document.getElementById('notif-communities').checked = profile.notif_communities !== false;
+    document.getElementById('notif-items').checked       = profile.notif_items       === true;
+  }
+});
+
+async function saveNotifications() {
+  const { data: { session } } = await supabaseClient.auth.getSession();
+  const fb = document.getElementById('notif-feedback');
+
+  const { error } = await supabaseClient
+    .from('profiles')
+    .update({
+      notif_messages:    document.getElementById('notif-messages').checked,
+      notif_requests:    document.getElementById('notif-requests').checked,
+      notif_communities: document.getElementById('notif-communities').checked,
+      notif_items:       document.getElementById('notif-items').checked,
+    })
+    .eq('id', session.user.id);
+
+  if (error) {
+    fb.textContent = 'Erro ao guardar. Tenta novamente.';
+    fb.style.cssText = 'color:#c0392b;background:rgba(192,57,43,0.08);padding:10px 14px;border-radius:8px;margin-top:16px;font-family:"Berlin",sans-serif;font-size:14px;';
+  } else {
+    fb.textContent = '✓ Preferências guardadas!';
+    fb.style.cssText = 'color:#016e58;background:rgba(1,110,88,0.08);padding:10px 14px;border-radius:8px;margin-top:16px;font-family:"Berlin",sans-serif;font-size:14px;';
+    setTimeout(() => window.location.href = 'profile.html', 1500);
+  }
+}
+</script>
+
+<style>
+.top-bar-dark { display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px;background:var(--blue);flex-shrink:0;gap:12px; }
+.btn-back-white { width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;text-decoration:none; }
+.btn-back-white svg { width:22px;height:22px;fill:#fff; }
+.page-title-white { font-family:"Berlin",sans-serif;font-size:20px;color:#fff;font-weight:400;flex:1;text-align:center; }
+.settings-form { padding:24px 20px; }
+.toggle-group { background:#fff;border-radius:14px;padding:4px 16px;box-shadow:0 2px 10px rgba(23,42,58,0.08);margin-bottom:20px; }
+.toggle-row { display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 0; }
+.toggle-info { flex:1; }
+.toggle-title { font-family:"Berlin",sans-serif;font-size:15px;color:var(--blue);font-weight:600;margin-bottom:3px; }
+.toggle-sub { font-family:"Berlin",sans-serif;font-size:12px;color:rgba(23,42,58,0.5); }
+.toggle-divider { height:1px;background:rgba(23,42,58,0.07); }
+.toggle-switch { position:relative;flex-shrink:0;cursor:pointer; }
+.toggle-switch input { position:absolute;opacity:0;width:0;height:0; }
+.toggle-track { display:block;width:48px;height:28px;background:rgba(23,42,58,0.15);border-radius:14px;position:relative;transition:background 0.2s; }
+.toggle-track::after { content:'';position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:transform 0.2s;box-shadow:0 1px 4px rgba(0,0,0,0.2); }
+.toggle-switch input:checked + .toggle-track { background:var(--dark-green); }
+.toggle-switch input:checked + .toggle-track::after { transform:translateX(20px); }
+.btn-save { width:100%;padding:16px;background:var(--dark-green);color:#fff;font-family:"Berlin",sans-serif;font-size:18px;border:none;border-radius:50px;cursor:pointer; }
+</style>
+
+</body>
+</html>

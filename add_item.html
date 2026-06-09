@@ -17,7 +17,7 @@
       <svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
     </a>
     <h1 class="page-title">Adicionar Item</h1>
-    <button class="btn-salvar" onclick="submitForm()">Salvar</button>
+    <button class="btn-salvar" id="btn-salvar">Salvar</button>
   </header>
 
   <main class="scroll-content">
@@ -27,7 +27,7 @@
       <div class="section-title">Fotos do item</div>
       <div class="section-sub">Adiciona até 4 fotos. A primeira será a capa.</div>
       <div class="photo-grid">
-        <div class="photo-slot" onclick="triggerUpload(this)">
+        <div class="photo-slot">
           <input type="file" accept="image/*" class="file-input" onchange="previewPhoto(this)">
           <div class="photo-placeholder">
             <span class="photo-plus">+</span>
@@ -35,7 +35,7 @@
           </div>
           <img class="photo-preview" src="" alt="">
         </div>
-        <div class="photo-slot" onclick="triggerUpload(this)">
+        <div class="photo-slot">
           <input type="file" accept="image/*" class="file-input" onchange="previewPhoto(this)">
           <div class="photo-placeholder">
             <span class="photo-plus">+</span>
@@ -43,7 +43,7 @@
           </div>
           <img class="photo-preview" src="" alt="">
         </div>
-        <div class="photo-slot" onclick="triggerUpload(this)">
+        <div class="photo-slot">
           <input type="file" accept="image/*" class="file-input" onchange="previewPhoto(this)">
           <div class="photo-placeholder">
             <span class="photo-plus">+</span>
@@ -51,7 +51,7 @@
           </div>
           <img class="photo-preview" src="" alt="">
         </div>
-        <div class="photo-slot" onclick="triggerUpload(this)">
+        <div class="photo-slot">
           <input type="file" accept="image/*" class="file-input" onchange="previewPhoto(this)">
           <div class="photo-placeholder">
             <span class="photo-plus">+</span>
@@ -70,7 +70,7 @@
 
       <div class="field-group">
         <label class="field-label">Nome do item</label>
-        <input class="field-input" type="text" placeholder="Ver todas">
+        <input class="field-input" type="text" id="item-title" placeholder="Nome do item">
       </div>
 
       <div class="field-group">
@@ -78,13 +78,13 @@
           <label class="field-label">Descrição</label>
           <span class="field-optional">Opcional</span>
         </div>
-        <textarea class="field-textarea" placeholder="Ver todas" rows="4"></textarea>
+        <textarea class="field-textarea" id="item-desc" placeholder="Descreve o item..." rows="4"></textarea>
       </div>
 
       <div class="field-group">
         <label class="field-label">Categoria</label>
         <div class="field-select-wrap">
-          <select class="field-select">
+          <select class="field-select" id="item-category">
             <option value="" disabled selected>Ver todas</option>
             <option>Roupas</option>
             <option>Livros</option>
@@ -124,7 +124,7 @@
 
       <div class="field-group">
         <label class="field-label">Cidade</label>
-        <input class="field-input" type="text" placeholder="Ver todas">
+        <input class="field-input" type="text" id="item-city" placeholder="Ex: Porto">
       </div>
 
       <div class="field-group">
@@ -132,7 +132,7 @@
           <label class="field-label">Bairro</label>
           <span class="field-optional">Opcional</span>
         </div>
-        <input class="field-input" type="text" placeholder="Ver todas">
+        <input class="field-input" type="text" id="item-neighborhood" placeholder="Ex: Bolhão">
       </div>
     </div>
 
@@ -194,9 +194,10 @@
       </div>
     </div>
 
+    <div id="item-feedback" style="margin:0 20px"></div>
     <!-- Botão Adicionar item -->
     <div class="submit-wrap">
-      <button class="btn-submit" onclick="submitForm()">Adicionar item</button>
+      <button class="btn-submit" id="btn-submit">Adicionar item</button>
     </div>
 
     <div style="height: 90px"></div>
@@ -214,31 +215,9 @@
 
 </div>
 
-<script>
-function triggerUpload(slot) {
-  slot.querySelector('.file-input').click();
-}
-function previewPhoto(input) {
-  const slot = input.closest('.photo-slot');
-  const file = input.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    const preview = slot.querySelector('.photo-preview');
-    preview.src = e.target.result;
-    preview.style.display = 'block';
-    slot.querySelector('.photo-placeholder').style.display = 'none';
-    slot.classList.add('has-photo');
-  };
-  reader.readAsDataURL(file);
-}
-function selectChip(btn, group) {
-  btn.closest('.chips-wrap').querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-  btn.classList.add('active');
-}
-function submitForm() {
-  alert('Item adicionado com sucesso!');
-}
-</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/add_item.js"></script>
 </body>
 </html>
