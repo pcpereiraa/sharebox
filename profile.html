@@ -16,23 +16,23 @@
 
     <!-- Hero / Profile Header -->
     <div class="profile-hero">
-      <div class="profile-avatar">
-        <img src="images/Icons/icone5@4x-8.png" alt="Avatar">
+      <div class="profile-avatar" id="profile-avatar">
+        <img src="images/Icons/icone5@4x-8.png" alt="Avatar" id="profile-avatar-img">
       </div>
-      <div class="profile-name">Maria Silva</div>
-      <div class="profile-email">maria.silva@email.com</div>
-      <a class="profile-edit-btn" href="#">Editar perfil</a>
+      <div class="profile-name" id="profile-name">—</div>
+      <div class="profile-email" id="profile-email">—</div>
+      <a class="profile-edit-btn" href="edit_profile.html">Editar perfil</a>
     </div>
 
     <!-- Stats -->
     <div class="profile-stats">
       <div class="stat-item">
-        <div class="stat-value">12</div>
+        <div class="stat-value" id="stat-items">—</div>
         <div class="stat-label">Anúncios</div>
       </div>
       <div class="stat-divider"></div>
       <div class="stat-item">
-        <div class="stat-value">38</div>
+        <div class="stat-value" id="stat-donations">—</div>
         <div class="stat-label">Doações</div>
       </div>
       <div class="stat-divider"></div>
@@ -51,26 +51,26 @@
         <a class="section-link" href="#">Ver todas</a>
       </div>
       <div class="menu-group">
-        <a class="menu-item" href="#">
+        <a class="menu-item" href="my_items.html?status=disponivel">
           <div class="menu-item-text">
             <div class="menu-item-title">Anúncios activos</div>
-            <div class="menu-item-sub">3 publicações</div>
+            <div class="menu-item-sub" id="sub-active">—</div>
           </div>
           <svg class="menu-chevron" viewBox="0 0 24 24" fill="currentColor"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
         </a>
         <div class="menu-divider"></div>
-        <a class="menu-item" href="#">
+        <a class="menu-item" href="my_items.html?status=pendente">
           <div class="menu-item-text">
             <div class="menu-item-title">Anúncios pendentes</div>
-            <div class="menu-item-sub">1 em revisão</div>
+            <div class="menu-item-sub" id="sub-pending">—</div>
           </div>
           <svg class="menu-chevron" viewBox="0 0 24 24" fill="currentColor"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
         </a>
         <div class="menu-divider"></div>
-        <a class="menu-item" href="#">
+        <a class="menu-item" href="my_items.html?status=expirado">
           <div class="menu-item-text">
             <div class="menu-item-title">Anúncios expirados</div>
-            <div class="menu-item-sub">8 publicações</div>
+            <div class="menu-item-sub" id="sub-expired">—</div>
           </div>
           <svg class="menu-chevron" viewBox="0 0 24 24" fill="currentColor"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
         </a>
@@ -81,18 +81,18 @@
         <span class="section-title">Doações</span>
       </div>
       <div class="menu-group">
-        <a class="menu-item" href="#">
+        <a class="menu-item" href="my_items.html?status=doado">
           <div class="menu-item-text">
             <div class="menu-item-title">Doações feitas</div>
-            <div class="menu-item-sub">38 itens doados</div>
+            <div class="menu-item-sub" id="sub-donations-made">—</div>
           </div>
           <svg class="menu-chevron" viewBox="0 0 24 24" fill="currentColor"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
         </a>
         <div class="menu-divider"></div>
-        <a class="menu-item" href="#">
+        <a class="menu-item" href="my_donations_received.html">
           <div class="menu-item-text">
             <div class="menu-item-title">Doações recebidas</div>
-            <div class="menu-item-sub">14 itens recebidos</div>
+            <div class="menu-item-sub" id="sub-donations-received">—</div>
           </div>
           <svg class="menu-chevron" viewBox="0 0 24 24" fill="currentColor"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
         </a>
@@ -103,18 +103,18 @@
         <span class="section-title">As minhas comunidades</span>
       </div>
       <div class="menu-group">
-        <a class="menu-item" href="#">
+        <a class="menu-item" href="communities.html">
           <div class="menu-item-text">
             <div class="menu-item-title">Comunidades em que participo</div>
-            <div class="menu-item-sub">3 comunidades</div>
+            <div class="menu-item-sub" id="sub-communities">—</div>
           </div>
           <svg class="menu-chevron" viewBox="0 0 24 24" fill="currentColor"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
         </a>
         <div class="menu-divider"></div>
-        <a class="menu-item" href="#">
+        <a class="menu-item" href="communities.html?role=admin">
           <div class="menu-item-text">
             <div class="menu-item-title">Comunidades que administro</div>
-            <div class="menu-item-sub">1 comunidade</div>
+            <div class="menu-item-sub" id="sub-communities-admin">—</div>
           </div>
           <svg class="menu-chevron" viewBox="0 0 24 24" fill="currentColor"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
         </a>
@@ -125,7 +125,7 @@
         <span class="section-title">Conta & Segurança</span>
       </div>
       <div class="menu-group">
-        <a class="menu-item" href="#">
+        <a class="menu-item" href="change_password.html">
           <div class="menu-item-text">
             <div class="menu-item-title">Alterar palavra-passe</div>
             <div class="menu-item-sub">Última alteração há 3 meses</div>
@@ -133,7 +133,7 @@
           <svg class="menu-chevron" viewBox="0 0 24 24" fill="currentColor"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
         </a>
         <div class="menu-divider"></div>
-        <a class="menu-item" href="#">
+        <a class="menu-item" href="notifications.html">
           <div class="menu-item-text">
             <div class="menu-item-title">Notificações</div>
             <div class="menu-item-sub">Todas activadas</div>
@@ -141,7 +141,7 @@
           <svg class="menu-chevron" viewBox="0 0 24 24" fill="currentColor"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
         </a>
         <div class="menu-divider"></div>
-        <a class="menu-item" href="#">
+        <a class="menu-item" href="privacy.html">
           <div class="menu-item-text">
             <div class="menu-item-title">Privacidade</div>
             <div class="menu-item-sub">Perfil público</div>
@@ -163,7 +163,7 @@
         <span class="section-title">Suporte</span>
       </div>
       <div class="menu-group">
-        <a class="menu-item" href="#">
+        <a class="menu-item" href="help.html">
           <div class="menu-item-text">
             <div class="menu-item-title">Ajuda & FAQ</div>
             <div class="menu-item-sub">Perguntas frequentes</div>
@@ -171,7 +171,7 @@
           <svg class="menu-chevron" viewBox="0 0 24 24" fill="currentColor"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
         </a>
         <div class="menu-divider"></div>
-        <a class="menu-item" href="#">
+        <a class="menu-item" href="report.html">
           <div class="menu-item-text">
             <div class="menu-item-title">Reportar problema</div>
             <div class="menu-item-sub">Algo não está a funcionar?</div>
@@ -179,7 +179,7 @@
           <svg class="menu-chevron" viewBox="0 0 24 24" fill="currentColor"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
         </a>
         <div class="menu-divider"></div>
-        <a class="menu-item" href="#">
+        <a class="menu-item" href="terms.html">
           <div class="menu-item-text">
             <div class="menu-item-title">Termos de serviço</div>
             <div class="menu-item-sub">Políticas e condições</div>
@@ -206,5 +206,9 @@
   </nav>
 
 </div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/profile.js"></script>
 </body>
 </html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>ShareBox — Termos de Serviço</title>
+<link rel="stylesheet" href="css/global.css">
+<link rel="stylesheet" href="css/profile.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js"></script>
+<script src="js/auth.js"></script>
+</head>
+<body>
+<div class="page">
+  <header class="top-bar-dark">
+    <a class="btn-back-white" href="profile.html">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+    </a>
+    <h1 class="page-title-white">Termos de Serviço</h1>
+    <div style="width:36px"></div>
+  </header>
+  <main class="scroll-content">
+    <div class="terms-body">
+
+      <p class="terms-updated">Última actualização: Janeiro 2025</p>
+
+      <div class="terms-section">
+        <div class="terms-title">1. Aceitação dos Termos</div>
+        <p class="terms-text">Ao utilizar a ShareBox, aceitas estes Termos de Serviço na íntegra. Se não concordares com algum dos termos, não deverás utilizar a plataforma.</p>
+      </div>
+
+      <div class="terms-section">
+        <div class="terms-title">2. O que é a ShareBox</div>
+        <p class="terms-text">A ShareBox é uma plataforma de economia circular que permite aos utilizadores partilhar, trocar e doar objectos usados com a sua comunidade local, promovendo a sustentabilidade e o consumo responsável.</p>
+      </div>
+
+      <div class="terms-section">
+        <div class="terms-title">3. Regras de Utilização</div>
+        <p class="terms-text">Ao publicar na ShareBox, comprometes-te a:</p>
+        <ul class="terms-list">
+          <li>Publicar apenas itens que possuis e tens direito de ceder</li>
+          <li>Descrever os itens com honestidade, incluindo defeitos</li>
+          <li>Não publicar conteúdo ilegal, ofensivo ou fraudulento</li>
+          <li>Não publicar itens proibidos por lei</li>
+          <li>Cumprir os compromissos assumidos com outros utilizadores</li>
+          <li>Tratar todos os utilizadores com respeito</li>
+        </ul>
+      </div>
+
+      <div class="terms-section">
+        <div class="terms-title">4. Responsabilidade</div>
+        <p class="terms-text">A ShareBox actua como intermediário entre utilizadores. Não somos responsáveis pela qualidade, segurança ou legalidade dos itens trocados, nem pelas acções dos utilizadores. As transacções são da responsabilidade exclusiva das partes envolvidas.</p>
+      </div>
+
+      <div class="terms-section">
+        <div class="terms-title">5. Privacidade e Dados</div>
+        <p class="terms-text">Os teus dados pessoais são tratados de acordo com o RGPD. Apenas recolhemos os dados necessários para o funcionamento da plataforma. Nunca vendemos os teus dados a terceiros.</p>
+      </div>
+
+      <div class="terms-section">
+        <div class="terms-title">6. Propriedade Intelectual</div>
+        <p class="terms-text">Ao publicar fotos e conteúdo na ShareBox, concedes-nos uma licença não exclusiva para exibir esse conteúdo na plataforma. Mantens todos os direitos sobre o teu conteúdo.</p>
+      </div>
+
+      <div class="terms-section">
+        <div class="terms-title">7. Alterações aos Termos</div>
+        <p class="terms-text">Podemos actualizar estes termos ocasionalmente. Notificaremos os utilizadores sobre alterações significativas. A utilização continuada da plataforma implica a aceitação dos novos termos.</p>
+      </div>
+
+      <div class="terms-section">
+        <div class="terms-title">8. Contacto</div>
+        <p class="terms-text">Para questões sobre estes termos, contacta-nos através da opção "Reportar problema" no teu perfil ou pelo email <strong>legal@sharebox.pt</strong></p>
+      </div>
+
+    </div>
+  </main>
+</div>
+<script>document.addEventListener('DOMContentLoaded', async () => { await requireAuth(); });</script>
+<style>
+.top-bar-dark{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px;background:var(--blue);flex-shrink:0;gap:12px;}
+.btn-back-white{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;text-decoration:none;}
+.btn-back-white svg{width:22px;height:22px;fill:#fff;}
+.page-title-white{font-family:"Berlin",sans-serif;font-size:20px;color:#fff;font-weight:400;flex:1;text-align:center;}
+.terms-body{padding:20px;}
+.terms-updated{font-family:"Berlin",sans-serif;font-size:12px;color:rgba(23,42,58,0.4);margin-bottom:20px;}
+.terms-section{margin-bottom:24px;}
+.terms-title{font-family:"Berlin",sans-serif;font-size:17px;color:var(--blue);font-weight:600;margin-bottom:8px;}
+.terms-text{font-family:"Berlin",sans-serif;font-size:14px;color:rgba(23,42,58,0.7);line-height:1.7;}
+.terms-list{font-family:"Berlin",sans-serif;font-size:14px;color:rgba(23,42,58,0.7);line-height:1.7;padding-left:20px;margin-top:8px;}
+.terms-list li{margin-bottom:4px;}
+</style>
+</body>
+</html>
