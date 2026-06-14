@@ -46,7 +46,7 @@
 
       <div class="field-group">
         <label class="field-label">Nome da comunidade</label>
-        <input class="field-input" type="text" placeholder="Ver todas">
+        <input class="field-input" type="text" id="comm-name" placeholder="Nome da comunidade">
       </div>
 
       <div class="field-group">
@@ -54,7 +54,7 @@
           <label class="field-label">Descrição</label>
           <span class="field-optional">Opcional</span>
         </div>
-        <textarea class="field-textarea" placeholder="Ver todas" rows="4"></textarea>
+        <textarea class="field-textarea" id="comm-desc" placeholder="Descreve a comunidade..." rows="4"></textarea>
       </div>
     </div>
 
@@ -64,7 +64,7 @@
     <div class="form-section">
       <div class="section-title">Categoria</div>
       <div class="field-select-wrap">
-        <select class="field-select">
+        <select class="field-select" id="comm-category">
           <option value="" disabled selected>Ver todas</option>
           <option>Roupas</option>
           <option>Livros</option>
@@ -89,7 +89,7 @@
 
       <div class="field-group">
         <label class="field-label">Cidade</label>
-        <input class="field-input" type="text" placeholder="Ver todas">
+        <input class="field-input" type="text" id="comm-city" placeholder="Ex: Porto">
       </div>
 
       <div class="field-group">
@@ -97,7 +97,7 @@
           <label class="field-label">Bairro / Zona</label>
           <span class="field-optional">Opcional</span>
         </div>
-        <input class="field-input" type="text" placeholder="Ver todas">
+        <input class="field-input" type="text" id="comm-neighborhood" placeholder="Ex: Bolhão">
       </div>
     </div>
 
@@ -116,7 +116,7 @@
             <div class="toggle-sub">Qualquer pessoa pode encontrar e aderir</div>
           </div>
           <label class="toggle-switch">
-            <input type="checkbox" checked onchange="handleToggle(this)">
+            <input type="checkbox" id="toggle-public" checked>
             <span class="toggle-track"></span>
           </label>
         </div>
@@ -162,7 +162,7 @@
           <label class="field-label">Regra 1</label>
           <span class="field-optional">Opcional</span>
         </div>
-        <input class="field-input" type="text" placeholder="Ver todas">
+        <input class="field-input" type="text" id="rule-1" placeholder="Ex: Respeitar todos os membros">
       </div>
 
       <div class="field-group">
@@ -170,10 +170,10 @@
           <label class="field-label">Regra 2</label>
           <span class="field-optional">Opcional</span>
         </div>
-        <input class="field-input" type="text" placeholder="Ver todas">
+        <input class="field-input" type="text" id="rule-2" placeholder="Ex: Apenas itens em bom estado">
       </div>
 
-      <button class="btn-add-rule" onclick="addRule()">+ Adicionar regra</button>
+      <button class="btn-add-rule" id="btn-add-rule">+ Adicionar regra</button>
     </div>
 
     <div class="divider"></div>
@@ -187,7 +187,7 @@
         <input class="field-input" type="text" placeholder="Ver todas" id="invite-input">
       </div>
 
-      <div class="invite-list">
+      <div class="invite-list" id="invite-list">
 
         <div class="invite-row">
           <div class="invite-avatar" style="background:#c8e6d4"></div>
@@ -225,14 +225,15 @@
       <!-- Link de partilha -->
       <div class="share-link-box">
         <span class="share-link-text">sharebox.app/comunidade/link...</span>
-        <button class="btn-copiar" onclick="copyLink()">Copiar</button>
+        <button class="btn-copiar" id="btn-copiar">Copiar</button>
       </div>
 
     </div>
 
     <!-- Botão criar -->
+    <div id="comm-feedback" style="margin:0 20px"></div>
     <div class="submit-wrap">
-      <button class="btn-submit" onclick="submitForm()">Criar comunidade</button>
+      <button class="btn-submit" id="btn-submit-comm">Criar comunidade</button>
     </div>
 
     <div style="height: 90px"></div>
@@ -250,51 +251,9 @@
 
 </div>
 
-<script>
-function triggerCoverUpload() {
-  document.getElementById('cover-input').click();
-}
-function previewCover(input) {
-  const file = input.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    const preview = document.getElementById('cover-preview');
-    preview.src = e.target.result;
-    preview.style.display = 'block';
-    document.getElementById('cover-placeholder').style.display = 'none';
-    document.getElementById('cover-upload').classList.add('has-photo');
-  };
-  reader.readAsDataURL(file);
-}
-let ruleCount = 2;
-function addRule() {
-  ruleCount++;
-  const btn = document.querySelector('.btn-add-rule');
-  const group = document.createElement('div');
-  group.className = 'field-group';
-  group.innerHTML = `
-    <div class="field-label-row">
-      <label class="field-label">Regra ${ruleCount}</label>
-      <span class="field-optional">Opcional</span>
-    </div>
-    <input class="field-input" type="text" placeholder="Ver todas">
-  `;
-  btn.parentNode.insertBefore(group, btn);
-}
-function handleToggle(input) {
-  // handled by CSS
-}
-function copyLink() {
-  navigator.clipboard?.writeText('https://sharebox.app/comunidade/link').then(() => {
-    const btn = document.querySelector('.btn-copiar');
-    btn.textContent = 'Copiado!';
-    setTimeout(() => btn.textContent = 'Copiar', 2000);
-  });
-}
-function submitForm() {
-  alert('Comunidade criada com sucesso!');
-}
-</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/add_community.js"></script>
 </body>
 </html>
