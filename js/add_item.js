@@ -188,7 +188,7 @@ async function submitForm() {
       const filePath = `${item.id}/${i + 1}.${ext}`;
 
       const { error: uploadError } = await supabaseClient.storage
-        .from('item-images')
+        .from('item_images')
         .upload(filePath, file, { upsert: true, contentType: file.type });
 
       if (uploadError) {

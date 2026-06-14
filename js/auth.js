@@ -116,10 +116,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
       const isAdmin = profile?.is_admin === true;
 
-  
-      document.getElementById('debug-go').onclick = function() {
-        window.location.href = isAdmin ? 'admin/index.html' : 'home.html';
-      };
+      window.location.href =
+          isAdmin
+              ? 'admin/index.html'
+              : 'home.html';
     });
   }
 
@@ -133,3 +133,54 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
 });
+
+// ========================================================
+// 4. RECUPERAÇÃO DE PALAVRA-PASSE
+// ========================================================
+
+const resetLink = document.getElementById("link-reset");
+
+if (resetLink) {
+    resetLink.addEventListener("click", async (e) => {
+        e.preventDefault(); // Não deixa a página recarregar
+
+        const email = document.getElementById("login-email").value;
+
+        // Se o gajo não escreveu o email, avisamos
+        if (!email) {
+            alert("Por favor, digita primeiro o teu e-mail no campo de login!");
+            return;
+        }
+
+        const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+            redirectTo: window.location.origin + '/reset-password.html', // Página onde ele vai digitar a nova senha
+        });
+
+        if (error) {
+            alert("Erro ao enviar e-mail de recuperação: " + error.message);
+        } else {
+            alert("E-mail de recuperação enviado! Confere a tua caixa de entrada.");
+        }
+    });
+}
+
+const resetForm = document.getElementById("reset-password-form");
+
+if (resetForm) {
+    resetForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        
+        const newPassword = document.getElementById("new-pwd").value;
+
+        const { error } = await supabaseClient.auth.updateUser({
+            password: newPassword
+        });
+
+        if (error) {
+            alert("Erro ao atualizar password: " + error.message);
+        } else {
+            alert("Palavra-passe atualizada com sucesso! Já podes fazer login.");
+            window.location.href = "login.html";
+        }
+    });
+}
