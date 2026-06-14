@@ -17,20 +17,37 @@ if (registerForm) {
             return;
         }
 
-        const { data, error } = await supabaseClient.auth.signUp({
+        const { data, error: signUpError } = await supabaseClient.auth.signUp({
             email,
             password: pwd,
             options: {
                 data: {
-                    full_name: name + " " + surname,
-                    username: email
+                    full_name: name + " " + surname
                 }
             }
         });
 
-        if (error) {
-            alert(error.message);
+        if (signUpError) {
+            alert(signUpError.message);
             return;
+        }
+
+        if (data?.user) {
+            const userId = data.user.id;
+
+            const { error: profileError } = await supabaseClient
+                .from('profiles')
+                .insert([
+                    {
+                        id: userId,
+                        full_name: name + " " + surname,
+                        username: email
+                    }
+                ]);
+            if (profileError) {
+                alert("Conta criada, mas houve um erro ao criar o perfil: " + profileError.message);
+                return;
+            }
         }
 
         alert("Conta criada com sucesso!");
