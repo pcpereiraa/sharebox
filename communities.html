@@ -14,7 +14,7 @@
   <!-- Top Bar -->
   <header class="top-bar">
     <h1 class="page-title">Comunidades</h1>
-    <a class="btn-criar" href="#">
+    <a class="btn-criar" href="add_community.html">
       <img src="images/Icons/icone2@4x-8.png" alt=""> Criar
     </a>
   </header>
@@ -38,7 +38,7 @@
       <a class="section-link" href="#">Ver todas</a>
     </div>
 
-    <div class="my-communities">
+    <div class="my-communities" id="my-communities">
 
       <div class="my-comm-card">
         <div class="my-comm-thumb">
@@ -90,7 +90,7 @@
     </div>
 
     <div class="nearby-scroll-wrap">
-      <div class="nearby-scroll">
+      <div class="nearby-scroll" id="nearby-scroll">
 
         <div class="comm-card">
           <div class="comm-card-img">
@@ -162,7 +162,7 @@
     </div>
 
     <div class="nearby-scroll-wrap">
-      <div class="nearby-scroll">
+      <div class="nearby-scroll" id="suggestions-scroll">
 
         <div class="comm-card">
           <div class="comm-card-img">
@@ -231,7 +231,7 @@
     <div class="cta-banner">
       <div class="cta-title">Cria a tua comunidade</div>
       <div class="cta-sub">Junta pessoas à tua volta,<br>partilha e reutiliza mais.</div>
-      <a class="cta-btn" href="#">Criar comunidade</a>
+      <a class="cta-btn" href="add_community.html">Criar comunidade</a>
     </div>
 
     <div style="height: 90px"></div>
@@ -246,6 +246,49 @@
     <a class="nav-item" href="profile.html"><img src="images/Icons/icone5@4x-8.png" alt="Perfil"></a>
   </nav>
 
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/communities.js"></script>
+
+<!-- Overlay -->
+<div class="sheet-overlay" id="sheet-overlay" onclick="closeSheet()"></div>
+
+<!-- Sheet: As minhas comunidades -->
+<div class="bottom-sheet" id="sheet-my-communities">
+  <div class="sheet-handle"></div>
+  <div class="sheet-header">
+    <span class="sheet-title">As minhas comunidades</span>
+    <button class="sheet-close" onclick="closeSheet()"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
+  </div>
+  <div class="sheet-body">
+    <div class="sheet-list-comms" id="sheet-my-list"></div>
+  </div>
+</div>
+
+<!-- Sheet: Perto de mim -->
+<div class="bottom-sheet" id="sheet-nearby">
+  <div class="sheet-handle"></div>
+  <div class="sheet-header">
+    <span class="sheet-title">Comunidades perto de mim</span>
+    <button class="sheet-close" onclick="closeSheet()"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
+  </div>
+  <div class="sheet-body">
+    <div class="sheet-list-comms" id="sheet-nearby-list"></div>
+  </div>
+</div>
+
+<!-- Sheet: Sugestões -->
+<div class="bottom-sheet" id="sheet-suggestions">
+  <div class="sheet-handle"></div>
+  <div class="sheet-header">
+    <span class="sheet-title">Sugestões para ti</span>
+    <button class="sheet-close" onclick="closeSheet()"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
+  </div>
+  <div class="sheet-body">
+    <div class="sheet-list-comms" id="sheet-suggestions-list"></div>
+  </div>
 </div>
 </body>
 </html>

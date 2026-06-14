@@ -3,10 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<link rel="shortcut icon" href="images/Logo/favicon.ico" type="image/x-icon">
 <title>ShareBox — Home</title>
 <link rel="stylesheet" href="css/global.css">
 <link rel="stylesheet" href="css/home.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js"></script>
+<script src="js/auth.js"></script>
 </head>
 <body>
 <div class="page">
@@ -68,7 +70,7 @@
       <a class="section-link" href="#" onclick="openSheet('sheet-recomendacoes'); return false;">Ver todas</a>
     </div>
     <div class="scroll-row-wrap">
-      <div class="scroll-row">
+      <div class="scroll-row" id="items-row">
 
         <div class="donation-card">
           <div class="donation-card-img">
@@ -143,7 +145,7 @@
       <a class="section-link" href="#" onclick="openSheet('sheet-comunidades'); return false;">Ver todas</a>
     </div>
     <div class="comm-scroll-wrap">
-      <div class="comm-scroll">
+      <div class="comm-scroll" id="communities-row">
 
         <div class="comm-card">
           <div class="comm-card-img">
@@ -195,11 +197,11 @@
 
   <!-- Navbar -->
   <nav class="navbar">
-    <a class="nav-item active" href="home.html"><img src="images/Icons/family_home.png" alt="Home"></a>
-    <a class="nav-item" href="communities.html"><img src="images/Icons/icone2@4x-8.png" alt="Comunidades"></a>
+    <a class="nav-item active" href="#"><img src="images/Icons/family_home.png" alt="Home"></a>
+    <a class="nav-item" href="#"><img src="images/Icons/icone2@4x-8.png" alt="Comunidades"></a>
     <a class="nav-item nav-add" href="add_item.html"><img src="images/Icons/add_circle.png" alt="Adicionar"></a>
-    <a class="nav-item" href="messages.html"><img src="images/Icons/business_messages.png" alt="Trocas"></a>
-    <a class="nav-item" href="profile.html"><img src="images/Icons/icone5@4x-8.png" alt="Perfil"></a>
+    <a class="nav-item" href="#"><img src="images/Icons/business_messages.png" alt="Trocas"></a>
+    <a class="nav-item" href="#"><img src="images/Icons/icone5@4x-8.png" alt="Perfil"></a>
   </nav>
 
 </div>
@@ -279,5 +281,6 @@ function closeSheet() {
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheet(); });
 </script>
 
+<script src="js/home.js"></script>
 </body>
 </html>

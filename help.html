@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>ShareBox — Ajuda & FAQ</title>
+<link rel="stylesheet" href="css/global.css">
+<link rel="stylesheet" href="css/profile.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js"></script>
+<script src="js/auth.js"></script>
+</head>
+<body>
+<div class="page">
+  <header class="top-bar-dark">
+    <a class="btn-back-white" href="profile.html">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+    </a>
+    <h1 class="page-title-white">Ajuda & FAQ</h1>
+    <div style="width:36px"></div>
+  </header>
+  <main class="scroll-content">
+    <div class="help-body">
+
+      <div class="faq-section-title">Primeiros passos</div>
+      <div class="faq-list">
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-question">Como publico um item para doação? <span class="faq-arrow">›</span></div>
+          <div class="faq-answer">Clica no botão + na barra de navegação, preenche os detalhes do item (fotos, descrição, estado), escolhe a categoria e localização e clica em "Adicionar item".</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-question">Como peço um item a outro utilizador? <span class="faq-arrow">›</span></div>
+          <div class="faq-answer">Abre a página do item e clica em "Contactar anunciante". Será aberta uma conversa onde podes combinar os detalhes da entrega.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-question">Como me junto a uma comunidade? <span class="faq-arrow">›</span></div>
+          <div class="faq-answer">Vai à página de Comunidades, encontra uma que te interesse e clica no botão +. Passarás a ver os itens e publicações dessa comunidade.</div>
+        </div>
+      </div>
+
+      <div class="faq-section-title">Conta & Segurança</div>
+      <div class="faq-list">
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-question">Como altero a minha palavra-passe? <span class="faq-arrow">›</span></div>
+          <div class="faq-answer">Vai ao teu Perfil → Conta & Segurança → Alterar palavra-passe. Introduz a nova password duas vezes e confirma.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-question">Esqueci-me da minha palavra-passe. O que faço? <span class="faq-arrow">›</span></div>
+          <div class="faq-answer">Na página de login, clica em "Esqueceste a password?" e introduz o teu email. Receberás um link para criar uma nova password.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-question">Como apago a minha conta? <span class="faq-arrow">›</span></div>
+          <div class="faq-answer">Vai ao teu Perfil → Privacidade → Zona de perigo → Eliminar conta. Esta acção é irreversível e apaga todos os teus dados.</div>
+        </div>
+      </div>
+
+      <div class="faq-section-title">Doações & Trocas</div>
+      <div class="faq-list">
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-question">Como marco um item como doado? <span class="faq-arrow">›</span></div>
+          <div class="faq-answer">Vai aos teus anúncios no perfil, abre o item e altera o estado para "Doado". O item deixará de aparecer nas pesquisas.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-question">Posso cancelar uma doação? <span class="faq-arrow">›</span></div>
+          <div class="faq-answer">Sim, podes alterar o estado do item de volta para "Disponível" a qualquer momento antes de efectuares a entrega.</div>
+        </div>
+      </div>
+
+      <div class="contact-box">
+        <div class="contact-title">Ainda tens dúvidas?</div>
+        <div class="contact-sub">Entra em contacto connosco</div>
+        <a class="contact-btn" href="report.html">Enviar mensagem</a>
+      </div>
+
+    </div>
+  </main>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', async () => { await requireAuth(); });
+function toggleFaq(el) {
+  el.classList.toggle('open');
+}
+</script>
+<style>
+.top-bar-dark{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px;background:var(--blue);flex-shrink:0;gap:12px;}
+.btn-back-white{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;text-decoration:none;}
+.btn-back-white svg{width:22px;height:22px;fill:#fff;}
+.page-title-white{font-family:"Berlin",sans-serif;font-size:20px;color:#fff;font-weight:400;flex:1;text-align:center;}
+.help-body{padding:20px;}
+.faq-section-title{font-family:"Berlin",sans-serif;font-size:18px;color:var(--blue);margin:24px 0 12px;}
+.faq-list{background:#fff;border-radius:14px;box-shadow:0 2px 10px rgba(23,42,58,0.08);overflow:hidden;}
+.faq-item{border-bottom:1px solid rgba(23,42,58,0.07);cursor:pointer;transition:background 0.1s;}
+.faq-item:last-child{border-bottom:none;}
+.faq-item:hover{background:rgba(23,42,58,0.02);}
+.faq-question{display:flex;align-items:center;justify-content:space-between;padding:16px;font-family:"Berlin",sans-serif;font-size:14px;color:var(--blue);font-weight:600;}
+.faq-arrow{font-size:20px;color:var(--dark-green);transition:transform 0.2s;flex-shrink:0;}
+.faq-item.open .faq-arrow{transform:rotate(90deg);}
+.faq-answer{display:none;padding:0 16px 16px;font-family:"Berlin",sans-serif;font-size:13px;color:rgba(23,42,58,0.6);line-height:1.6;}
+.faq-item.open .faq-answer{display:block;}
+.contact-box{background:var(--blue);border-radius:16px;padding:24px;text-align:center;margin-top:28px;}
+.contact-title{font-family:"Berlin",sans-serif;font-size:20px;color:#fff;margin-bottom:6px;}
+.contact-sub{font-family:"Berlin",sans-serif;font-size:13px;color:rgba(255,255,255,0.55);margin-bottom:16px;}
+.contact-btn{display:block;background:var(--dark-green);color:#fff;font-family:"Berlin",sans-serif;font-size:16px;padding:14px 32px;border-radius:50px;text-decoration:none;}
+</style>
+</body>
+</html>

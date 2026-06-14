@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>ShareBox — Editar Perfil</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#016e58">
+<link rel="stylesheet" href="css/global.css">
+<link rel="stylesheet" href="css/profile.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js"></script>
+<script src="js/auth.js"></script>
+</head>
+<body>
+<div class="page">
+
+  <header class="ep-header">
+    <a class="ep-back" href="profile.html">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+    </a>
+    <h1 class="ep-title">Editar Perfil</h1>
+    <div style="width:36px"></div>
+  </header>
+
+  <main class="scroll-content">
+
+    <!-- Avatar -->
+    <div class="ep-avatar-section">
+      <div class="ep-avatar" id="ep-avatar" onclick="document.getElementById('avatar-input').click()">
+        <img id="ep-avatar-img" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:50%">
+        <span id="ep-avatar-initial" style="font-size:36px;color:#fff;font-family:'Berlin',sans-serif"></span>
+        <div class="ep-avatar-overlay">
+          <svg viewBox="0 0 24 24" fill="white" width="24" height="24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" opacity="0"/><path d="M20 4h-3.17L15 2H9L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V6h4.05l1.83-2h4.24l1.83 2H20v12zM12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zm0 8c-1.65 0-3-1.35-3-3s1.35-3 3-3 3 1.35 3 3-1.35 3-3 3z"/></svg>
+        </div>
+      </div>
+      <input type="file" id="avatar-input" accept="image/jpeg,image/png,image/webp" style="display:none" onchange="previewAvatar(this)">
+      <button class="ep-change-btn" onclick="document.getElementById('avatar-input').click()">Alterar foto</button>
+      <p class="ep-hint">JPG, PNG ou WebP · Máx. 2MB</p>
+    </div>
+
+    <div class="ep-form">
+
+      <div id="ep-feedback"></div>
+
+      <div class="ep-field">
+        <label class="ep-label">Nome completo</label>
+        <input class="ep-input" type="text" id="edit-fullname" placeholder="O teu nome completo">
+      </div>
+
+      <div class="ep-field">
+        <label class="ep-label">Username</label>
+        <input class="ep-input" type="text" id="edit-username" placeholder="@username">
+      </div>
+
+      <div class="ep-field">
+        <label class="ep-label">Bio <span class="ep-optional">Opcional</span></label>
+        <textarea class="ep-textarea" id="edit-bio" rows="3" placeholder="Conta um pouco sobre ti..."></textarea>
+      </div>
+
+      <div class="ep-field">
+        <label class="ep-label">Localização <span class="ep-optional">Opcional</span></label>
+        <input class="ep-input" type="text" id="edit-location" placeholder="Ex: Porto, Portugal">
+      </div>
+
+      <button class="ep-save-btn" id="btn-save" onclick="saveProfile()">Guardar alterações</button>
+
+    </div>
+    <div style="height:40px"></div>
+  </main>
+
+</div>
+
+<script>
+let avatarFile = null;
+let currentUserId = null;
+
+document.addEventListener('DOMContentLoaded', async function () {
+  const session = await requireAuth();
+  if (!session) return;
+  currentUserId = session.user.id;
+
+  const { data: profile } = await supabaseClient
+    .from('profiles')
+    .select('full_name, username, bio, location, avatar_url')
+    .eq('id', currentUserId)
+    .maybeSingle();
+
+  if (!profile) return;
+
+  document.getElementById('edit-fullname').value = profile.full_name || '';
+  document.getElementById('edit-username').value  = profile.username  || '';
+  document.getElementById('edit-bio').value       = profile.bio       || '';
+  document.getElementById('edit-location').value  = profile.location  || '';
+
+  if (profile.avatar_url) {
+    document.getElementById('ep-avatar-img').src = profile.avatar_url;
+    document.getElementById('ep-avatar-img').style.display = 'block';
+    document.getElementById('ep-avatar-initial').style.display = 'none';
+  } else {
+    document.getElementById('ep-avatar-initial').textContent = (profile.full_name || 'U').charAt(0).toUpperCase();
+  }
+});
+
+function previewAvatar(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 2 * 1024 * 1024) {
+    showMsg('ep-feedback', 'A imagem não pode ter mais de 2MB.', 'error');
+    return;
+  }
+  avatarFile = file;
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('ep-avatar-img').src = e.target.result;
+    document.getElementById('ep-avatar-img').style.display = 'block';
+    document.getElementById('ep-avatar-initial').style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+}
+
+async function saveProfile() {
+  const btn = document.getElementById('btn-save');
+  btn.disabled = true;
+  btn.textContent = 'A guardar...';
+
+  try {
+    let avatarUrl = null;
+
+    // Upload avatar se houver ficheiro novo
+    if (avatarFile) {
+      const ext      = avatarFile.name.split('.').pop();
+      const filePath = `${currentUserId}/avatar.${ext}`;
+
+      const { error: uploadError } = await supabaseClient.storage
+        .from('avatars')
+        .upload(filePath, avatarFile, { upsert: true, contentType: avatarFile.type });
+
+      if (uploadError) throw new Error('Erro no upload: ' + uploadError.message);
+
+      const { data: urlData } = supabaseClient.storage
+        .from('avatars')
+        .getPublicUrl(filePath);
+
+      avatarUrl = urlData.publicUrl + '?t=' + Date.now(); // cache bust
+    }
+
+    const updates = {
+      full_name: document.getElementById('edit-fullname').value.trim(),
+      username:  document.getElementById('edit-username').value.trim(),
+      bio:       document.getElementById('edit-bio').value.trim(),
+      location:  document.getElementById('edit-location').value.trim(),
+    };
+    if (avatarUrl) updates.avatar_url = avatarUrl;
+
+    const { error } = await supabaseClient
+      .from('profiles')
+      .update(updates)
+      .eq('id', currentUserId);
+
+    if (error) throw error;
+
+    showMsg('ep-feedback', '✓ Perfil actualizado com sucesso!', 'success');
+    setTimeout(() => window.location.href = 'profile.html', 1500);
+
+  } catch (err) {
+    console.error(err);
+    showMsg('ep-feedback', 'Erro: ' + err.message, 'error');
+  }
+
+  btn.disabled = false;
+  btn.textContent = 'Guardar alterações';
+}
+
+function showMsg(id, msg, type) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = msg;
+  el.style.cssText = `display:block;padding:10px 14px;border-radius:8px;margin-bottom:16px;font-family:"Berlin",sans-serif;font-size:14px;color:${type==='error'?'#c0392b':'#016e58'};background:${type==='error'?'rgba(192,57,43,0.08)':'rgba(1,110,88,0.08)'};`;
+}
+</script>
+
+<style>
+.ep-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px;background:var(--blue);flex-shrink:0;gap:12px;}
+.ep-back{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;text-decoration:none;}
+.ep-back svg{width:22px;height:22px;fill:#fff;}
+.ep-title{font-family:"Berlin",sans-serif;font-size:20px;color:#fff;font-weight:400;flex:1;text-align:center;}
+.ep-avatar-section{display:flex;flex-direction:column;align-items:center;gap:10px;padding:28px 20px 20px;background:var(--blue);}
+.ep-avatar{width:90px;height:90px;border-radius:50%;background:var(--dark-green);border:3px solid var(--light-green);display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;position:relative;}
+.ep-avatar-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.35);display:flex;align-items:center;justify-content:center;border-radius:50%;opacity:0;transition:opacity 0.2s;}
+.ep-avatar:hover .ep-avatar-overlay{opacity:1;}
+.ep-change-btn{font-family:"Berlin",sans-serif;font-size:14px;color:rgba(255,255,255,0.8);background:transparent;border:1px solid rgba(255,255,255,0.3);padding:7px 18px;border-radius:50px;cursor:pointer;}
+.ep-hint{font-family:"Berlin",sans-serif;font-size:11px;color:rgba(255,255,255,0.4);}
+.ep-form{padding:20px;}
+.ep-field{margin-bottom:16px;}
+.ep-label{font-family:"Berlin",sans-serif;font-size:15px;color:var(--blue);display:block;margin-bottom:8px;}
+.ep-optional{color:rgba(23,42,58,0.4);font-size:13px;}
+.ep-input{width:100%;height:48px;background:#fff;border:1px solid rgba(23,42,58,0.12);border-radius:12px;padding:0 14px;font-family:"Berlin",sans-serif;font-size:14px;color:var(--blue);outline:none;box-shadow:0 2px 10px rgba(23,42,58,0.08);}
+.ep-input:focus{border-color:var(--dark-green);}
+.ep-textarea{width:100%;background:#fff;border:1px solid rgba(23,42,58,0.12);border-radius:12px;padding:12px 14px;font-family:"Berlin",sans-serif;font-size:14px;color:var(--blue);outline:none;resize:none;min-height:90px;box-shadow:0 2px 10px rgba(23,42,58,0.08);line-height:1.5;}
+.ep-textarea:focus{border-color:var(--dark-green);}
+.ep-save-btn{width:100%;padding:16px;background:var(--dark-green);color:#fff;font-family:"Berlin",sans-serif;font-size:18px;border:none;border-radius:50px;cursor:pointer;margin-top:8px;}
+.ep-save-btn:hover{background:var(--light-green);}
+</style>
+</body>
+</html>

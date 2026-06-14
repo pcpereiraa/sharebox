@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ShareBox — Admin</title>
+<link rel="stylesheet" href="admin.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<div class="admin-layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <img src="../images/Logo/logoinicial.png" alt="ShareBox">
+      <span>Admin</span>
+    </div>
+    <nav class="sidebar-nav">
+      <a class="nav-link active" href="index.html" data-page="dashboard">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+        Dashboard
+      </a>
+      <a class="nav-link" href="users.html" data-page="users">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+        Utilizadores
+      </a>
+      <a class="nav-link" href="items.html" data-page="items">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 6h-2.18c.07-.44.18-.88.18-1.33C18 2.54 15.96.5 13.5.5c-1.5 0-2.81.75-3.6 1.88L9 3.5l-.9-1.13C7.31 1.25 6 .5 4.5.5 2.04.5 0 2.54 0 4.67c0 .45.11.89.18 1.33H0v2h20V6zM9 19h6l1-8H8l1 8z"/></svg>
+        Itens
+      </a>
+      <a class="nav-link" href="communities.html" data-page="communities">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+        Comunidades
+      </a>
+      <a class="nav-link" href="reports.html" data-page="reports">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+        Reportes
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="admin-user">
+        <div class="admin-avatar" id="admin-avatar"></div>
+        <div class="admin-info">
+          <div class="admin-name" id="admin-name">Carregando...</div>
+          <div class="admin-role">Administrador</div>
+        </div>
+      </div>
+      <button class="btn-logout" id="logout-btn">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
+        Sair
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <main class="main-content">
+
+    <div class="page-header">
+      <h1 class="page-title">Dashboard</h1>
+      <span class="page-date" id="current-date"></span>
+    </div>
+
+    <!-- Stats cards -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon users">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+        </div>
+        <div class="stat-info">
+          <div class="stat-value" id="stat-users">—</div>
+          <div class="stat-label">Utilizadores</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon items">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 6h-2.18c.07-.44.18-.88.18-1.33C18 2.54 15.96.5 13.5.5c-1.5 0-2.81.75-3.6 1.88L9 3.5l-.9-1.13C7.31 1.25 6 .5 4.5.5 2.04.5 0 2.54 0 4.67c0 .45.11.89.18 1.33H0v2h20V6zM9 19h6l1-8H8l1 8z"/></svg>
+        </div>
+        <div class="stat-info">
+          <div class="stat-value" id="stat-items">—</div>
+          <div class="stat-label">Itens publicados</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon communities">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+        </div>
+        <div class="stat-info">
+          <div class="stat-value" id="stat-communities">—</div>
+          <div class="stat-label">Comunidades</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon requests">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+        </div>
+        <div class="stat-info">
+          <div class="stat-value" id="stat-requests">—</div>
+          <div class="stat-label">Pedidos</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tables row -->
+    <div class="tables-row">
+
+      <!-- Recent users -->
+      <div class="table-card">
+        <div class="table-card-header">
+          <h2>Utilizadores recentes</h2>
+          <a href="users.html" class="link-ver-todos">Ver todos →</a>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Username</th>
+              <th>Admin</th>
+              <th>Criado em</th>
+            </tr>
+          </thead>
+          <tbody id="users-table-body">
+            <tr><td colspan="4" class="loading-row">A carregar...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Recent items -->
+      <div class="table-card">
+        <div class="table-card-header">
+          <h2>Itens recentes</h2>
+          <a href="items.html" class="link-ver-todos">Ver todos →</a>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Título</th>
+              <th>Estado</th>
+              <th>Tipo</th>
+              <th>Data</th>
+            </tr>
+          </thead>
+          <tbody id="items-table-body">
+            <tr><td colspan="4" class="loading-row">A carregar...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+    <!-- Recent communities -->
+    <div class="table-card" style="margin-top:24px">
+      <div class="table-card-header">
+        <h2>Comunidades recentes</h2>
+        <a href="communities.html" class="link-ver-todos">Ver todos →</a>
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Criador</th>
+            <th>Privada</th>
+            <th>Criada em</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="communities-table-body">
+          <tr><td colspan="5" class="loading-row">A carregar...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://ijswdmvksmqldhkyghwr.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlqc3dkbXZrc21xbGRoa3lnaHdyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg3NjYxODgsImV4cCI6MjA5NDM0MjE4OH0.8JuKWiWxKQ0GN-7MmfIcuZE1BAfbNR3oxPMY89amBAM';
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// ── Guard: só admins ─────────────────────────────────
+async function adminGuard() {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) { window.location.href = '../login.html'; return false; }
+  const { data } = await sb.from('profiles').select('is_admin, full_name').eq('id', session.user.id).single();
+  if (!data?.is_admin) { window.location.href = '../home.html'; return false; }
+  document.getElementById('admin-name').textContent = data.full_name || 'Admin';
+  document.getElementById('admin-avatar').textContent = (data.full_name || 'A')[0].toUpperCase();
+  return true;
+}
+
+// ── Logout ───────────────────────────────────────────
+document.getElementById('logout-btn').addEventListener('click', async () => {
+  await sb.auth.signOut();
+  window.location.href = '../login.html';
+});
+
+// ── Data atual ───────────────────────────────────────
+document.getElementById('current-date').textContent = new Date().toLocaleDateString('pt-PT', {
+  weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+});
+
+// ── Carregar stats ───────────────────────────────────
+async function loadStats() {
+  const [users, items, communities, requests] = await Promise.all([
+    sb.from('profiles').select('*', { count: 'exact', head: true }),
+    sb.from('items').select('*', { count: 'exact', head: true }),
+    sb.from('communities').select('*', { count: 'exact', head: true }),
+    sb.from('requests').select('*', { count: 'exact', head: true }),
+  ]);
+  document.getElementById('stat-users').textContent = users.count ?? 0;
+  document.getElementById('stat-items').textContent = items.count ?? 0;
+  document.getElementById('stat-communities').textContent = communities.count ?? 0;
+  document.getElementById('stat-requests').textContent = requests.count ?? 0;
+}
+
+// ── Carregar utilizadores recentes ───────────────────
+async function loadUsers() {
+  const { data } = await sb.from('profiles').select('full_name, username, is_admin, created_at').order('created_at', { ascending: false }).limit(5);
+  const tbody = document.getElementById('users-table-body');
+  if (!data?.length) { tbody.innerHTML = '<tr><td colspan="4" class="empty-row">Sem utilizadores</td></tr>'; return; }
+  tbody.innerHTML = data.map(u => `
+    <tr>
+      <td>${u.full_name || '—'}</td>
+      <td class="text-muted">@${u.username || '—'}</td>
+      <td>${u.is_admin ? '<span class="badge admin">Admin</span>' : '<span class="badge user">User</span>'}</td>
+      <td class="text-muted">${formatDate(u.created_at)}</td>
+    </tr>
+  `).join('');
+}
+
+// ── Carregar itens recentes ──────────────────────────
+async function loadItems() {
+  const { data } = await sb.from('items').select('title, condition, type, status, created_at').order('created_at', { ascending: false }).limit(5);
+  const tbody = document.getElementById('items-table-body');
+  if (!data?.length) { tbody.innerHTML = '<tr><td colspan="4" class="empty-row">Sem itens</td></tr>'; return; }
+  tbody.innerHTML = data.map(i => `
+    <tr>
+      <td>${i.title || '—'}</td>
+      <td><span class="badge ${i.status === 'disponível' ? 'available' : 'other'}">${i.status || '—'}</span></td>
+      <td class="text-muted">${i.type || '—'}</td>
+      <td class="text-muted">${formatDate(i.created_at)}</td>
+    </tr>
+  `).join('');
+}
+
+// ── Carregar comunidades recentes ────────────────────
+async function loadCommunities() {
+  const { data } = await sb.from('communities').select('name, is_private, created_at, owner_id, profiles(full_name)').order('created_at', { ascending: false }).limit(5);
+  const tbody = document.getElementById('communities-table-body');
+  if (!data?.length) { tbody.innerHTML = '<tr><td colspan="5" class="empty-row">Sem comunidades</td></tr>'; return; }
+  tbody.innerHTML = data.map(c => `
+    <tr>
+      <td>${c.name || '—'}</td>
+      <td class="text-muted">${c.profiles?.full_name || '—'}</td>
+      <td>${c.is_private ? '<span class="badge private">Privada</span>' : '<span class="badge public">Pública</span>'}</td>
+      <td class="text-muted">${formatDate(c.created_at)}</td>
+      <td>
+        <button class="btn-action delete" onclick="deleteCommunity('${c.owner_id}')">Eliminar</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+async function deleteCommunity(id) {
+  if (!confirm('Tens a certeza que queres eliminar esta comunidade?')) return;
+  await sb.from('communities').delete().eq('owner_id', id);
+  loadCommunities();
+}
+
+function formatDate(iso) {
+  if (!iso) return '—';
+  return new Date(iso).toLocaleDateString('pt-PT', { day: '2-digit', month: '2-digit', year: 'numeric' });
+}
+
+// ── Init ─────────────────────────────────────────────
+async function init() {
+  const ok = await adminGuard();
+  if (!ok) return;
+  await Promise.all([loadStats(), loadUsers(), loadItems(), loadCommunities()]);
+}
+
+init();
+</script>
+</body>
+</html>
