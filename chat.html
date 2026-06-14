@@ -17,12 +17,12 @@
       <svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
     </a>
     <div class="chat-avatar-wrap">
-      <div class="chat-avatar"></div>
+      <div class="chat-avatar" id="chat-avatar"></div>
       <span class="online-dot active"></span>
     </div>
     <div class="chat-header-info">
-      <div class="chat-name">Ana Rodrigues</div>
-      <div class="chat-status"><span class="online-indicator"></span> Online agora</div>
+      <div class="chat-name" id="chat-name">...</div>
+      <div class="chat-status" id="chat-status"><span class="online-indicator"></span> Online agora</div>
     </div>
     <button class="chat-menu-btn">
       <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
@@ -30,8 +30,7 @@
   </header>
 
   <!-- Item card -->
-  <div class="item-reference">
-    <div class="item-ref-thumb" style="background:#b2dfdb"></div>
+  <div class="item-reference" id="item-reference"></div>
     <div class="item-ref-info">
       <div class="item-ref-name">Nome do item</div>
       <div class="item-ref-meta">Doação · Bolhão, Porto</div>
@@ -39,105 +38,24 @@
     <span class="item-ref-badge">Disponível</span>
   </div>
 
-  <!-- Messages -->
-  <main class="chat-messages" id="chat-messages">
-
-    <div class="date-separator">
-      <span>Hoje</span>
-    </div>
-
-    <!-- Received -->
-    <div class="msg-row received">
-      <div class="msg-avatar"></div>
-      <div class="msg-bubble received">
-        <div class="msg-text">Olá! Ainda tens o livro disponível?</div>
-        <div class="msg-time">14:28</div>
-      </div>
-    </div>
-
-    <!-- Sent -->
-    <div class="msg-row sent">
-      <div class="msg-bubble sent">
-        <div class="msg-text">Olá Ana! Sim, está disponível 😊</div>
-        <div class="msg-time-row">
-          <span class="msg-time">14:29</span>
-          <span class="msg-ticks">✓✓</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Received -->
-    <div class="msg-row received">
-      <div class="msg-avatar"></div>
-      <div class="msg-bubble received">
-        <div class="msg-text">Óptimo! Posso ir buscar amanhã de manhã?</div>
-        <div class="msg-time">14:30</div>
-      </div>
-    </div>
-
-    <!-- Sent -->
-    <div class="msg-row sent">
-      <div class="msg-bubble sent">
-        <div class="msg-text">Claro, sem problema. Estou no Bolhão.</div>
-        <div class="msg-time-row">
-          <span class="msg-time">14:31</span>
-          <span class="msg-ticks">✓✓</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Received -->
-    <div class="msg-row received">
-      <div class="msg-avatar"></div>
-      <div class="msg-bubble received">
-        <div class="msg-text">Boa! Posso ir buscar amanhã?</div>
-        <div class="msg-time">14:32</div>
-      </div>
-    </div>
-
-  </main>
+  <main class="chat-messages" id="chat-messages"></main>
 
   <!-- Input bar -->
   <div class="chat-input-bar">
     <button class="chat-attach-btn">
       <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
     </button>
-    <input class="chat-input" type="text" placeholder="Escreve uma mensagem..." id="msg-input" onkeydown="handleEnter(event)">
-    <button class="chat-send-btn" onclick="sendMessage()">
+    <input class="chat-input" type="text" placeholder="Escreve uma mensagem..." id="msg-input" id="msg-input">
+    <button class="chat-send-btn" id="send-btn">
       <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
     </button>
   </div>
 
 </div>
 
-<script>
-function sendMessage() {
-  const input = document.getElementById('msg-input');
-  const text = input.value.trim();
-  if (!text) return;
-
-  const container = document.getElementById('chat-messages');
-  const now = new Date();
-  const time = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
-
-  const row = document.createElement('div');
-  row.className = 'msg-row sent';
-  row.innerHTML = `
-    <div class="msg-bubble sent">
-      <div class="msg-text">${text}</div>
-      <div class="msg-time-row">
-        <span class="msg-time">${time}</span>
-        <span class="msg-ticks">✓</span>
-      </div>
-    </div>
-  `;
-  container.appendChild(row);
-  input.value = '';
-  container.scrollTop = container.scrollHeight;
-}
-function handleEnter(e) {
-  if (e.key === 'Enter') sendMessage();
-}
-</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/chat.js"></script>
 </body>
 </html>
