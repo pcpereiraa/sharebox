@@ -2,82 +2,68 @@
   "name": "ShareBox",
   "short_name": "ShareBox",
   "description": "Partilha e troca de objetos na tua comunidade",
-  "start_url": "/home.html",
+  "start_url": "home.html",
   "display": "standalone",
   "orientation": "portrait-primary",
   "background_color": "#f5f5eb",
   "theme_color": "#016e58",
   "lang": "pt",
-  "scope": "/",
+  "scope": "./",
   "icons": [
     {
-      "src": "images/Logo/logoinicial.png",
+      "src": "images/Logo/logo_manifest.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "images/Logo/logoinicial.png",
+      "src": "images/Logo/logo_manifestG.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "images/Logo/logo_white.png",
+      "src": "images/Logo/logo_manifestwhite.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
     }
   ],
-  "screenshots": [
-    {
-      "src": "images/Banner/Billboard.png",
-      "sizes": "1200x400",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "ShareBox — Partilha mais, desperdiça menos"
-    }
-  ],
+"screenshots": [
+  {
+    "src": "images/banner/screen_manifest.png",
+    "sizes": "1080x1920",
+    "type": "image/png"
+  },
+  {
+    "src": "images/banner/screen2_manifest.png",
+    "sizes": "1920x1080",
+    "type": "image/png",
+    "form_factor": "wide" 
+  }
+],
   "categories": ["lifestyle", "social", "shopping"],
   "shortcuts": [
     {
       "name": "Adicionar item",
       "short_name": "Adicionar",
       "description": "Publica um novo item para doação",
-      "url": "/add-item.html",
-      "icons": [
-        {
-          "src": "images/Icons/add_circle.png",
-          "sizes": "96x96",
-          "type": "image/png"
-        }
-      ]
+      "url": "add_item.html",
+      "icons": [{ "src": "images/Icons/add_circle_manifest.png", "sizes": "96x96", "type": "image/png" }]
     },
     {
       "name": "Mensagens",
       "short_name": "Mensagens",
       "description": "Ver as tuas mensagens",
-      "url": "/messages.html",
-      "icons": [
-        {
-          "src": "images/Icons/business_messages.png",
-          "sizes": "96x96",
-          "type": "image/png"
-        }
-      ]
+      "url": "messages.html",
+      "icons": [{ "src": "images/Icons/messages_manifest.png", "sizes": "96x96", "type": "image/png" }]
     },
     {
       "name": "Comunidades",
       "short_name": "Comunidades",
       "description": "Explorar comunidades",
-      "url": "/communities.html",
-      "icons": [
-        {
-          "src": "images/Icons/icone2@4x-8.png",
-          "sizes": "96x96",
-          "type": "image/png"
-        }
-      ]
+      "url": "communities.html",
+      "icons": [{ "src": "images/Icons/community_manifest.png", "sizes": "96x96", "type": "image/png" }]
     }
   ]
 }
