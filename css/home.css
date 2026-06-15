@@ -635,3 +635,17 @@ body {
 .comm-add-icon-sm {
   width: 24px; height: 24px; object-fit: contain; flex-shrink: 0;
 }
+/* ── Categoria activa ───────────────────────────────── */
+.cat-card.active .cat-thumb {
+  background: var(--dark-green);
+  transform: scale(1.05);
+}
+.cat-card.active .cat-thumb img,
+.cat-card.active .cat-thumb svg {
+  filter: brightness(0) invert(1);
+  opacity: 1;
+}
+.cat-card.active .cat-label {
+  color: var(--dark-green);
+  font-weight: 600;
+}

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ShareBox Admin — Comunidades</title>
+<link rel="stylesheet" href="admin.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+<div class="admin-layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-logo"><img src="../images/Logo/logoinicial.png" alt="ShareBox"><span>Admin</span></div>
+    <nav class="sidebar-nav">
+      <a class="nav-link" href="index.html"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>Dashboard</a>
+      <a class="nav-link" href="users.html"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>Utilizadores</a>
+      <a class="nav-link" href="items.html"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 6h-2.18c.07-.44.18-.88.18-1.33C18 2.54 15.96.5 13.5.5c-1.5 0-2.81.75-3.6 1.88L9 3.5l-.9-1.13C7.31 1.25 6 .5 4.5.5 2.04.5 0 2.54 0 4.67c0 .45.11.89.18 1.33H0v2h20V6zM9 19h6l1-8H8l1 8z"/></svg>Itens</a>
+      <a class="nav-link active" href="communities.html"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>Comunidades</a>
+      <a class="nav-link" href="reports.html"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>Reportes</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="admin-user"><div class="admin-avatar" id="admin-avatar"></div><div class="admin-info"><div class="admin-name" id="admin-name">Admin</div><div class="admin-role">Administrador</div></div></div>
+      <button class="btn-logout" id="logout-btn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>Sair</button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="page-header">
+      <h1 class="page-title">Comunidades</h1>
+      <span class="page-date" id="current-date"></span>
+    </div>
+
+    <div class="stats-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:28px">
+      <div class="stat-card"><div class="stat-icon communities"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></div><div class="stat-info"><div class="stat-value" id="stat-total">—</div><div class="stat-label">Total</div></div></div>
+      <div class="stat-card"><div class="stat-icon items"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg></div><div class="stat-info"><div class="stat-value" id="stat-public">—</div><div class="stat-label">Públicas</div></div></div>
+      <div class="stat-card"><div class="stat-icon requests"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2z"/></svg></div><div class="stat-info"><div class="stat-value" id="stat-private">—</div><div class="stat-label">Privadas</div></div></div>
+    </div>
+
+    <div class="table-card">
+      <div class="table-card-header">
+        <h2>Todas as comunidades</h2>
+        <input type="text" id="search-input" placeholder="Pesquisar..." style="padding:8px 14px;border:1px solid rgba(23,42,58,0.15);border-radius:8px;font-family:'Berlin',sans-serif;font-size:13px;outline:none;width:220px">
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr><th>Imagem</th><th>Nome</th><th>Criador</th><th>Localização</th><th>Membros</th><th>Visibilidade</th><th>Criada em</th><th>Ações</th></tr>
+        </thead>
+        <tbody id="comms-tbody">
+          <tr><td colspan="8" class="loading-row">A carregar...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://ijswdmvksmqldhkyghwr.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlqc3dkbXZrc21xbGRoa3lnaHdyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg3NjYxODgsImV4cCI6MjA5NDM0MjE4OH0.8JuKWiWxKQ0GN-7MmfIcuZE1BAfbNR3oxPMY89amBAM';
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+let allComms = []; let memberMap = {};
+
+async function adminGuard() {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) { window.location.href = '../login.html'; return false; }
+  const { data } = await sb.from('profiles').select('is_admin, full_name').eq('id', session.user.id).single();
+  if (!data?.is_admin) { window.location.href = '../home.html'; return false; }
+  document.getElementById('admin-name').textContent = data.full_name || 'Admin';
+  document.getElementById('admin-avatar').textContent = (data.full_name || 'A')[0].toUpperCase();
+  return true;
+}
+
+document.getElementById('logout-btn').addEventListener('click', async () => { await sb.auth.signOut(); window.location.href = '../login.html'; });
+document.getElementById('current-date').textContent = new Date().toLocaleDateString('pt-PT', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+
+async function loadCommunities() {
+  const { data: comms } = await sb.from('communities').select('id, name, image_url, location, is_private, created_at, owner_id').order('created_at', { ascending: false });
+  allComms = comms || [];
+
+  const ownerIds = [...new Set(allComms.map(c => c.owner_id).filter(Boolean))];
+  const commIds  = allComms.map(c => c.id);
+
+  const [{ data: profiles }, { data: members }] = await Promise.all([
+    sb.from('profiles').select('id, full_name').in('id', ownerIds),
+    sb.from('communities_members').select('community_id').in('community_id', commIds)
+  ]);
+
+  const profileMap = {};
+  (profiles||[]).forEach(p => { profileMap[p.id] = p.full_name; });
+  memberMap = {};
+  (members||[]).forEach(m => { memberMap[m.community_id] = (memberMap[m.community_id]||0)+1; });
+
+  document.getElementById('stat-total').textContent   = allComms.length;
+  document.getElementById('stat-public').textContent  = allComms.filter(c => !c.is_private).length;
+  document.getElementById('stat-private').textContent = allComms.filter(c => c.is_private).length;
+
+  renderComms(allComms, profileMap);
+  window._profileMap = profileMap;
+}
+
+function renderComms(comms, profileMap) {
+  profileMap = profileMap || window._profileMap || {};
+  const tbody = document.getElementById('comms-tbody');
+  if (!comms.length) { tbody.innerHTML = '<tr><td colspan="8" class="empty-row">Sem comunidades</td></tr>'; return; }
+  tbody.innerHTML = comms.map(c => `<tr>
+    <td>${c.image_url ? `<img src="${c.image_url}" style="width:48px;height:48px;object-fit:cover;border-radius:8px">` : '<div style="width:48px;height:48px;background:#f0f2f5;border-radius:8px"></div>'}</td>
+    <td><strong>${c.name||'—'}</strong></td>
+    <td class="text-muted">${profileMap[c.owner_id]||'—'}</td>
+    <td class="text-muted">${c.location||'—'}</td>
+    <td class="text-muted">${memberMap[c.id]||0} membros</td>
+    <td><span class="badge ${c.is_private?'private':'public'}">${c.is_private?'Privada':'Pública'}</span></td>
+    <td class="text-muted">${formatDate(c.created_at)}</td>
+    <td><button class="btn-action delete" onclick="deleteComm('${c.id}')">Eliminar</button></td>
+  </tr>`).join('');
+}
+
+document.getElementById('search-input').addEventListener('input', function() {
+  const q = this.value.toLowerCase();
+  renderComms(q ? allComms.filter(c => (c.name||'').toLowerCase().includes(q) || (c.location||'').toLowerCase().includes(q)) : allComms);
+});
+
+async function deleteComm(id) {
+  if (!confirm('Tens a certeza que queres eliminar esta comunidade?')) return;
+  await sb.from('communities_members').delete().eq('community_id', id);
+  await sb.from('communities').delete().eq('id', id);
+  loadCommunities();
+}
+
+function formatDate(iso) { return iso ? new Date(iso).toLocaleDateString('pt-PT', { day:'2-digit', month:'2-digit', year:'numeric' }) : '—'; }
+async function init() { const ok = await adminGuard(); if (ok) loadCommunities(); }
+init();
+</script>
+</body>
+</html>
