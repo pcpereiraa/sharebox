@@ -30,116 +30,7 @@
     </div>
 
     <!-- Conversation list -->
-    <div class="conv-list">
-
-      <a class="conv-item unread" href="chat.html">
-        <div class="conv-avatar-wrap">
-          <div class="conv-avatar" style="background:#b2dfdb"></div>
-          <span class="online-dot"></span>
-        </div>
-        <div class="conv-info">
-          <div class="conv-name">Ana Rodrigues</div>
-          <div class="conv-preview">Boa! Posso ir buscar amanhã?</div>
-        </div>
-        <div class="conv-meta">
-          <span class="conv-time">14:32</span>
-          <span class="conv-unread-dot"></span>
-        </div>
-      </a>
-      <div class="conv-divider"></div>
-
-      <a class="conv-item" href="chat.html">
-        <div class="conv-avatar-wrap">
-          <div class="conv-avatar" style="background:#b2dfdb"></div>
-          <span class="online-dot"></span>
-        </div>
-        <div class="conv-info">
-          <div class="conv-name">João Silva</div>
-          <div class="conv-preview">Obrigado pela doação 🙏</div>
-        </div>
-        <div class="conv-meta">
-          <span class="conv-time">13:15</span>
-        </div>
-      </a>
-      <div class="conv-divider"></div>
-
-      <a class="conv-item unread" href="chat.html">
-        <div class="conv-avatar-wrap">
-          <div class="conv-avatar" style="background:#b2dfdb"></div>
-          <span class="online-dot"></span>
-        </div>
-        <div class="conv-info">
-          <div class="conv-name">Sofia Costa</div>
-          <div class="conv-preview">Ainda tens a planta disponível?</div>
-        </div>
-        <div class="conv-meta">
-          <span class="conv-time">Ontem</span>
-          <span class="conv-unread-dot"></span>
-        </div>
-      </a>
-      <div class="conv-divider"></div>
-
-      <a class="conv-item" href="chat.html">
-        <div class="conv-avatar-wrap">
-          <div class="conv-avatar" style="background:#b2dfdb"></div>
-          <span class="online-dot"></span>
-        </div>
-        <div class="conv-info">
-          <div class="conv-name">Miguel Ferreira</div>
-          <div class="conv-preview">Perfeito, até logo então!</div>
-        </div>
-        <div class="conv-meta">
-          <span class="conv-time">Ontem</span>
-        </div>
-      </a>
-      <div class="conv-divider"></div>
-
-      <a class="conv-item unread" href="chat.html">
-        <div class="conv-avatar-wrap">
-          <div class="conv-avatar" style="background:#b2dfdb"></div>
-          <span class="online-dot"></span>
-        </div>
-        <div class="conv-info">
-          <div class="conv-name">Carla Mendes</div>
-          <div class="conv-preview">Onde fica exactamente?</div>
-        </div>
-        <div class="conv-meta">
-          <span class="conv-time">Seg</span>
-          <span class="conv-unread-dot"></span>
-        </div>
-      </a>
-      <div class="conv-divider"></div>
-
-      <a class="conv-item" href="chat.html">
-        <div class="conv-avatar-wrap">
-          <div class="conv-avatar" style="background:#b2dfdb"></div>
-          <span class="online-dot"></span>
-        </div>
-        <div class="conv-info">
-          <div class="conv-name">Rui Pereira</div>
-          <div class="conv-preview">Muito bem conservado, obrigado</div>
-        </div>
-        <div class="conv-meta">
-          <span class="conv-time">Dom</span>
-        </div>
-      </a>
-      <div class="conv-divider"></div>
-
-      <a class="conv-item" href="chat.html">
-        <div class="conv-avatar-wrap">
-          <div class="conv-avatar" style="background:#80cbc4"></div>
-          <span class="online-dot active"></span>
-        </div>
-        <div class="conv-info">
-          <div class="conv-name">Inês Gomes</div>
-          <div class="conv-preview">Posso trocar por um livro?</div>
-        </div>
-        <div class="conv-meta">
-          <span class="conv-time">Sáb</span>
-        </div>
-      </a>
-
-    </div>
+    <div class="conv-list" id="conv-list"></div>
 
     <div style="height: 90px"></div>
   </main>
@@ -154,5 +45,9 @@
   </nav>
 
 </div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/messages.js"></script>
 </body>
 </html>
