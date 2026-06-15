@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ShareBox Admin — Itens</title>
+<link rel="stylesheet" href="admin.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+<div class="admin-layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-logo"><img src="../images/Logo/logoinicial.png" alt="ShareBox"><span>Admin</span></div>
+    <nav class="sidebar-nav">
+      <a class="nav-link" href="index.html"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>Dashboard</a>
+      <a class="nav-link" href="users.html"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>Utilizadores</a>
+      <a class="nav-link active" href="items.html"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 6h-2.18c.07-.44.18-.88.18-1.33C18 2.54 15.96.5 13.5.5c-1.5 0-2.81.75-3.6 1.88L9 3.5l-.9-1.13C7.31 1.25 6 .5 4.5.5 2.04.5 0 2.54 0 4.67c0 .45.11.89.18 1.33H0v2h20V6zM9 19h6l1-8H8l1 8z"/></svg>Itens</a>
+      <a class="nav-link" href="communities.html"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>Comunidades</a>
+      <a class="nav-link" href="reports.html"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>Reportes</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="admin-user"><div class="admin-avatar" id="admin-avatar"></div><div class="admin-info"><div class="admin-name" id="admin-name">Admin</div><div class="admin-role">Administrador</div></div></div>
+      <button class="btn-logout" id="logout-btn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>Sair</button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="page-header">
+      <h1 class="page-title">Itens</h1>
+      <span class="page-date" id="current-date"></span>
+    </div>
+
+    <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:28px">
+      <div class="stat-card"><div class="stat-icon items"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 6h-2.18c.07-.44.18-.88.18-1.33C18 2.54 15.96.5 13.5.5c-1.5 0-2.81.75-3.6 1.88L9 3.5l-.9-1.13C7.31 1.25 6 .5 4.5.5 2.04.5 0 2.54 0 4.67c0 .45.11.89.18 1.33H0v2h20V6zM9 19h6l1-8H8l1 8z"/></svg></div><div class="stat-info"><div class="stat-value" id="stat-total">—</div><div class="stat-label">Total</div></div></div>
+      <div class="stat-card"><div class="stat-icon communities"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></div><div class="stat-info"><div class="stat-value" id="stat-available">—</div><div class="stat-label">Disponíveis</div></div></div>
+      <div class="stat-card"><div class="stat-icon requests"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg></div><div class="stat-info"><div class="stat-value" id="stat-donated">—</div><div class="stat-label">Doados</div></div></div>
+      <div class="stat-card"><div class="stat-icon users"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg></div><div class="stat-info"><div class="stat-value" id="stat-pending">—</div><div class="stat-label">Pendentes</div></div></div>
+    </div>
+
+    <div class="table-card">
+      <div class="table-card-header">
+        <h2>Todos os itens</h2>
+        <div style="display:flex;gap:10px;align-items:center">
+          <input type="text" id="search-input" placeholder="Pesquisar..." style="padding:8px 14px;border:1px solid rgba(23,42,58,0.15);border-radius:8px;font-family:'Berlin',sans-serif;font-size:13px;outline:none;width:200px">
+          <select id="filter-status" style="padding:8px 14px;border:1px solid rgba(23,42,58,0.15);border-radius:8px;font-family:'Berlin',sans-serif;font-size:13px;outline:none;cursor:pointer">
+            <option value="">Todos os estados</option>
+            <option value="disponivel">Disponível</option>
+            <option value="doado">Doado</option>
+            <option value="pendente">Pendente</option>
+            <option value="expirado">Expirado</option>
+          </select>
+        </div>
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr><th>Imagem</th><th>Título</th><th>Dono</th><th>Categoria</th><th>Estado</th><th>Localização</th><th>Data</th><th>Ações</th></tr>
+        </thead>
+        <tbody id="items-tbody">
+          <tr><td colspan="8" class="loading-row">A carregar...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://ijswdmvksmqldhkyghwr.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlqc3dkbXZrc21xbGRoa3lnaHdyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg3NjYxODgsImV4cCI6MjA5NDM0MjE4OH0.8JuKWiWxKQ0GN-7MmfIcuZE1BAfbNR3oxPMY89amBAM';
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+let allItems = [];
+
+async function adminGuard() {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) { window.location.href = '../login.html'; return false; }
+  const { data } = await sb.from('profiles').select('is_admin, full_name').eq('id', session.user.id).single();
+  if (!data?.is_admin) { window.location.href = '../home.html'; return false; }
+  document.getElementById('admin-name').textContent = data.full_name || 'Admin';
+  document.getElementById('admin-avatar').textContent = (data.full_name || 'A')[0].toUpperCase();
+  return true;
+}
+
+document.getElementById('logout-btn').addEventListener('click', async () => { await sb.auth.signOut(); window.location.href = '../login.html'; });
+document.getElementById('current-date').textContent = new Date().toLocaleDateString('pt-PT', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+
+async function loadItems() {
+  const { data: items } = await sb.from('items').select('id, title, condition, status, location, created_at, owner_id, category_id').order('created_at', { ascending: false });
+  allItems = items || [];
+
+  // Buscar imagens e perfis
+  const ids = allItems.map(i => i.id);
+  const ownerIds = [...new Set(allItems.map(i => i.owner_id).filter(Boolean))];
+
+  const [{ data: images }, { data: profiles }] = await Promise.all([
+    sb.from('item_images').select('item_id, image_url').in('item_id', ids),
+    sb.from('profiles').select('id, full_name').in('id', ownerIds)
+  ]);
+
+  const imgMap = {};
+  (images||[]).forEach(img => { if (!imgMap[img.item_id]) imgMap[img.item_id] = img.image_url; });
+  const profileMap = {};
+  (profiles||[]).forEach(p => { profileMap[p.id] = p.full_name; });
+
+  // Stats
+  document.getElementById('stat-total').textContent     = allItems.length;
+  document.getElementById('stat-available').textContent = allItems.filter(i => i.status === 'disponivel').length;
+  document.getElementById('stat-donated').textContent   = allItems.filter(i => i.status === 'doado').length;
+  document.getElementById('stat-pending').textContent   = allItems.filter(i => i.status === 'pendente').length;
+
+  renderItems(allItems, imgMap, profileMap);
+  window._imgMap = imgMap;
+  window._profileMap = profileMap;
+}
+
+function renderItems(items, imgMap, profileMap) {
+  imgMap     = imgMap     || window._imgMap     || {};
+  profileMap = profileMap || window._profileMap || {};
+  const tbody = document.getElementById('items-tbody');
+  if (!items.length) { tbody.innerHTML = '<tr><td colspan="8" class="empty-row">Sem itens</td></tr>'; return; }
+  tbody.innerHTML = items.map(item => {
+    const img = imgMap[item.id];
+    const statusCls = item.status === 'disponivel' ? 'available' : 'other';
+    return `<tr>
+      <td>${img ? `<img src="${img}" style="width:48px;height:48px;object-fit:cover;border-radius:8px">` : '<div style="width:48px;height:48px;background:#f0f2f5;border-radius:8px"></div>'}</td>
+      <td><strong>${item.title||'—'}</strong></td>
+      <td class="text-muted">${profileMap[item.owner_id]||'—'}</td>
+      <td class="text-muted">${item.condition||'—'}</td>
+      <td><span class="badge ${statusCls}">${item.status||'—'}</span></td>
+      <td class="text-muted">${item.location||'—'}</td>
+      <td class="text-muted">${formatDate(item.created_at)}</td>
+      <td><button class="btn-action delete" onclick="deleteItem('${item.id}')">Eliminar</button></td>
+    </tr>`;
+  }).join('');
+}
+
+document.getElementById('search-input').addEventListener('input', filterItems);
+document.getElementById('filter-status').addEventListener('change', filterItems);
+function filterItems() {
+  const q      = document.getElementById('search-input').value.toLowerCase();
+  const status = document.getElementById('filter-status').value;
+  let filtered = allItems;
+  if (q) filtered = filtered.filter(i => (i.title||'').toLowerCase().includes(q) || (i.location||'').toLowerCase().includes(q));
+  if (status) filtered = filtered.filter(i => i.status === status);
+  renderItems(filtered);
+}
+
+async function deleteItem(id) {
+  if (!confirm('Tens a certeza que queres eliminar este item?')) return;
+  await sb.from('item_images').delete().eq('item_id', id);
+  await sb.from('favorites').delete().eq('item_id', id);
+  await sb.from('items').delete().eq('id', id);
+  loadItems();
+}
+
+function formatDate(iso) {
+  if (!iso) return '—';
+  return new Date(iso).toLocaleDateString('pt-PT', { day:'2-digit', month:'2-digit', year:'numeric' });
+}
+
+async function init() { const ok = await adminGuard(); if (ok) loadItems(); }
+init();
+</script>
+</body>
+</html>

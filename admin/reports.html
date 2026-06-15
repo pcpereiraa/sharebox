@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ShareBox Admin — Reportes</title>
+<link rel="stylesheet" href="admin.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+<div class="admin-layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-logo"><img src="../images/Logo/logoinicial.png" alt="ShareBox"><span>Admin</span></div>
+    <nav class="sidebar-nav">
+      <a class="nav-link" href="index.html"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>Dashboard</a>
+      <a class="nav-link" href="users.html"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>Utilizadores</a>
+      <a class="nav-link" href="items.html"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 6h-2.18c.07-.44.18-.88.18-1.33C18 2.54 15.96.5 13.5.5c-1.5 0-2.81.75-3.6 1.88L9 3.5l-.9-1.13C7.31 1.25 6 .5 4.5.5 2.04.5 0 2.54 0 4.67c0 .45.11.89.18 1.33H0v2h20V6zM9 19h6l1-8H8l1 8z"/></svg>Itens</a>
+      <a class="nav-link" href="communities.html"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>Comunidades</a>
+      <a class="nav-link active" href="reports.html"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>Reportes</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="admin-user"><div class="admin-avatar" id="admin-avatar"></div><div class="admin-info"><div class="admin-name" id="admin-name">Admin</div><div class="admin-role">Administrador</div></div></div>
+      <button class="btn-logout" id="logout-btn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>Sair</button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="page-header">
+      <h1 class="page-title">Reportes</h1>
+      <span class="page-date" id="current-date"></span>
+    </div>
+
+    <!-- Stats rápidas -->
+    <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:28px">
+      <div class="stat-card"><div class="stat-icon requests" style="background:#e74c3c"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg></div><div class="stat-info"><div class="stat-value" id="stat-total">—</div><div class="stat-label">Total</div></div></div>
+      <div class="stat-card"><div class="stat-icon users" style="background:#e67e22"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg></div><div class="stat-info"><div class="stat-value" id="stat-pending">—</div><div class="stat-label">Pendentes</div></div></div>
+      <div class="stat-card"><div class="stat-icon items" style="background:#27ae60"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div><div class="stat-info"><div class="stat-value" id="stat-resolved">—</div><div class="stat-label">Resolvidos</div></div></div>
+      <div class="stat-card"><div class="stat-icon communities"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg></div><div class="stat-info"><div class="stat-value" id="stat-today">—</div><div class="stat-label">Hoje</div></div></div>
+    </div>
+
+    <!-- Pedidos de reportes -->
+    <div class="table-card" style="margin-bottom:24px">
+      <div class="table-card-header">
+        <h2>Pedidos de reportes</h2>
+        <select id="filter-status" style="padding:8px 14px;border:1px solid rgba(23,42,58,0.15);border-radius:8px;font-family:'Berlin',sans-serif;font-size:13px;outline:none;cursor:pointer">
+          <option value="">Todos</option>
+          <option value="pendente">Pendentes</option>
+          <option value="resolvido">Resolvidos</option>
+          <option value="ignorado">Ignorados</option>
+        </select>
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr><th>Data</th><th>Utilizador</th><th>Tipo</th><th>Item reportado</th><th>Estado</th><th>Ações</th></tr>
+        </thead>
+        <tbody id="reports-tbody">
+          <tr><td colspan="6" class="loading-row">A carregar...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Actividade de mensagens -->
+    <div class="table-card">
+      <div class="table-card-header"><h2>Actividade recente de mensagens</h2></div>
+      <table class="data-table">
+        <thead><tr><th>De</th><th>Para</th><th>Mensagem</th><th>Data</th></tr></thead>
+        <tbody id="messages-tbody"><tr><td colspan="4" class="loading-row">A carregar...</td></tr></tbody>
+      </table>
+    </div>
+  </main>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://ijswdmvksmqldhkyghwr.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlqc3dkbXZrc21xbGRoa3lnaHdyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg3NjYxODgsImV4cCI6MjA5NDM0MjE4OH0.8JuKWiWxKQ0GN-7MmfIcuZE1BAfbNR3oxPMY89amBAM';
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+async function adminGuard() {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) { window.location.href = '../login.html'; return false; }
+  const { data } = await sb.from('profiles').select('is_admin, full_name').eq('id', session.user.id).single();
+  if (!data?.is_admin) { window.location.href = '../home.html'; return false; }
+  document.getElementById('admin-name').textContent = data.full_name || 'Admin';
+  document.getElementById('admin-avatar').textContent = (data.full_name || 'A')[0].toUpperCase();
+  return true;
+}
+
+document.getElementById('logout-btn').addEventListener('click', async () => { await sb.auth.signOut(); window.location.href = '../login.html'; });
+document.getElementById('current-date').textContent = new Date().toLocaleDateString('pt-PT', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+
+// Dados mock de reportes (tabela de reportes não existe na BD)
+const mockReports = [
+  { id: 1, created_at: new Date().toISOString(), user: 'Rafael Pereira', type: 'Conteúdo inapropriado', item: 'Planta Jiboia', status: 'pendente' },
+  { id: 2, created_at: new Date(Date.now() - 86400000).toISOString(), user: 'Plinio Nicollay', type: 'Utilizador suspeito', item: '—', status: 'resolvido' },
+  { id: 3, created_at: new Date(Date.now() - 172800000).toISOString(), user: 'Rafael Admin', type: 'Item fraudulento', item: 'Guitarra Acústica', status: 'ignorado' },
+];
+
+function loadReports() {
+  const filter   = document.getElementById('filter-status').value;
+  const filtered = filter ? mockReports.filter(r => r.status === filter) : mockReports;
+  const today    = new Date().toDateString();
+
+  document.getElementById('stat-total').textContent    = mockReports.length;
+  document.getElementById('stat-pending').textContent  = mockReports.filter(r => r.status === 'pendente').length;
+  document.getElementById('stat-resolved').textContent = mockReports.filter(r => r.status === 'resolvido').length;
+  document.getElementById('stat-today').textContent    = mockReports.filter(r => new Date(r.created_at).toDateString() === today).length;
+
+  const tbody = document.getElementById('reports-tbody');
+  if (!filtered.length) { tbody.innerHTML = '<tr><td colspan="6" class="empty-row">Sem reportes</td></tr>'; return; }
+
+  tbody.innerHTML = filtered.map(r => {
+    const statusColor = r.status === 'pendente' ? '#e67e22' : r.status === 'resolvido' ? '#27ae60' : 'rgba(23,42,58,0.4)';
+    return `<tr>
+      <td class="text-muted">${formatDate(r.created_at)}</td>
+      <td><strong>${r.user}</strong></td>
+      <td class="text-muted">${r.type}</td>
+      <td class="text-muted">${r.item}</td>
+      <td><span style="font-family:'Berlin',sans-serif;font-size:12px;padding:4px 10px;border-radius:50px;background:${statusColor}20;color:${statusColor}">${r.status}</span></td>
+      <td style="display:flex;gap:6px">
+        ${r.status === 'pendente' ? `
+          <button class="btn-action edit" onclick="updateReport(${r.id},'resolvido')">Resolver</button>
+          <button class="btn-action" style="background:rgba(23,42,58,0.06);color:rgba(23,42,58,0.5)" onclick="updateReport(${r.id},'ignorado')">Ignorar</button>
+        ` : '—'}
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function updateReport(id, status) {
+  const report = mockReports.find(r => r.id === id);
+  if (report) { report.status = status; loadReports(); }
+}
+
+async function loadMessages() {
+  const { data: msgs } = await sb.from('messages').select('id, content, created_at, sender_id, receiver_id').order('created_at', { ascending: false }).limit(10);
+  if (!msgs?.length) { document.getElementById('messages-tbody').innerHTML = '<tr><td colspan="4" class="empty-row">Sem mensagens</td></tr>'; return; }
+
+  const userIds = [...new Set([...msgs.map(m => m.sender_id), ...msgs.map(m => m.receiver_id)])];
+  const { data: profiles } = await sb.from('profiles').select('id, full_name').in('id', userIds);
+  const pm = {}; (profiles||[]).forEach(p => { pm[p.id] = p.full_name; });
+
+  document.getElementById('messages-tbody').innerHTML = msgs.map(m => `<tr>
+    <td><strong>${pm[m.sender_id]||'—'}</strong></td>
+    <td class="text-muted">${pm[m.receiver_id]||'—'}</td>
+    <td class="text-muted" style="max-width:300px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${m.content}</td>
+    <td class="text-muted">${formatDate(m.created_at)}</td>
+  </tr>`).join('');
+}
+
+document.getElementById('filter-status').addEventListener('change', loadReports);
+
+function formatDate(iso) { return iso ? new Date(iso).toLocaleDateString('pt-PT', { day:'2-digit', month:'2-digit', year:'numeric' }) : '—'; }
+
+async function init() {
+  const ok = await adminGuard();
+  if (ok) { loadReports(); loadMessages(); }
+}
+init();
+</script>
+</body>
+</html>
