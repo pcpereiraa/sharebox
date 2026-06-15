@@ -42,7 +42,8 @@ document.addEventListener('DOMContentLoaded', async function () {
       const isRelevant =
         (msg.sender_id === currentUserId && msg.receiver_id === otherUserId) ||
         (msg.sender_id === otherUserId   && msg.receiver_id === currentUserId);
-      if (isRelevant) appendMessage(msg);
+      // Só adicionar via Realtime se for mensagem do outro — as nossas já aparecem ao enviar
+      if (isRelevant && msg.sender_id !== currentUserId) appendMessage(msg);
     })
     .subscribe();
 
@@ -94,6 +95,7 @@ async function loadItemReference() {
     .maybeSingle();
 
   if (!item) { ref.style.display = 'none'; return; }
+  ref.classList.add('has-item');
 
   // Buscar imagem
   const { data: images } = await supabaseClient
@@ -168,6 +170,7 @@ function appendMessage(msg, scroll = true) {
 
   const row = document.createElement('div');
   row.className = `msg-row ${isSent ? 'sent' : 'received'}`;
+  if (msg.id?.startsWith('temp_')) row.dataset.tempId = msg.id;
   row.innerHTML = isSent
     ? `<div class="msg-bubble sent">
         <div class="msg-text">${escapeHtml(msg.content)}</div>
@@ -195,7 +198,17 @@ async function sendMessage() {
   input.value = '';
   input.focus();
 
-  const { error } = await supabaseClient
+  // Mostrar imediatamente sem esperar pelo Realtime
+  const tempMsg = {
+    id:         'temp_' + Date.now(),
+    sender_id:  currentUserId,
+    content:    text,
+    read:       false,
+    created_at: new Date().toISOString(),
+  };
+  appendMessage(tempMsg, true);
+
+  const { data, error } = await supabaseClient
     .from('messages')
     .insert({
       sender_id:   currentUserId,
@@ -203,11 +216,16 @@ async function sendMessage() {
       item_id:     itemId && itemId !== 'null' ? itemId : null,
       content:     text,
       read:        false,
-    });
+    })
+    .select('id')
+    .single();
 
   if (error) {
     console.error('[Chat] Erro envio:', error);
-    input.value = text; // restaurar texto
+    input.value = text;
+    // Remover mensagem temporária
+    const tempEl = document.querySelector(`[data-temp-id="${tempMsg.id}"]`);
+    if (tempEl) tempEl.remove();
   }
 }
 

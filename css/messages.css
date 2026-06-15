@@ -147,6 +147,13 @@ body {
 
 .chat-page {
   background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
 }
 
 /* Chat Top Bar */
@@ -204,11 +211,12 @@ body {
 
 /* Item reference card */
 .item-reference {
-  display: flex; align-items: center; gap: 12px;
+  display: none; align-items: center; gap: 12px;
   background: #fff; padding: 12px 16px;
   border-bottom: 1px solid rgba(23,42,58,0.08);
   flex-shrink: 0;
 }
+.item-reference.has-item { display: flex; }
 .item-ref-thumb {
   width: 52px; height: 52px; border-radius: var(--r-sm); flex-shrink: 0;
 }
