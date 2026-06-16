@@ -2,6 +2,7 @@
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
+<link rel="manifest" href="manifest.json">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>ShareBox — Detalhe do Item</title>
 <link rel="stylesheet" href="css/global.css">
@@ -9,6 +10,11 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/supabase.js"></script>
 <script src="js/auth.js"></script>
+  <!-- Apple PWA -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="ShareBox">
+  <link rel="apple-touch-icon" href="images/Logo/logoinicial.png">
 </head>
 <body>
 <div class="page">
@@ -201,11 +207,8 @@
   </main>
 
   <!-- Bottom action bar -->
-  <div class="bottom-bar">
-    <button class="bottom-fav" id="bottom-fav" onclick="toggleFav(this)">
-      <img src="images/Icons/favorite.png" alt="Favorito">
-    </button>
-    <a class="btn-contactar" href="#">Contactar anunciante</a>
+  <div class="bottom-bar" id="bottom-bar">
+    <!-- preenchido pelo JS consoante se é dono ou visitante -->
   </div>
 
   <!-- Navbar -->
@@ -234,5 +237,15 @@ function toggleFav(btn) {
 }
 </script>
 <script src="js/item_detail.js"></script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js')
+        .then(reg => console.log('[SW] Registado:', reg.scope))
+        .catch(err => console.error('[SW] Erro:', err));
+    });
+  }
+</script>
 </body>
 </html>
