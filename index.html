@@ -30,5 +30,15 @@
         </div>
         
     </main>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('js/sw.js')
+        .then(reg => console.log('[SW] Registado:', reg.scope))
+        .catch(err => console.error('[SW] Erro:', err));
+    });
+  }
+</script>
 </body>
 </html>
