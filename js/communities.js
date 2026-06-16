@@ -316,3 +316,89 @@ function renderCommListItem(comm, members, isMember, userId) {
     </div>
   `;
 }
+// ── Pesquisa de comunidades ───────────────────────────
+let _searchTimeout = null;
+
+function openSearch() {
+  const overlay = document.getElementById('search-overlay');
+  if (!overlay) return;
+  overlay.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => document.getElementById('search-real-input')?.focus(), 100);
+}
+
+function closeSearch() {
+  const overlay = document.getElementById('search-overlay');
+  if (!overlay) return;
+  overlay.style.display = 'none';
+  document.body.style.overflow = '';
+  document.getElementById('search-real-input').value = '';
+  document.getElementById('search-results').innerHTML = '';
+  document.getElementById('search-clear').style.display = 'none';
+}
+
+function clearSearch() {
+  document.getElementById('search-real-input').value = '';
+  document.getElementById('search-results').innerHTML = '';
+  document.getElementById('search-clear').style.display = 'none';
+  document.getElementById('search-real-input').focus();
+}
+
+function handleSearch(query) {
+  const clearBtn = document.getElementById('search-clear');
+  if (clearBtn) clearBtn.style.display = query ? 'block' : 'none';
+  clearTimeout(_searchTimeout);
+  if (!query.trim()) { document.getElementById('search-results').innerHTML = ''; return; }
+  _searchTimeout = setTimeout(() => searchCommunities(query.trim()), 300);
+}
+
+async function searchCommunities(query) {
+  const container = document.getElementById('search-results');
+  container.innerHTML = '<p style="font-family:\'Berlin\',sans-serif;font-size:14px;color:rgba(255,255,255,0.5);text-align:center;padding:32px 0">A pesquisar...</p>';
+
+  const { data: communities } = await supabaseClient
+    .from('communities')
+    .select('id, name, image_url, location, is_private')
+    .ilike('name', `%${query}%`)
+    .limit(20);
+
+  if (!communities?.length) {
+    container.innerHTML = `
+      <div style="text-align:center;padding:48px 20px">
+        <div style="font-size:48px;margin-bottom:12px">🔍</div>
+        <p style="font-family:'Berlin',sans-serif;font-size:16px;color:rgba(255,255,255,0.6)">Sem resultados para "${query}"</p>
+      </div>`;
+    return;
+  }
+
+  const ids = communities.map(c => c.id);
+  const { data: members } = await supabaseClient
+    .from('communities_members').select('community_id').in('community_id', ids);
+  const memberMap = {};
+  (members || []).forEach(m => { memberMap[m.community_id] = (memberMap[m.community_id] || 0) + 1; });
+
+  container.innerHTML = `
+    <div style="font-family:'Berlin',sans-serif;font-size:12px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:1px;margin:16px 0 10px">
+      ${communities.length} resultado${communities.length !== 1 ? 's' : ''}
+    </div>
+    ${communities.map(comm => `
+      <div onclick="closeSearch();window.location.href='community_detail.html?id=${comm.id}'"
+           style="display:flex;align-items:center;gap:12px;padding:12px;background:rgba(255,255,255,0.07);border-radius:14px;margin-bottom:8px;cursor:pointer"
+           onmouseover="this.style.background='rgba(255,255,255,0.12)'"
+           onmouseout="this.style.background='rgba(255,255,255,0.07)'">
+        <div style="width:52px;height:52px;border-radius:10px;overflow:hidden;flex-shrink:0;background:rgba(255,255,255,0.1)">
+          ${comm.image_url ? `<img src="${comm.image_url}" style="width:100%;height:100%;object-fit:cover">` : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:24px">👥</div>'}
+        </div>
+        <div style="flex:1;min-width:0">
+          <div style="font-family:'Berlin',sans-serif;font-size:15px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${comm.name}</div>
+          <div style="font-family:'Berlin',sans-serif;font-size:12px;color:rgba(255,255,255,0.45);margin-top:3px">
+            📍 ${comm.location || 'Portugal'} · 👥 ${memberMap[comm.id] || 0} membros · ${comm.is_private ? '🔒 Privada' : '🌐 Pública'}
+          </div>
+        </div>
+        <svg viewBox="0 0 24 24" fill="rgba(255,255,255,0.3)" width="18" height="18"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+      </div>
+    `).join('')}
+  `;
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSearch(); });

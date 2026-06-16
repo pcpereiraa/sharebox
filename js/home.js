@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     loadCommunities(),
     loadUserProfile(session.user.id)
   ]);
+  await loadUserFavorites(session.user.id);
 
   // ── Clique em categoria
   document.addEventListener('click', function (e) {
@@ -255,18 +256,42 @@ async function loadUserProfile(userId) {
 }
 
 // ── Toggle favorito ───────────────────────────────────
+
+// ── Carrega favoritos do utilizador ──────────────────
+let _userFavIds = new Set();
+
+async function loadUserFavorites(userId) {
+  const { data: favs } = await supabaseClient
+    .from('favorites')
+    .select('item_id')
+    .eq('user_id', userId);
+
+  _userFavIds = new Set((favs || []).map(f => f.item_id));
+
+  // Marcar corações nos cards existentes
+  document.querySelectorAll('.donation-card').forEach(card => {
+    const itemId = card.dataset.id;
+    if (itemId && _userFavIds.has(itemId)) {
+      const btn = card.querySelector('.fav-btn');
+      if (btn) btn.classList.add('faved');
+    }
+  });
+}
+
 async function toggleFav(event, itemId, btn) {
   event.stopPropagation();
   const { data: { session } } = await supabaseClient.auth.getSession();
   if (!session) return;
   const userId = session.user.id;
-  const isFaved = btn.classList.contains('faved');
+  const isFaved = btn.classList.contains('faved') || _userFavIds.has(itemId);
   if (isFaved) {
     await supabaseClient.from('favorites').delete().eq('user_id', userId).eq('item_id', itemId);
     btn.classList.remove('faved');
+    _userFavIds.delete(itemId);
   } else {
     await supabaseClient.from('favorites').upsert({ user_id: userId, item_id: itemId });
     btn.classList.add('faved');
+    _userFavIds.add(itemId);
   }
 }
 
@@ -283,3 +308,140 @@ async function joinCommunity(event, communityId, btn) {
     btn.style.pointerEvents = 'none';
   }
 }
+
+// ── Pesquisa ──────────────────────────────────────────
+let _searchTimeout = null;
+
+function openSearch() {
+  const overlay = document.getElementById('search-overlay');
+  if (!overlay) return;
+  overlay.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => {
+    document.getElementById('search-real-input')?.focus();
+  }, 100);
+}
+
+function closeSearch() {
+  const overlay = document.getElementById('search-overlay');
+  if (!overlay) return;
+  overlay.style.display = 'none';
+  document.body.style.overflow = '';
+  document.getElementById('search-real-input').value = '';
+  document.getElementById('search-results').innerHTML = '';
+  document.getElementById('search-clear').style.display = 'none';
+}
+
+function clearSearch() {
+  document.getElementById('search-real-input').value = '';
+  document.getElementById('search-results').innerHTML = '';
+  document.getElementById('search-clear').style.display = 'none';
+  document.getElementById('search-real-input').focus();
+}
+
+function handleSearch(query) {
+  const clearBtn = document.getElementById('search-clear');
+  if (clearBtn) clearBtn.style.display = query ? 'block' : 'none';
+
+  clearTimeout(_searchTimeout);
+  if (!query.trim()) {
+    document.getElementById('search-results').innerHTML = '';
+    return;
+  }
+  // Debounce 300ms
+  _searchTimeout = setTimeout(() => performSearch(query.trim()), 300);
+}
+
+async function performSearch(query) {
+  const container = document.getElementById('search-results');
+  container.innerHTML = '<p style="font-family:\'Berlin\',sans-serif;font-size:14px;color:rgba(255,255,255,0.5);text-align:center;padding:32px 0">A pesquisar...</p>';
+
+  const q = query.toLowerCase();
+
+  // Pesquisar itens e comunidades em paralelo
+  const [{ data: items }, { data: communities }] = await Promise.all([
+    supabaseClient
+      .from('items')
+      .select('id, title, location, category_id, owner_id')
+      .eq('status', 'disponivel')
+      .ilike('title', `%${query}%`)
+      .limit(10),
+    supabaseClient
+      .from('communities')
+      .select('id, name, image_url, location')
+      .ilike('name', `%${query}%`)
+      .limit(5)
+  ]);
+
+  // Buscar imagens dos itens
+  const itemIds = (items || []).map(i => i.id);
+  const { data: images } = itemIds.length
+    ? await supabaseClient.from('item_images').select('item_id, image_url').in('item_id', itemIds)
+    : { data: [] };
+  const imgMap = {};
+  (images || []).forEach(img => { if (!imgMap[img.item_id]) imgMap[img.item_id] = img.image_url; });
+
+  const totalResults = (items?.length || 0) + (communities?.length || 0);
+
+  if (!totalResults) {
+    container.innerHTML = `
+      <div style="text-align:center;padding:48px 20px">
+        <div style="font-size:48px;margin-bottom:12px">🔍</div>
+        <p style="font-family:'Berlin',sans-serif;font-size:16px;color:rgba(255,255,255,0.6)">Sem resultados para "${query}"</p>
+        <p style="font-family:'Berlin',sans-serif;font-size:13px;color:rgba(255,255,255,0.35);margin-top:8px">Tenta palavras diferentes</p>
+      </div>`;
+    return;
+  }
+
+  let html = '';
+
+  // Itens
+  if (items?.length) {
+    html += `<div style="font-family:'Berlin',sans-serif;font-size:12px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:1px;margin:16px 0 10px">Itens (${items.length})</div>`;
+    html += items.map(item => {
+      const img = imgMap[item.id];
+      return `
+        <div onclick="closeSearch();window.location.href='item_detail.html?id=${item.id}'"
+             style="display:flex;align-items:center;gap:12px;padding:12px;background:rgba(255,255,255,0.07);border-radius:14px;margin-bottom:8px;cursor:pointer;transition:background 0.15s"
+             onmouseover="this.style.background='rgba(255,255,255,0.12)'"
+             onmouseout="this.style.background='rgba(255,255,255,0.07)'">
+          <div style="width:52px;height:52px;border-radius:10px;overflow:hidden;flex-shrink:0;background:rgba(255,255,255,0.1)">
+            ${img ? `<img src="${img}" style="width:100%;height:100%;object-fit:cover">` : ''}
+          </div>
+          <div style="flex:1;min-width:0">
+            <div style="font-family:'Berlin',sans-serif;font-size:15px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${item.title}</div>
+            <div style="font-family:'Berlin',sans-serif;font-size:12px;color:rgba(255,255,255,0.45);margin-top:3px">📍 ${item.location || 'Portugal'}</div>
+          </div>
+          <svg viewBox="0 0 24 24" fill="rgba(255,255,255,0.3)" width="18" height="18"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+        </div>`;
+    }).join('');
+  }
+
+  // Comunidades
+  if (communities?.length) {
+    html += `<div style="font-family:'Berlin',sans-serif;font-size:12px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:1px;margin:20px 0 10px">Comunidades (${communities.length})</div>`;
+    html += communities.map(comm => {
+      return `
+        <div onclick="closeSearch();window.location.href='community_detail.html?id=${comm.id}'"
+             style="display:flex;align-items:center;gap:12px;padding:12px;background:rgba(255,255,255,0.07);border-radius:14px;margin-bottom:8px;cursor:pointer;transition:background 0.15s"
+             onmouseover="this.style.background='rgba(255,255,255,0.12)'"
+             onmouseout="this.style.background='rgba(255,255,255,0.07)'">
+          <div style="width:52px;height:52px;border-radius:10px;overflow:hidden;flex-shrink:0;background:rgba(255,255,255,0.1)">
+            ${comm.image_url ? `<img src="${comm.image_url}" style="width:100%;height:100%;object-fit:cover">` : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:24px">👥</div>'}
+          </div>
+          <div style="flex:1;min-width:0">
+            <div style="font-family:'Berlin',sans-serif;font-size:15px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${comm.name}</div>
+            <div style="font-family:'Berlin',sans-serif;font-size:12px;color:rgba(255,255,255,0.45);margin-top:3px">📍 ${comm.location || 'Portugal'}</div>
+          </div>
+          <svg viewBox="0 0 24 24" fill="rgba(255,255,255,0.3)" width="18" height="18"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+        </div>`;
+    }).join('');
+  }
+
+  container.innerHTML = html;
+}
+
+// Fechar com ESC
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeSearch();
+});
