@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<link rel="shortcut icon" href="images/Logo/favicon.ico" type="image/x-icon">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#016e58">
+<title>ShareBox — Favoritos</title>
+<link rel="stylesheet" href="css/global.css">
+<link rel="stylesheet" href="css/home.css">
+<link rel="stylesheet" href="css/my_items.css">
+<style>
+.fav-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  padding: 20px;
+}
+.fav-card {
+  background: #fff;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(23,42,58,0.08);
+  cursor: pointer;
+  transition: transform 0.12s;
+  position: relative;
+}
+.fav-card:hover { transform: translateY(-2px); }
+.fav-card-img {
+  width: 100%;
+  aspect-ratio: 1;
+  overflow: hidden;
+  background: #f0f2f5;
+  position: relative;
+}
+.fav-card-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.fav-card-info {
+  padding: 10px 12px;
+}
+.fav-card-title {
+  font-family: "Berlin", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--blue);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 4px;
+}
+.fav-card-meta {
+  font-family: "Berlin", sans-serif;
+  font-size: 11px;
+  color: rgba(23,42,58,0.45);
+}
+.btn-unfav {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 30px;
+  height: 30px;
+  background: rgba(255,255,255,0.9);
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+}
+.btn-unfav svg { width: 16px; height: 16px; }
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 64px 32px;
+  gap: 14px;
+}
+.empty-state svg { opacity: 0.2; }
+.empty-state h3 {
+  font-family: "Berlin", sans-serif;
+  font-size: 20px;
+  color: var(--blue);
+}
+.empty-state p {
+  font-family: "Berlin", sans-serif;
+  font-size: 14px;
+  color: rgba(23,42,58,0.5);
+  line-height: 1.6;
+}
+.btn-explore {
+  margin-top: 8px;
+  background: var(--dark-green);
+  color: #fff;
+  font-family: "Berlin", sans-serif;
+  font-size: 15px;
+  padding: 14px 32px;
+  border-radius: 50px;
+  text-decoration: none;
+  display: inline-block;
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="top-bar">
+    <a href="home.html" class="btn-back-white" style="width:36px;height:36px;border-radius:50%;background:rgba(23,42,58,0.06);display:flex;align-items:center;justify-content:center;text-decoration:none">
+      <svg viewBox="0 0 24 24" fill="var(--blue)" width="22" height="22"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+    </a>
+    <h1 class="page-title">Favoritos</h1>
+    <div style="width:36px"></div>
+  </header>
+
+  <main class="scroll-content">
+    <div id="fav-grid" class="fav-grid"></div>
+    <div id="empty-state" class="empty-state" style="display:none">
+      <svg viewBox="0 0 24 24" width="72" height="72" fill="none" stroke="var(--blue)" stroke-width="1.5">
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+      </svg>
+      <h3>Sem favoritos ainda</h3>
+      <p>Guarda os itens que te interessam<br>clicando no coração ♡</p>
+      <a href="home.html" class="btn-explore">Explorar itens</a>
+    </div>
+    <div style="height:90px"></div>
+  </main>
+
+  <nav class="navbar">
+    <a class="nav-item active" href="home.html"><img src="images/Icons/family_home.png" alt="Home"></a>
+    <a class="nav-item" href="communities.html"><img src="images/Icons/icone2@4x-8.png" alt="Comunidades"></a>
+    <a class="nav-item nav-add" href="add_item.html"><img src="images/Icons/add_circle.png" alt="Adicionar"></a>
+    <a class="nav-item" href="messages.html"><img src="images/Icons/business_messages.png" alt="Mensagens"></a>
+    <a class="nav-item" href="profile.html"><img src="images/Icons/icone5@4x-8.png" alt="Perfil"></a>
+  </nav>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js"></script>
+<script src="js/auth.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', async function () {
+  const session = await requireAuth();
+  if (!session) return;
+  await loadFavorites(session.user.id);
+});
+
+async function loadFavorites(userId) {
+  const grid  = document.getElementById('fav-grid');
+  const empty = document.getElementById('empty-state');
+
+  const { data: favs, error } = await supabaseClient
+    .from('favorites')
+    .select('item_id')
+    .eq('user_id', userId);
+
+  if (error || !favs?.length) {
+    grid.style.display = 'none';
+    empty.style.display = 'flex';
+    return;
+  }
+
+  const itemIds = favs.map(f => f.item_id);
+
+  const { data: items } = await supabaseClient
+    .from('items')
+    .select('id, title, location, status')
+    .in('id', itemIds)
+    .eq('status', 'disponivel');
+
+  if (!items?.length) {
+    grid.style.display = 'none';
+    empty.style.display = 'flex';
+    return;
+  }
+
+  // Buscar imagens
+  const { data: images } = await supabaseClient
+    .from('item_images')
+    .select('item_id, image_url')
+    .in('item_id', items.map(i => i.id));
+
+  const imgMap = {};
+  (images || []).forEach(img => { if (!imgMap[img.item_id]) imgMap[img.item_id] = img.image_url; });
+
+  grid.innerHTML = items.map(item => {
+    const img = imgMap[item.id] || 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=300&h=300&fit=crop';
+    return `
+      <div class="fav-card" onclick="window.location.href='item_detail.html?id=${item.id}'">
+        <div class="fav-card-img">
+          <img src="${img}" alt="${item.title}" onerror="this.src='https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=300&h=300&fit=crop'">
+          <button class="btn-unfav" onclick="unfav(event,'${item.id}',this)" title="Remover dos favoritos">
+            <svg viewBox="0 0 24 24" fill="#e74c3c"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          </button>
+        </div>
+        <div class="fav-card-info">
+          <div class="fav-card-title">${item.title}</div>
+          <div class="fav-card-meta">📍 ${item.location?.split(',')[0] || 'Portugal'}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+async function unfav(event, itemId, btn) {
+  event.stopPropagation();
+  const { data: { session } } = await supabaseClient.auth.getSession();
+  await supabaseClient.from('favorites').delete().eq('user_id', session.user.id).eq('item_id', itemId);
+
+  const card = btn.closest('.fav-card');
+  card.style.transition = 'opacity 0.2s, transform 0.2s';
+  card.style.opacity = '0';
+  card.style.transform = 'scale(0.9)';
+  setTimeout(() => {
+    card.remove();
+    const remaining = document.querySelectorAll('.fav-card');
+    if (!remaining.length) {
+      document.getElementById('fav-grid').style.display = 'none';
+      document.getElementById('empty-state').style.display = 'flex';
+    }
+  }, 200);
+}
+</script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => navigator.serviceWorker.register('sw.js'));
+  }
+</script>
+</body>
+</html>

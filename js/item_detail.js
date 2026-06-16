@@ -154,6 +154,7 @@ async function loadItem(itemId, userId) {
 
   if (fav) {
     document.querySelectorAll('#fav-toggle, #bottom-fav').forEach(btn => btn.classList.add('active'));
+    updateFavIcon(true);
   }
 }
 
@@ -203,4 +204,41 @@ async function loadMoreItems(currentItemId) {
       </div>
     `;
   }).join('');
+}
+
+
+// ── Toggle favorito ───────────────────────────────────
+async function toggleFav(btn) {
+  const { data: { session } } = await supabaseClient.auth.getSession();
+  if (!session) { window.location.href = 'login.html'; return; }
+
+  const params = new URLSearchParams(window.location.search);
+  const itemId = params.get('id');
+  const userId = session.user.id;
+  const isFaved = btn.classList.contains('active');
+
+  // Sincronizar ambos os botões imediatamente
+  document.querySelectorAll('#fav-toggle, #bottom-fav').forEach(b => {
+    b.classList.toggle('active', !isFaved);
+  });
+  updateFavIcon(!isFaved);
+
+  if (isFaved) {
+    await supabaseClient.from('favorites').delete()
+      .eq('user_id', userId).eq('item_id', itemId);
+  } else {
+    await supabaseClient.from('favorites').upsert(
+      { user_id: userId, item_id: itemId }
+    );
+  }
+}
+
+function updateFavIcon(faved) {
+  document.querySelectorAll('#fav-toggle img, #bottom-fav img').forEach(img => {
+    if (faved) {
+      img.style.filter = 'invert(27%) sepia(97%) saturate(1600%) hue-rotate(336deg) brightness(95%) contrast(95%)';
+    } else {
+      img.style.filter = '';
+    }
+  });
 }
