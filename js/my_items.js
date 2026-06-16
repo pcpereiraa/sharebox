@@ -156,10 +156,8 @@ function getStatusClass(status) {
 }
 
 function editItem(itemId) {
-
-    window.location.href =
-        `edit_item.html?id=${itemId}`;
-}
+  window.location.href = `add_item.html?edit=${itemId}`;
+}                   
 
 async function deleteItem(itemId) {
 

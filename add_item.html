@@ -2,11 +2,17 @@
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
+<link rel="manifest" href="manifest.json">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <link rel="shortcut icon" href="images/Logo/favicon.ico" type="image/x-icon">
 <title>ShareBox — Adicionar Item</title>
 <link rel="stylesheet" href="css/global.css">
 <link rel="stylesheet" href="css/add_item.css">
+  <!-- Apple PWA -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="ShareBox">
+  <link rel="apple-touch-icon" href="images/Logo/logoinicial.png">
 </head>
 <body>
 <div class="page">
@@ -16,7 +22,7 @@
     <a class="btn-back" href="home.html">
       <svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
     </a>
-    <h1 class="page-title">Adicionar Item</h1>
+    <h1 class="page-title" id="page-title">Adicionar Item</h1>
     <button class="btn-salvar" id="btn-salvar">Salvar</button>
   </header>
 
@@ -107,11 +113,11 @@
     <!-- Estado do item -->
     <div class="form-section">
       <div class="section-title">Estado do item</div>
-      <div class="chips-wrap">
-        <button type="button" class="chip active" onclick="selectChip(this, 'estado')">Novo — nunca usado</button>
-        <button type="button" class="chip" onclick="selectChip(this, 'estado')">Bom — usado sem defeitos</button>
-        <button type="button" class="chip" onclick="selectChip(this, 'estado')">Usado — sinais de uso</button>
-        <button type="button" class="chip" onclick="selectChip(this, 'estado')">Avariado</button>
+      <div class="chips-wrap" id="condition-chips">
+        <button type="button" class="chip active" data-value="Novo" onclick="selectChip(this, 'estado')">Novo — nunca usado</button>
+        <button type="button" class="chip" data-value="Bom" onclick="selectChip(this, 'estado')">Bom — usado sem defeitos</button>
+        <button type="button" class="chip" data-value="Usado" onclick="selectChip(this, 'estado')">Usado — sinais de uso</button>
+        <button type="button" class="chip" data-value="Avariado" onclick="selectChip(this, 'estado')">Avariado</button>
       </div>
     </div>
 
@@ -219,5 +225,15 @@
 <script src="js/supabase.js"></script>
 <script src="js/auth.js"></script>
 <script src="js/add_item.js"></script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js')
+        .then(reg => console.log('[SW] Registado:', reg.scope))
+        .catch(err => console.error('[SW] Erro:', err));
+    });
+  }
+</script>
 </body>
 </html>

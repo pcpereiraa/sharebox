@@ -2,207 +2,320 @@
    ShareBox — community_detail.js
 ───────────────────────────────────────────────────── */
 
+let _commId  = null;
+let _userId  = null;
+let _ownerId = null;
+
 document.addEventListener('DOMContentLoaded', async function () {
 
-  console.log('[CommDetail] URL:', window.location.href);
-  console.log('[CommDetail] Params:', window.location.search);
-
   const session = await requireAuth();
-  console.log('[CommDetail] Session:', session?.user?.id);
   if (!session) return;
+  _userId = session.user.id;
 
   const params = new URLSearchParams(window.location.search);
-  const commId = params.get('id');
-  console.log('[CommDetail] commId:', commId);
-  if (!commId) { window.location.href = 'communities.html'; return; }
+  _commId = params.get('id');
+  if (!_commId) { window.location.href = 'communities.html'; return; }
 
   await Promise.all([
-    loadCommunity(commId, session.user.id),
-    loadCommunityItems(commId),
-    loadCommunityMembers(commId)
+    loadCommunity(),
+    loadItems(),
+    loadMembers(),
   ]);
+
+  await setupJoinButton();
 });
 
-async function loadCommunity(commId, userId) {
+// ── Carrega comunidade ────────────────────────────────
+async function loadCommunity() {
   const { data: comm, error } = await supabaseClient
     .from('communities')
     .select('id, name, description, image_url, location, is_private, created_at, owner_id')
-    .eq('id', commId)
+    .eq('id', _commId)
     .maybeSingle();
 
   if (error || !comm) { window.location.href = 'communities.html'; return; }
+  _ownerId = comm.owner_id;
 
-  // Buscar owner separadamente
-  const { data: owner } = await supabaseClient
-    .from('profiles').select('id, full_name').eq('id', comm.owner_id).maybeSingle();
-
-  // Contar membros
-  const { count: membersCount } = await supabaseClient
-    .from('communities_members')
-    .select('*', { count: 'exact', head: true })
-    .eq('community_id', commId);
-
-  // ── Hero
-  const heroBg = document.querySelector('.hero-bg');
+  // Hero
+  const heroBg = document.getElementById('hero-bg');
   if (heroBg && comm.image_url) heroBg.src = comm.image_url;
 
-  const heroTitle = document.querySelector('.hero-title');
-  if (heroTitle) heroTitle.textContent = comm.name || '—';
+  document.getElementById('hero-title').textContent    = comm.name || '—';
+  document.getElementById('hero-location').textContent = comm.location || '';
+  document.getElementById('location-text').textContent = comm.location || '—';
+  document.getElementById('desc-box').textContent      = comm.description || 'Sem descrição disponível.';
 
-  const heroLoc = document.querySelector('.hero-location');
-  if (heroLoc) heroLoc.textContent = comm.location || '';
-  const statEls = document.querySelectorAll('.stat-value');
-  if (statEls[0]) statEls[0].textContent = membersCount || 0;
-  if (statEls[1]) {
-    // Conta anúncios desta comunidade
-    const { count } = await supabaseClient
-      .from('items')
-      .select('*', { count: 'exact', head: true })
-      .eq('community_id', commId);
-    statEls[1].textContent = count || 0;
-  }
-  if (statEls[2]) {
-    const date = new Date(comm.created_at);
-    statEls[2].textContent = date.toLocaleDateString('pt-PT', { month: 'short', year: 'numeric' });
-  }
+  // Data criação
+  const date = new Date(comm.created_at).toLocaleDateString('pt-PT', { month: 'short', year: 'numeric' });
+  document.getElementById('stat-date').textContent = date;
 
-  // ── Descrição
-  const descEl = document.querySelector('.desc-box');
-  if (descEl) descEl.textContent = comm.description || '—';
+  // Admin
+  const { data: owner } = await supabaseClient
+    .from('profiles').select('full_name, avatar_url').eq('id', comm.owner_id).maybeSingle();
 
-  // ── Localização
-  const locText = document.querySelector('.location-text');
-  if (locText) locText.textContent = comm.location || '—';
-
-  // ── Admin
-  if (owner) {
-    const adminName = document.querySelector('.member-name');
-    if (adminName) adminName.textContent = owner.full_name || '—';
-    const adminAvatar = document.querySelector('.admin-box .member-avatar');
-    if (adminAvatar) adminAvatar.textContent = owner.full_name?.charAt(0) || '?';
-  }
-
-  // ── Botão aderir — verifica se já é membro
-  const { data: membership } = await supabaseClient
-    .from('communities_members')
-    .select('role')
-    .eq('community_id', commId)
-    .eq('user_id', userId)
-    .maybeSingle();
-
-  const joinBtn = document.querySelector('.btn-aderir');
-  if (joinBtn) {
-    if (membership) {
-      joinBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Já és membro';
-      joinBtn.style.background = 'rgba(1,110,88,0.3)';
-      joinBtn.style.pointerEvents = 'none';
+  const adminName   = document.getElementById('admin-name');
+  const adminAvatar = document.getElementById('admin-avatar');
+  if (adminName)   adminName.textContent = owner?.full_name || '—';
+  if (adminAvatar) {
+    if (owner?.avatar_url) {
+      adminAvatar.innerHTML = `<img src="${owner.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
     } else {
-      joinBtn.addEventListener('click', async (e) => {
-        e.preventDefault();
-        const { error } = await supabaseClient
-          .from('communities_members')
-          .upsert({ community_id: commId, user_id: userId, role: 'member' });
-        if (!error) {
-          joinBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Já és membro';
-          joinBtn.style.background = 'rgba(1,110,88,0.3)';
-          joinBtn.style.pointerEvents = 'none';
-        }
-      });
+      adminAvatar.textContent = (owner?.full_name || 'A').charAt(0).toUpperCase();
     }
   }
 }
 
-async function loadCommunityItems(commId) {
-  const { data: items } = await supabaseClient
-    .from('items')
-    .select(`
-      id, title, location,
-      profiles!owner_id (full_name),
-      item_images (image_url, position)
-    `)
-    .eq('community_id', commId)
-    .eq('status', 'disponivel')
-    .limit(6);
-
-  const container = document.querySelector('.items-scroll');
+// ── Carrega itens da comunidade ───────────────────────
+async function loadItems() {
+  const container = document.getElementById('items-scroll');
   if (!container) return;
 
+  const { data: items } = await supabaseClient
+    .from('items')
+    .select('id, title, location, owner_id')
+    .eq('community_id', _commId)
+    .eq('status', 'disponivel')
+    .order('created_at', { ascending: false })
+    .limit(10);
+
+  // Atualizar stat de anúncios
+  const { count } = await supabaseClient
+    .from('items').select('*', { count: 'exact', head: true })
+    .eq('community_id', _commId);
+  const statItems = document.getElementById('stat-items');
+  if (statItems) statItems.textContent = count || 0;
+
   if (!items?.length) {
-    container.innerHTML = '<p style="padding:16px;color:rgba(23,42,58,0.4);font-family:\'Berlin\',sans-serif;font-size:14px">Sem itens ainda nesta comunidade.</p>';
+    container.innerHTML = '<p style="font-family:\'Berlin\',sans-serif;font-size:14px;color:rgba(23,42,58,0.4);padding:8px 0">Sem itens nesta comunidade.</p>';
     return;
   }
 
-  container.innerHTML = items.map(item => {
-    const img = item.item_images?.sort((a, b) => a.position - b.position)[0]?.image_url
-      || 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=200&h=140&fit=crop';
-    const ownerName = item.profiles?.full_name || 'Utilizador';
-    const initial   = ownerName.charAt(0).toUpperCase();
+  // Buscar imagens e donos
+  const ids = items.map(i => i.id);
+  const ownerIds = [...new Set(items.map(i => i.owner_id).filter(Boolean))];
 
+  const [{ data: images }, { data: profiles }] = await Promise.all([
+    supabaseClient.from('item_images').select('item_id, image_url').in('item_id', ids),
+    supabaseClient.from('profiles').select('id, full_name').in('id', ownerIds)
+  ]);
+
+  const imgMap = {};
+  (images || []).forEach(img => { if (!imgMap[img.item_id]) imgMap[img.item_id] = img.image_url; });
+  const profileMap = {};
+  (profiles || []).forEach(p => { profileMap[p.id] = p.full_name; });
+
+  container.innerHTML = items.map(item => {
+    const img  = imgMap[item.id] || 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=200&h=140&fit=crop';
+    const name = profileMap[item.owner_id] || 'Utilizador';
     return `
-      <div class="item-card" onclick="window.location.href='item_detail.html?id=${item.id}'">
+      <div class="item-card" onclick="window.location.href='item_detail.html?id=${item.id}'" style="cursor:pointer">
         <div class="item-card-img">
-          <img src="${img}" alt="${item.title}">
+          <img src="${img}" alt="${item.title}" onerror="this.src='https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=200&h=140&fit=crop'">
         </div>
         <div class="item-card-info">
           <div class="item-card-name">${item.title}</div>
           <div class="item-card-meta">
             <div class="item-user">
-              <div class="user-avatar-sm">${initial}</div>
-              <span>por ${ownerName.split(' ')[0]}</span>
+              <div class="user-avatar-sm">${name.charAt(0).toUpperCase()}</div>
+              <span>por ${name.split(' ')[0]}</span>
             </div>
-            <div class="item-dist">
-              <svg viewBox="0 0 10 13" width="8" height="10" style="width:8px;height:10px;flex-shrink:0">
-                <path d="M5 0C2.24 0 0 2.24 0 5c0 3.75 5 8 5 8s5-4.25 5-8c0-2.76-2.24-5-5-5zm0 6.5c-.83 0-1.5-.67-1.5-1.5S4.17 3.5 5 3.5 6.5 4.17 6.5 5 5.83 6.5 5 6.5z" fill="currentColor"/>
-              </svg>
-              
-            </div>
+            <div class="item-dist">${item.location?.split(',')[0] || ''}</div>
           </div>
         </div>
-      </div>
-    `;
+      </div>`;
   }).join('');
 }
 
-async function loadCommunityMembers(commId) {
-  const { data: members } = await supabaseClient
+// ── Carrega membros ───────────────────────────────────
+async function loadMembers() {
+  const container = document.getElementById('members-group');
+  const title     = document.getElementById('members-title');
+  const statEl    = document.getElementById('stat-members');
+  if (!container) return;
+
+  const { data: memberships } = await supabaseClient
     .from('communities_members')
-    .select(`
-      role, joined_at,
-      profiles!user_id (id, full_name, avatar_url)
-    `)
-    .eq('community_id', commId)
+    .select('user_id, role, joined_at')
+    .eq('community_id', _commId)
     .order('joined_at', { ascending: true })
-    .limit(4);
+    .limit(20);
 
-  const container = document.querySelector('.members-group');
-  if (!container || !members?.length) return;
+  const count = memberships?.length || 0;
+  if (statEl)  statEl.textContent = count;
+  if (title)   title.textContent  = `Participantes · ${count}`;
 
-  const colors = ['#c8e6d4', '#d4e4f0', '#e8d5e8', '#f0e4d4'];
+  if (!memberships?.length) return;
 
-  const membersHTML = members.map((m, i) => {
-    const profile = m.profiles;
-    const name    = profile?.full_name || 'Utilizador';
-    const role    = m.role === 'admin' ? 'Admin' : 'Membro';
-    const date    = new Date(m.joined_at).toLocaleDateString('pt-PT', { month: 'short', year: 'numeric' });
-    const divider = i < members.length - 1 ? '<div class="member-divider"></div>' : '';
+  const userIds = memberships.map(m => m.user_id);
+  const { data: profiles } = await supabaseClient
+    .from('profiles').select('id, full_name, avatar_url').in('id', userIds);
+
+  const profileMap = {};
+  (profiles || []).forEach(p => { profileMap[p.id] = p; });
+
+  const colors = ['#c8e6d4','#d4e4f0','#e8d5e8','#f0e4d4','#d4f0e4'];
+
+  const shown   = memberships.slice(0, 5);
+  const hiddenN = count > 5 ? count - 5 : 0;
+
+  container.innerHTML = shown.map((m, i) => {
+    const p    = profileMap[m.user_id] || {};
+    const name = p.full_name || 'Utilizador';
+    const date = m.joined_at
+      ? new Date(m.joined_at).toLocaleDateString('pt-PT', { month: 'short', year: 'numeric' })
+      : '—';
+    const isAdmin = m.role === 'admin';
 
     return `
       <div class="member-row">
-        <div class="member-avatar" style="background:${colors[i % colors.length]};display:flex;align-items:center;justify-content:center;font-family:'Berlin',sans-serif;font-size:18px;color:var(--blue)">
-          ${name.charAt(0).toUpperCase()}
+        <div class="member-avatar" style="background:${colors[i % colors.length]};display:flex;align-items:center;justify-content:center;font-family:'Berlin',sans-serif;font-size:18px;color:var(--blue);overflow:hidden">
+          ${p.avatar_url
+            ? `<img src="${p.avatar_url}" style="width:100%;height:100%;object-fit:cover">`
+            : name.charAt(0).toUpperCase()}
         </div>
         <div class="member-info">
           <div class="member-name">${name}</div>
-          <div class="member-sub">${role} · desde ${date}</div>
+          <div class="member-sub">${isAdmin ? 'Admin' : 'Membro'} · desde ${date}</div>
         </div>
-        <span class="badge ${m.role === 'admin' ? 'admin' : 'membro'}">${role}</span>
+        <span class="badge ${isAdmin ? 'admin' : 'membro'}">${isAdmin ? 'Admin' : 'Membro'}</span>
       </div>
-      ${divider}
+      ${i < shown.length - 1 ? '<div class="member-divider"></div>' : ''}
     `;
   }).join('');
 
-  // Preservar o link "Ver todos"
-  const verTodosLink = container.querySelector('.ver-todos-link');
-  container.innerHTML = membersHTML;
-  if (verTodosLink) container.appendChild(verTodosLink);
+  if (hiddenN > 0) {
+    container.innerHTML += `<a class="ver-todos-link" href="#" onclick="openMembersSheet();return false;">Ver todos os ${count} participantes →</a>`;
+  }
 }
+
+// ── Botão aderir / sair ───────────────────────────────
+async function setupJoinButton() {
+  const btn = document.querySelector('.btn-aderir');
+  if (!btn) return;
+
+  const { data: membership } = await supabaseClient
+    .from('communities_members')
+    .select('role')
+    .eq('community_id', _commId)
+    .eq('user_id', _userId)
+    .maybeSingle();
+
+  const isOwner  = _userId === _ownerId;
+  const isMember = !!membership;
+
+  if (isOwner) {
+    btn.textContent = '✏️ Editar comunidade';
+    btn.onclick = () => window.location.href = `add_community.html?edit=${_commId}`;
+  } else if (isMember) {
+    btn.textContent = 'Sair da comunidade';
+    btn.style.background = 'rgba(192,57,43,0.15)';
+    btn.style.color      = '#c0392b';
+    btn.onclick = leaveCommunity;
+  } else {
+    btn.textContent = '+ Aderir à comunidade';
+    btn.onclick = joinCommunity;
+  }
+}
+
+async function joinCommunity() {
+  const btn = document.querySelector('.btn-aderir');
+  if (btn) { btn.disabled = true; btn.textContent = 'A aderir...'; }
+
+  const { error } = await supabaseClient
+    .from('communities_members')
+    .upsert({ community_id: _commId, user_id: _userId, role: 'member' });
+
+  if (!error) {
+    btn.textContent   = 'Sair da comunidade';
+    btn.style.background = 'rgba(192,57,43,0.15)';
+    btn.style.color   = '#c0392b';
+    btn.disabled      = false;
+    btn.onclick       = leaveCommunity;
+    showToast('✓ Entraste na comunidade!');
+    loadMembers();
+  }
+}
+
+async function leaveCommunity() {
+  if (!confirm('Tens a certeza que queres sair desta comunidade?')) return;
+  const btn = document.querySelector('.btn-aderir');
+  if (btn) { btn.disabled = true; btn.textContent = 'A sair...'; }
+
+  await supabaseClient.from('communities_members')
+    .delete().eq('community_id', _commId).eq('user_id', _userId);
+
+  window.location.href = 'communities.html';
+}
+
+// ── Toast ─────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.textContent = msg;
+  t.style.cssText = 'position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:var(--dark-green);color:#fff;font-family:"Berlin",sans-serif;font-size:14px;padding:12px 24px;border-radius:50px;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.2);white-space:nowrap';
+  document.body.appendChild(t);
+  setTimeout(() => { t.style.transition = 'opacity 0.3s'; t.style.opacity = '0'; setTimeout(() => t.remove(), 300); }, 2500);
+}
+
+// ── Sheet de membros ──────────────────────────────────
+async function openMembersSheet() {
+  document.getElementById('sheet-overlay').classList.add('active');
+  document.getElementById('sheet-members').classList.add('active');
+  document.body.style.overflow = 'hidden';
+
+  const list  = document.getElementById('sheet-members-list');
+  const title = document.getElementById('sheet-members-title');
+  list.innerHTML = '<p style="font-family:\'Berlin\',sans-serif;font-size:14px;color:rgba(23,42,58,0.45);text-align:center;padding:20px 0">A carregar...</p>';
+
+  const { data: memberships } = await supabaseClient
+    .from('communities_members')
+    .select('user_id, role, joined_at')
+    .eq('community_id', _commId)
+    .order('joined_at', { ascending: true });
+
+  if (title) title.textContent = `Participantes · ${memberships?.length || 0}`;
+
+  if (!memberships?.length) {
+    list.innerHTML = '<p style="font-family:\'Berlin\',sans-serif;font-size:14px;color:rgba(23,42,58,0.45);text-align:center;padding:20px 0">Sem membros.</p>';
+    return;
+  }
+
+  const userIds = memberships.map(m => m.user_id);
+  const { data: profiles } = await supabaseClient
+    .from('profiles').select('id, full_name, avatar_url, location').in('id', userIds);
+
+  const profileMap = {};
+  (profiles || []).forEach(p => { profileMap[p.id] = p; });
+
+  const colors = ['#c8e6d4','#d4e4f0','#e8d5e8','#f0e4d4','#d4f0e4','#f0d4d4'];
+
+  list.innerHTML = memberships.map((m, i) => {
+    const p    = profileMap[m.user_id] || {};
+    const name = p.full_name || 'Utilizador';
+    const date = m.joined_at
+      ? new Date(m.joined_at).toLocaleDateString('pt-PT', { day: '2-digit', month: 'short', year: 'numeric' })
+      : '—';
+    const isAdmin = m.role === 'admin';
+
+    return `
+      <div class="sheet-member-row">
+        <div class="sheet-member-avatar" style="background:${colors[i % colors.length]}">
+          ${p.avatar_url
+            ? `<img src="${p.avatar_url}" style="width:100%;height:100%;object-fit:cover">`
+            : name.charAt(0).toUpperCase()}
+        </div>
+        <div style="flex:1;min-width:0">
+          <div class="sheet-member-name">${name}</div>
+          <div class="sheet-member-sub">${isAdmin ? '⭐ Admin' : 'Membro'} · desde ${date}</div>
+        </div>
+        ${isAdmin ? '<span class="badge admin" style="flex-shrink:0">Admin</span>' : ''}
+      </div>`;
+  }).join('');
+}
+
+function closeSheet() {
+  document.getElementById('sheet-overlay').classList.remove('active');
+  document.getElementById('sheet-members').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheet(); });
