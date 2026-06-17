@@ -23,7 +23,7 @@
       "purpose": "any"
     },
     {
-      "src": "images/Logo/logo_manifestG.png",
+      "src": "images/Logo/apple-touch-icon.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
