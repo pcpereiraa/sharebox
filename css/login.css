@@ -1,71 +1,121 @@
+/* ── Layout geral ──────────────────────────────────── */
+.login-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 24px;
+    box-sizing: border-box;
+}
+
 .logo-container {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 20px;
+    margin-bottom: 28px;
 }
+.logo { width: 200px; max-width: 60vw; }
 
-.login-screen {
-    margin-bottom: 15px;
+/* ── Formulário ────────────────────────────────────── */
+.login-form {
+    width: 100%;
+    max-width: 380px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
 }
 
 .form-caption {
-    font-size: 24px;
+    font-family: "Berlin", sans-serif;
+    font-size: 22px;
     color: var(--cream);
-    margin-left: 16px;
+    margin-bottom: 4px;
 }
 
-.login-form {
-    width: 100%;
-    max-width: 450px;
-    margin: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+.form-hint {
+    font-family: "Berlin", sans-serif;
+    font-size: 14px;
+    color: rgba(255,255,255,0.55);
+    line-height: 1.6;
+    margin: 0;
 }
+
+/* ── Inputs ────────────────────────────────────────── */
+.input {
+    width: 100%;
+    height: 52px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 12px;
+    padding: 0 16px;
+    font-family: "Berlin", sans-serif;
+    font-size: 15px;
+    color: #fff;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+}
+.input::placeholder { color: rgba(255,255,255,0.4); }
+.input:focus { border-color: var(--dark-green); }
 
 .rec-pwd {
+    display: block;
     color: var(--dark-green);
     text-align: right;
-    margin-right: 25px;
+    font-family: "Berlin", sans-serif;
+    font-size: 13px;
+    text-decoration: none;
+    margin-top: -4px;
 }
 
-a:hover {
-    text-decoration: underline;
-    color: var(--light-green);
-}
-
-.reset-screen {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    box-sizing: border-box;
-}
-
-/* Botões principais */
-
+/* ── Botões ────────────────────────────────────────── */
 .buttons-container {
-    margin: auto;
-
+    width: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    gap: 12px;
+    margin-top: 8px;
 }
 
-/* Desktop */
+.btn {
+    width: 100%;
+    padding: 16px 0;
+    border-radius: 50px;
+    font-family: "Berlin", sans-serif;
+    font-size: 16px;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    display: block;
+    box-sizing: border-box;
+    transition: opacity 0.2s, transform 0.15s;
+}
+.btn:active { transform: scale(0.98); }
 
+.btn-primary {
+    background: var(--dark-green);
+    color: #fff;
+}
+.btn-primary:hover { opacity: 0.9; }
+
+.btn-secondary {
+    background: transparent;
+    border: 1.5px solid rgba(255,255,255,0.3);
+    color: rgba(255,255,255,0.85);
+}
+.btn-secondary:hover { background: rgba(255,255,255,0.08); }
+
+/* ── Feedback ──────────────────────────────────────── */
+#login-feedback, #register-feedback, #forgot-feedback, #reset-feedback {
+    font-family: "Berlin", sans-serif;
+    font-size: 14px;
+}
+
+/* ── Desktop ───────────────────────────────────────── */
 @media (min-width: 768px) {
-
-    .login-screen {
-        max-width: 550px;
-        margin: 0 auto;
-    }
-
-    .logo {
-        width: 280px;
-    }
-
+    .logo { width: 260px; max-width: none; }
+    .login-form { max-width: 420px; }
 }

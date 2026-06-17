@@ -2,9 +2,8 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-
+    <link rel="manifest" href="manifest.json">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/components.css">
     <link rel="stylesheet" href="css/register.css">
@@ -15,11 +14,16 @@
     <script src="js/auth.js"></script>
 
     <title>ShareBox - Registo</title>
+  <!-- Apple PWA -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="ShareBox">
+  <link rel="apple-touch-icon" href="images/Logo/logoinicial.png">
 </head>
 <body>
     <main class="register-screen">
         <div class="logo-container">
-            <img src="images/logo/logo_white.png" alt="Logo Sharebox" class="logo">
+            <img src="images/Logo/logo_white.png" alt="Logo Sharebox" class="logo">
         </div>
         
         <form id="register-form" class="register-form">
@@ -61,5 +65,15 @@
 
         
     </main>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js')
+        .then(reg => console.log('[SW] Registado:', reg.scope))
+        .catch(err => console.error('[SW] Erro:', err));
+    });
+  }
+</script>
 </body>
 </html>

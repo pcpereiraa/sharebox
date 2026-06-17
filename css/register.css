@@ -1,40 +1,107 @@
+/* ── Layout geral ──────────────────────────────────── */
+.register-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 24px;
+    box-sizing: border-box;
+}
+
 .logo-container {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 20px;
+    margin-bottom: 24px;
 }
+.logo { width: 200px; max-width: 60vw; }
 
-.register-screen {
-    margin-bottom: 15px;
+/* ── Formulário ────────────────────────────────────── */
+.register-form {
+    width: 100%;
+    max-width: 380px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
 }
 
 .form-caption {
-    font-size: 24px;
+    font-family: "Berlin", sans-serif;
+    font-size: 22px;
     color: var(--cream);
-    margin-left: 16px;
+    margin-bottom: 4px;
 }
 
-.register-form {
+/* ── Inputs ────────────────────────────────────────── */
+.input {
     width: 100%;
-    max-width: 450px;
-    margin: auto;
+    height: 52px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 12px;
+    padding: 0 16px;
+    font-family: "Berlin", sans-serif;
+    font-size: 15px;
+    color: #fff;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+}
+.input::placeholder { color: rgba(255,255,255,0.4); }
+.input:focus { border-color: var(--dark-green); }
+
+/* ── Botões ────────────────────────────────────────── */
+.buttons-container {
+    width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 12px;
+    margin-top: 8px;
 }
 
-/* Desktop */
+.btn {
+    width: 100%;
+    padding: 16px 0;
+    border-radius: 50px;
+    font-family: "Berlin", sans-serif;
+    font-size: 16px;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    display: block;
+    box-sizing: border-box;
+    transition: opacity 0.2s, transform 0.15s;
+}
+.btn:active { transform: scale(0.98); }
 
+.btn-primary {
+    background: var(--dark-green);
+    color: #fff;
+}
+.btn-primary:hover { opacity: 0.9; }
+
+.btn-secondary {
+    background: transparent;
+    border: 1.5px solid rgba(255,255,255,0.3);
+    color: rgba(255,255,255,0.85);
+}
+.btn-secondary:hover { background: rgba(255,255,255,0.08); }
+
+/* ── Erro ──────────────────────────────────────────── */
+#register-error {
+    font-family: "Berlin", sans-serif;
+    font-size: 14px;
+    color: #c0392b;
+    background: rgba(192,57,43,0.08);
+    padding: 10px 14px;
+    border-radius: 10px;
+}
+
+/* ── Desktop ───────────────────────────────────────── */
 @media (min-width: 768px) {
-
-    .register-screen {
-        max-width: 550px;
-        margin: 0 auto;
-    }
-
-    .logo {
-        width: 280px;
-    }
-
+    .logo { width: 260px; max-width: none; }
+    .register-form { max-width: 420px; }
 }
