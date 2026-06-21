@@ -40,9 +40,15 @@ async function loadProfile(profileId, currentUserId) {
   document.getElementById('profile-name').textContent = profile.full_name || 'Utilizador';
   document.getElementById('profile-location').textContent = profile.location || 'Portugal';
 
-  const avatarImg = document.getElementById('profile-avatar-img');
-  if (profile.avatar_url) {
-    avatarImg.src = profile.avatar_url;
+  const avatarEl = document.getElementById('profile-avatar');
+  if (avatarEl) {
+    avatarEl.style.display = 'flex';
+    avatarEl.style.alignItems = 'center';
+    avatarEl.style.justifyContent = 'center';
+    avatarEl.style.overflow = 'hidden';
+    avatarEl.innerHTML = profile.avatar_url
+      ? `<img src="${profile.avatar_url}" style="width:100%;height:100%;object-fit:cover">`
+      : `<svg viewBox="0 0 24 24" width="55%" height="55%" fill="rgba(255,255,255,0.85)"><path d="M12 12c2.7 0 8 1.34 8 4v2H4v-2c0-2.66 5.3-4 8-4zm0-2a4 4 0 1 1 0-8 4 4 0 0 1 0 8z"/></svg>`;
   }
 
   if (profile.bio) {

@@ -39,22 +39,13 @@ async function loadProfile(userId) {
   // Avatar — foto ou ícone placeholder
   const avatarEl = document.getElementById('profile-avatar');
   if (avatarEl) {
-    if (profile.avatar_url) {
-      const img = document.getElementById('profile-avatar-img');
-      if (img) {
-        img.src = profile.avatar_url;
-        img.style.width = '100%';
-        img.style.height = '100%';
-        img.style.objectFit = 'cover';
-        img.style.filter = 'none';
-        img.style.opacity = '1';
-      }
-    } else {
-      avatarEl.style.display = 'flex';
-      avatarEl.style.alignItems = 'center';
-      avatarEl.style.justifyContent = 'center';
-      avatarEl.innerHTML = avatarHTML(null, '55%');
-    }
+    avatarEl.style.display = 'flex';
+    avatarEl.style.alignItems = 'center';
+    avatarEl.style.justifyContent = 'center';
+    avatarEl.style.overflow = 'hidden';
+    avatarEl.innerHTML = profile.avatar_url
+      ? `<img src="${profile.avatar_url}" style="width:100%;height:100%;object-fit:cover">`
+      : `<svg viewBox="0 0 24 24" width="55%" height="55%" fill="rgba(255,255,255,0.85)"><path d="M12 12c2.7 0 8 1.34 8 4v2H4v-2c0-2.66 5.3-4 8-4zm0-2a4 4 0 1 1 0-8 4 4 0 0 1 0 8z"/></svg>`;
   }
 }
 
