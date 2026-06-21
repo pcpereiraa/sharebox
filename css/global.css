@@ -1,5 +1,28 @@
 @charset "UTF-8";
 
+/* ═══════════════════════════════════════════════════════════
+   Folha de estilos GLOBAL, carregada em TODAS as páginas do
+   projeto (antes das folhas específicas de cada página).
+   Responsabilidades:
+     1. Importar a fonte personalizada "Berlin" (normal e bold).
+     2. Definir as variáveis CSS (design tokens) usadas em todo
+        o site — cores principais da marca ShareBox.
+     3. Fazer um "reset" básico (remover margens/paddings por
+        defeito do browser e normalizar box-sizing).
+     4. Definir estilos base de elementos comuns (body, a, img).
+
+   Nota: as variáveis aqui definidas em :root ficam disponíveis
+   em todas as outras folhas CSS através de var(--nome).
+═══════════════════════════════════════════════════════════ */
+
+/* ── Fontes personalizadas ────────────────────────────────
+   "Berlin" é a fonte tipográfica usada em todo o ShareBox
+   (títulos, texto, botões). Carregada localmente a partir de
+   ficheiros .TTF na pasta /fonts, em duas variantes de peso:
+   normal (400) e bold (700, com nome de família diferente
+   "Berlin Bold" em vez de usar font-weight:700 na mesma família,
+   já que o ficheiro TTF da bold é um ficheiro separado).
+──────────────────────────────────────────────────────────── */
 @font-face {
     font-family: "Berlin";
     src: url(../fonts/BRLNSR.TTF) format("truetype");
@@ -14,6 +37,19 @@
     font-style: normal;
 }
 
+/* ── Design tokens (variáveis CSS) ────────────────────────
+   Paleta de cores oficial do ShareBox. Usadas em praticamente
+   todas as outras folhas de estilo via var(--nome-da-variavel).
+   Definir as cores aqui (e não espalhadas pelo código) permite
+   alterar o tema inteiro do site mudando apenas estes valores.
+
+   - light-green : verde mais claro, usado em hovers/destaques
+   - dark-green  : verde principal da marca (botões, links de ação)
+   - blue        : azul escuro, cor de fundo principal (navbar, hero)
+   - cream       : cor de texto/fundo claro (quase branco, tom creme)
+   - cream-light : variante do creme com transparência (40% opacidade),
+                   usada para texto secundário sobre fundos escuros
+──────────────────────────────────────────────────────────── */
 :root {
     --light-green: #009a7d;
     --dark-green: #016e58;
@@ -22,21 +58,41 @@
     --cream-light: rgba(246, 247, 235, 0.45);
 }
 
+/* ── Reset universal ───────────────────────────────────────
+   Remove margens e paddings que os browsers aplicam por
+   defeito a elementos como <body>, <h1>, <p>, <ul>, etc.
+   box-sizing: border-box garante que padding e border são
+   incluídos na largura/altura definida (em vez de a aumentarem),
+   o que torna os cálculos de layout muito mais previsíveis.
+──────────────────────────────────────────────────────────── */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+/* ── Estilos base do <body> ────────────────────────────────
+   Fundo azul escuro por defeito (cor de marca) — páginas
+   específicas podem sobrepor este valor (ex: páginas com fundo
+   creme usam var(--bg) definido localmente nas suas próprias
+   folhas CSS). A fonte "Berlin" é aplicada globalmente, com
+   sans-serif como alternativa caso a fonte não carregue.
+──────────────────────────────────────────────────────────── */
 body {
     background-color: var(--blue);
     font-family: "Berlin", sans-serif;
 }
 
+/* Remove o sublinhado por defeito dos links em todo o site —
+   cada componente decide explicitamente se quer sublinhado. */
 a {
     text-decoration: none;
 }
 
+/* display:block evita o espaço extra que as imagens inline
+   por vezes criam (gap abaixo da imagem causado por line-height).
+   max-width:100% torna as imagens responsivas por defeito,
+   nunca maiores do que o elemento pai onde estão inseridas. */
 img {
     display: block;
     max-width: 100%;

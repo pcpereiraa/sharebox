@@ -1,3 +1,16 @@
+/* ═══════════════════════════════════════════════════════════
+   Estilos da página de ABERTURA da aplicação (index.html) —
+   o primeiro ecrã que o utilizador vê, com o logótipo, o
+   slogan e os botões de "Entrar" / "Criar conta". É a única
+   página totalmente vertical (logo no topo, botões no fundo),
+   sem navbar nem barra de topo.
+═══════════════════════════════════════════════════════════ */
+
+/* Contentor principal de ecrã completo. Usa flexbox em coluna
+   com justify-content:space-between para empurrar o logo para
+   o topo e os botões para o fundo, com o espaço vazio no meio
+   distribuído automaticamente — não é preciso calcular margens
+   manualmente para centrar o conteúdo verticalmente. */
 .index-screen {
     height: 100vh;
     display: flex;
@@ -8,6 +21,8 @@
     box-sizing: border-box;
 }
 
+/* Agrupa o logótipo e o slogan, centrados e com espaçamento
+   consistente entre eles (gap). */
 .logo-container {
     text-align: center;
     display: flex;
@@ -17,6 +32,9 @@
     color: var(--cream);
 }
 
+/* Logo um pouco maior do que em components.css (220px em vez
+   de 203px), mas com max-width:70vw para nunca ultrapassar
+   70% da largura do ecrã em telemóveis muito pequenos. */
 .logo {
     width: 220px;
     max-width: 70vw;
@@ -28,6 +46,9 @@
     line-height: 1.5;
 }
 
+/* Contentor dos botões "Entrar"/"Criar conta", com largura
+   máxima limitada (320px) para não ficarem demasiado largos
+   em ecrãs grandes. */
 .buttons-container {
     width: 100%;
     max-width: 320px;
@@ -36,6 +57,14 @@
     gap: 12px;
 }
 
+/* Nota: esta página define a sua PRÓPRIA versão de .btn,
+   .btn-primary e .btn-secondary, em vez de reutilizar
+   diretamente as de components.css — têm valores semelhantes
+   mas não são idênticos (ex: aqui o border-radius é fixo em
+   50px em vez de 25px, e o padding usa valores diferentes).
+   Isto significa que, se ambas as folhas forem carregadas na
+   mesma página, a que for carregada depois "ganha" por ordem
+   de especificidade igual (CSS posterior sobrepõe-se). */
 .btn {
     width: 100%;
     padding: 16px 0;
@@ -50,6 +79,10 @@
     box-sizing: border-box;
     transition: opacity 0.2s, transform 0.15s;
 }
+/* Feedback ao toque: encolhe ligeiramente ao premir (independente
+   da animação genérica de botões já definida em animations.css —
+   esta regra local garante o comportamento mesmo que
+   animations.css não seja carregado nesta página). */
 .btn:active { transform: scale(0.98); }
 
 .btn-primary {
@@ -58,6 +91,10 @@
 }
 .btn-primary:hover { opacity: 0.9; }
 
+/* Botão secundário "outline": fundo transparente, apenas com
+   borda semi-transparente — visualmente mais discreto que o
+   primário, adequado para a ação alternativa ("Criar conta"
+   em vez de "Entrar", ou vice-versa). */
 .btn-secondary {
     background: transparent;
     border: 1.5px solid rgba(255,255,255,0.3);
@@ -65,6 +102,13 @@
 }
 .btn-secondary:hover { background: rgba(255,255,255,0.08); }
 
+/* ── Desktop ───────────────────────────────────────────────
+   Em ecrãs maiores o logo cresce para 300px, mas max-width
+   é definido como 280px — na prática, como 280 < 300, é o
+   max-width que acaba a limitar o tamanho real renderizado
+   (o browser aplica sempre o menor valor entre width e
+   max-width). Resultado prático: o logo fica fixo em 280px
+   em desktop. */
 @media (min-width: 768px) {
     .logo {
         width: 300px;

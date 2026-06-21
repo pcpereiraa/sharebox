@@ -1,7 +1,18 @@
 /* ─────────────────────────────────────────────────────
-   ShareBox — home.css  (Figma-aligned)
+   Estilos da página INICIAL (home.html) — a página mais
+   complexa visualmente do site, com: barra de estado falsa
+   (relógio/bateria, estilo mockup de telemóvel), barra de
+   pesquisa, banner promocional com dots, scroll horizontal
+   de categorias, scroll horizontal de itens em doação, secção
+   "Como funciona", scroll horizontal de comunidades sugeridas,
+   navbar inferior e várias bottom sheets (painéis deslizantes
+   usados para a pesquisa expandida, lista de categorias e
+   lista de comunidades).
 ───────────────────────────────────────────────────── */
 
+/* Variáveis locais desta página — note-se a adição de
+   --cat-bg (cor de fundo das pastilhas de categoria) que não
+   existe nas outras folhas CSS, específica desta página. */
 :root {
   --bg:        #f5f5eb;
   --cat-bg:    #e6e4d5;
@@ -34,7 +45,12 @@ body {
   .page { max-width: 402px; margin: 0 auto; box-shadow: 0 0 60px rgba(0,0,0,0.35); }
 }
 
-/* Desktop: ocupa toda a largura, elementos escalam */
+/* Desktop: ocupa toda a largura, elementos escalam
+   Esta é a media query desktop mais extensa do projeto —
+   praticamente todos os componentes da home têm uma versão
+   "ampliada" para ecrãs grandes, incluindo a redefinição de
+   --r-md/--r-lg (raios de borda maiores) para combinar melhor
+   com elementos visualmente maiores. */
 @media (min-width: 768px) {
   body { background: var(--bg); }
   :root {
@@ -60,7 +76,12 @@ body {
   .cat-label { font-size: 14px; }
   .categories { gap: 14px; }
 
-  /* Donation cards - muito maiores no desktop */
+  /* Donation cards - muito maiores no desktop
+     Em mobile estes cards estão num scroll horizontal de
+     largura fixa (150px); em desktop o scroll horizontal
+     transforma-se numa grelha que "quebra linha" (flex-wrap),
+     com cards a ocupar um terço da largura disponível cada
+     (calc(33.333% - 16px) compensa o gap entre os 3 por linha). */
   .scroll-row-wrap { padding: 0 var(--pad); }
   .scroll-row {
     gap: 24px;
@@ -75,6 +96,10 @@ body {
   .user-name { font-size: 14px; }
   .donation-dist { font-size: 14px; }
   .user-avatar { width: 30px; height: 30px; font-size: 14px; }
+  /* !important necessário aqui porque o SVG do ícone de
+     distância já tem dimensões fixas inline/via atributo no
+     próprio SVG — sem !important, a regra de mobile (8x10px)
+     teria mais especificidade ou seria difícil de sobrepor. */
   .donation-dist svg { width: 12px !important; height: 14px !important; min-width: 12px !important; max-width: 12px !important; }
   .fav-btn { width: 38px; height: 38px; top: 12px; right: 12px; }
 
@@ -85,7 +110,9 @@ body {
   .how-card-title { font-size: 24px; }
   .how-card-sub { font-size: 16px; }
 
-  /* Community cards - muito maiores no desktop */
+  /* Community cards - muito maiores no desktop
+     Mesma técnica de "scroll horizontal → grelha com wrap"
+     aplicada aos cards de comunidade. */
   .comm-scroll-wrap { padding: 0 var(--pad); }
   .comm-scroll {
     gap: 24px;
@@ -112,7 +139,15 @@ body {
   .nav-add img { width: 36px; height: 36px; }
 }
 
-/* ── Status Bar ─────────────────────────────────────── */
+/* ── Status Bar ─────────────────────────────────────── 
+   Barra "falsa" de estado de telemóvel (hora + ícone de
+   bateria), recriada em CSS puro — não é a barra de estado
+   real do sistema operativo, mas sim um elemento decorativo
+   desenhado para o mockup/design da app parecer mais nativo
+   no protótipo Figma. O ícone de bateria é construído inteira-
+   mente com bordas e pseudo-elementos (::before para o nível
+   de carga, ::after para o "terminal" saliente da bateria),
+   sem usar nenhuma imagem. */
 .status-bar {
   display: flex;
   align-items: center;
@@ -140,6 +175,8 @@ body {
   padding: 2px;
   display: flex; align-items: center;
 }
+/* Nível de carga da bateria (fixo a 75% de largura, sempre o
+   mesmo valor — é decorativo, não reflete a bateria real). */
 .battery-fill::before {
   content: '';
   display: block;
@@ -147,6 +184,8 @@ body {
   background: var(--blue);
   border-radius: 1px;
 }
+/* O pequeno "terminal" positivo que sobressai do lado direito
+   da bateria, típico do desenho de ícones de bateria. */
 .battery-fill::after {
   content: '';
   position: absolute;
@@ -157,7 +196,8 @@ body {
   border-radius: 0 1px 1px 0;
 }
 
-/* ── Top Bar ────────────────────────────────────────── */
+/* ── Top Bar ────────────────────────────────────────── 
+   Cabeçalho com o logótipo ShareBox e o botão de notificações. */
 .top-bar {
   display: flex;
   align-items: center;
@@ -176,7 +216,13 @@ body {
 }
 .notif-btn img { width: 40px; height: 40px; object-fit: contain; }
 
-/* ── Scroll content ────────────────────────────────── */
+/* ── Scroll content ────────────────────────────────── 
+   Área de scroll vertical principal da página, ocupando o
+   espaço restante entre a top-bar e a navbar (flex:1). As
+   regras ::-webkit-scrollbar/scrollbar-width:none escondem
+   visualmente a barra de scroll, mantendo o scroll funcional
+   — usado em praticamente toda a interface do ShareBox para
+   um visual mais limpo, semelhante a apps nativas. */
 .scroll-content {
   flex: 1;
   overflow-y: auto;
@@ -208,7 +254,9 @@ body {
 .search-bar input::placeholder { color: rgba(23,42,58,0.45); }
 .search-filter { margin-left: auto; cursor: pointer; display: flex; align-items: center; }
 
-/* ── Banner ─────────────────────────────────────────── */
+/* ── Banner ─────────────────────────────────────────── 
+   Banner promocional/carrossel de imagens no topo da home,
+   com indicadores de página (dots) por baixo. */
 .banner-wrap { padding: 0 var(--pad); margin-bottom: 10px; }
 .banner {
   width: 100%;
@@ -232,7 +280,9 @@ body {
   }
 }
 
-/* Dots */
+/* Dots — indicadores de qual slide do banner está ativo
+   (o dot .active fica verde-escuro, os outros ficam num
+   verde mais ténue/transparente). */
 .banner-dots {
   display: flex; align-items: center; justify-content: center;
   gap: 5px; padding: 10px 0 18px;
@@ -243,7 +293,10 @@ body {
 }
 .banner-dot.active { background: var(--dark-green); }
 
-/* ── Section header ─────────────────────────────────── */
+/* ── Section header ─────────────────────────────────── 
+   Cabeçalho reutilizado por todas as secções da home
+   ("Categorias", "Itens recentes", "Comunidades sugeridas"):
+   título à esquerda + link "Ver tudo" à direita. */
 .section-header {
   display: flex; align-items: center; justify-content: space-between;
   padding: 0 var(--pad);
@@ -261,7 +314,10 @@ body {
   text-decoration: none;
 }
 
-/* ── Categories ─────────────────────────────────────── */
+/* ── Categories ─────────────────────────────────────── 
+   Scroll horizontal de pastilhas de categoria (ex: "Roupa",
+   "Livros", "Eletrónica"). Cada .cat-card é um botão clicável
+   que filtra os itens mostrados por categoria. */
 .categories-wrap { padding: 0 var(--pad); margin-bottom: 28px; }
 .categories {
   display: flex; gap: 10px;
@@ -291,7 +347,10 @@ body {
   white-space: nowrap;
 }
 
-/* ── Donation Cards ──────────────────────────────────── */
+/* ── Donation Cards ──────────────────────────────────── 
+   Scroll horizontal dos itens disponíveis para doação na
+   home (os mesmos cards reaparecem, com pequenas variações
+   de tamanho, nas bottom sheets e em ecrãs maiores). */
 .scroll-row-wrap {
   padding: 0 0 0 var(--pad);
   margin-bottom: 28px;
@@ -327,6 +386,12 @@ body {
   object-fit: cover;
   display: block;
 }
+/* Botão de favorito flutuante sobre a imagem do card —
+   posicionado em absolute relativo a .donation-card-img
+   (que tem position:relative). O estado "favoritado" (classe
+   .faved, definida mais abaixo no ficheiro) troca o ícone
+   para um coração vermelho preenchido via data-URI SVG inline,
+   sem precisar de um ficheiro de imagem adicional. */
 .fav-btn {
   position: absolute; top: 8px; right: 8px;
   width: 28px; height: 28px;
@@ -350,6 +415,9 @@ body {
   display: flex; align-items: center; justify-content: space-between;
 }
 .donation-user { display: flex; align-items: center; gap: 4px; }
+/* Avatar de fallback: círculo colorido com a inicial do nome
+   do utilizador (usado quando não há foto de perfil real —
+   a lógica de gerar a inicial vem do JavaScript, em home.js). */
 .user-avatar {
   width: 18px; height: 18px;
   background: var(--cat-bg);
@@ -368,13 +436,21 @@ body {
   font-family: "Berlin", sans-serif;
   font-size: 10px; color: rgba(0,0,0,0.5);
 }
+/* !important aqui força o tamanho do ícone SVG de distância a
+   manter-se pequeno mesmo que o SVG inline tenha os seus
+   próprios atributos width/height — evita que o ícone fique
+   desproporcionalmente grande dependendo de como o SVG foi
+   gerado/inserido no HTML. */
 .donation-dist svg {
   width: 8px !important; height: 10px !important;
   min-width: 8px !important; max-width: 8px !important;
   fill: rgba(23,42,58,0.55); flex-shrink: 0; display: block;
 }
 
-/* ── Como Funciona ──────────────────────────────────── */
+/* ── Como Funciona ──────────────────────────────────── 
+   Secção explicativa com 3 (ou mais) passos de como o
+   ShareBox funciona, cada um com um ícone, título e subtítulo,
+   distribuídos uniformemente (space-around) numa linha. */
 .how-section { padding: 0 var(--pad); margin-bottom: 8px; }
 .how-cards {
   display: flex;
@@ -400,7 +476,10 @@ body {
   font-size: 12px; color: rgba(23,42,58,0.55); line-height: 1.5;
 }
 
-/* ── Community Cards ────────────────────────────────── */
+/* ── Community Cards ────────────────────────────────── 
+   Scroll horizontal de comunidades sugeridas — visualmente
+   muito semelhante aos .donation-card, mas com .comm-add-icon
+   (ícone de "+" para aderir) em vez de botão de favorito. */
 .comm-scroll-wrap {
   padding: 0 0 0 var(--pad);
   margin-bottom: 24px; overflow: hidden;
@@ -452,7 +531,9 @@ body {
   width: 22px; height: 22px; object-fit: contain;
 }
 
-/* ── NAVBAR ─────────────────────────────────────────── */
+/* ── NAVBAR ─────────────────────────────────────────── 
+   Mesma navbar inferior fixa partilhada por todo o site
+   (ver explicação detalhada em components.css). */
 .navbar {
   position: sticky;
   bottom: 0;
@@ -489,6 +570,13 @@ body {
 
 /* ══════════════════════════════════════════════════════
    BOTTOM SHEETS
+   ──────────────────────────────────────────────────────
+   Painéis que deslizam a partir do fundo do ecrã sobre um
+   overlay escuro semi-transparente. Usados na home para:
+   pesquisa expandida, grelha completa de categorias, e lista
+   completa de comunidades disponíveis. O JavaScript (home.js)
+   controla a abertura/fecho adicionando/removendo a classe
+   .active tanto no overlay como na própria sheet.
 ══════════════════════════════════════════════════════ */
 .sheet-overlay {
   position: fixed; inset: 0;
@@ -499,6 +587,11 @@ body {
 }
 .sheet-overlay.active { opacity: 1; pointer-events: all; }
 
+/* A sheet começa fora do ecrã (translateY(100%)) e desliza
+   para a posição visível (translateY(0)) quando .active é
+   adicionado — a curva cubic-bezier customizada dá um
+   movimento com ligeira desaceleração no final, semelhante
+   ao comportamento nativo de sheets em iOS. */
 .bottom-sheet {
   position: fixed;
   bottom: 0; left: 50%; transform: translateX(-50%) translateY(100%);
@@ -517,6 +610,9 @@ body {
   .bottom-sheet { max-width: 402px; }
 }
 
+/* "Pega" visual no topo da sheet (sugere ao utilizador que
+   pode arrastar para fechar, embora a interação de arrastar
+   em si seja implementada/controlada via JS, não por CSS). */
 .sheet-handle {
   width: 40px; height: 4px;
   background: rgba(23,42,58,0.2);
@@ -546,11 +642,21 @@ body {
 }
 .sheet-body::-webkit-scrollbar { display: none; }
 
+/* Grelha de categorias dentro da sheet — usa auto-fill com
+   minmax para criar colunas automaticamente conforme o espaço
+   disponível, sem precisar de definir um número fixo de
+   colunas (responsivo "de fábrica", sem media queries extra). */
 .sheet-grid-cats {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
   gap: 14px 10px; justify-items: center;
 }
+/* Lista de doações dentro da sheet — aqui os .donation-card
+   são reformatados de "card vertical" (imagem acima, texto
+   abaixo) para "linha horizontal" (imagem à esquerda, texto à
+   direita, como uma lista), usando !important para sobrepor
+   a largura fixa de 150px definida na versão scroll-horizontal
+   do mesmo componente. */
 .sheet-grid-donations {
   display: grid;
   grid-template-columns: 1fr;
@@ -592,6 +698,10 @@ body {
   right: 6px;
 }
 
+/* Em ecrãs >=600px, a lista de doações na sheet volta a ser
+   uma grelha de 2 colunas com cards verticais (em vez de
+   linhas horizontais) — aproveita melhor o espaço extra
+   disponível numa sheet mais larga. */
 @media (min-width: 600px) {
   .sheet-grid-donations {
     grid-template-columns: repeat(2, 1fr);
@@ -606,6 +716,8 @@ body {
   }
 }
 
+/* Lista de comunidades dentro da sheet (estrutura semelhante
+   à dos itens, mas com .comm-add-icon-sm em vez de fav-btn). */
 .sheet-list-comms { display: flex; flex-direction: column; gap: 10px; }
 .comm-list-item {
   display: flex; align-items: center; gap: 12px;
@@ -635,7 +747,12 @@ body {
 .comm-add-icon-sm {
   width: 24px; height: 24px; object-fit: contain; flex-shrink: 0;
 }
-/* ── Categoria activa ───────────────────────────────── */
+/* ── Categoria activa ───────────────────────────────── 
+   Quando o utilizador seleciona uma categoria (clica num
+   .cat-card), essa categoria fica visualmente destacada:
+   fundo verde-escuro, ícone invertido para branco e label
+   com a cor da marca em negrito — dá feedback claro de qual
+   filtro está atualmente aplicado à lista de itens. */
 .cat-card.active .cat-thumb {
   background: var(--dark-green);
   transform: scale(1.05);
@@ -649,7 +766,13 @@ body {
   color: var(--dark-green);
   font-weight: 600;
 }
-/* ── Favorito activo ─────────────────────────────────── */
+/* ── Favorito activo ─────────────────────────────────── 
+   Quando um item é marcado como favorito (classe .faved
+   adicionada pelo JavaScript em home.js), o ícone de coração
+   é substituído por uma versão SVG vermelha preenchida,
+   embutida diretamente como data-URI no CSS (em vez de carregar
+   um segundo ficheiro de imagem) — troca instantânea sem
+   pedido de rede adicional. */
 .fav-btn.faved img {
   filter: none;
   content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23e74c3c'%3E%3Cpath d='M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z'/%3E%3C/svg%3E");
@@ -657,7 +780,9 @@ body {
 .fav-btn.faved {
   background: rgba(231,76,60,0.12);
 }
-/* Botão de voltar no top-bar */
+/* Botão de voltar no top-bar (variante usada quando esta
+   folha é reaproveitada num contexto onde o notif-btn funciona
+   como link/botão de "voltar" em vez de notificações). */
 .top-bar .notif-btn, .top-bar a.notif-btn {
   background: none;
   border: none;

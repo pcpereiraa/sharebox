@@ -1,5 +1,9 @@
 /* ─────────────────────────────────────────────────────
-   ShareBox — communities.css
+   Estilos da página "Comunidades" (communities.html), que
+   lista as comunidades do utilizador, comunidades próximas
+   e sugestões, além de uma bottom sheet com a lista completa
+   de comunidades. Reutiliza a estrutura de .comm-card já vista
+   em home.css (cards de comunidade no scroll horizontal).
 ───────────────────────────────────────────────────── */
 
 :root {
@@ -59,7 +63,9 @@ body {
 }
 .scroll-content::-webkit-scrollbar { display: none; }
 
-/* ── Top Bar ────────────────────────────────────────── */
+/* ── Top Bar ────────────────────────────────────────── 
+   Cabeçalho com título da página e botão "+ Criar" (link
+   direto para add_community.html). */
 .top-bar {
   display: flex;
   align-items: center;
@@ -96,7 +102,10 @@ body {
 }
 .btn-criar:hover { background: var(--light-green); }
 
-/* ── Search Bar ─────────────────────────────────────── */
+/* ── Search Bar ─────────────────────────────────────── 
+   Barra de pesquisa que, ao ser usada, dispara a função
+   searchCommunities() em communities.js (pesquisa tanto em
+   itens como em comunidades, incluindo privadas). */
 .search-wrap { padding: 0 var(--pad) 20px; }
 .search-bar {
   display: flex;
@@ -136,7 +145,11 @@ body {
   text-decoration: none;
 }
 
-/* ── My Communities list ────────────────────────────── */
+/* ── My Communities list ────────────────────────────── 
+   Lista VERTICAL (não scroll horizontal) das comunidades a
+   que o utilizador já pertence, com badge a indicar o papel
+   (Admin ou Membro) — populada por loadMyCommunities() em
+   communities.js. */
 .my-communities {
   display: flex;
   flex-direction: column;
@@ -196,6 +209,10 @@ body {
   white-space: nowrap;
   flex-shrink: 0;
 }
+/* Os dois estados do badge de papel (Admin/Membro) usam
+   tons muito semelhantes de verde — a diferença é sutil
+   (opacidade do fundo: 12% vs 8%) mas suficiente para
+   distinguir visualmente quem administra a comunidade. */
 .my-comm-badge.admin {
   background: rgba(1,110,88,0.12);
   color: var(--dark-green);
@@ -205,7 +222,9 @@ body {
   color: var(--dark-green);
 }
 
-/* ── Location pill ──────────────────────────────────── */
+/* ── Location pill ──────────────────────────────────── 
+   Pastilha de localização (ex: "Porto, Portugal") usada como
+   filtro de proximidade para a secção de comunidades próximas. */
 .location-pill {
   display: inline-flex;
   align-items: center;
@@ -222,7 +241,11 @@ body {
   box-shadow: var(--shadow-sm);
 }
 
-/* ── Nearby / Suggestion cards (horizontal scroll) ─── */
+/* ── Nearby / Suggestion cards (horizontal scroll) ─── 
+   Duas secções desta página (comunidades próximas e sugestões)
+   usam scroll horizontal com os mesmos .comm-card já definidos
+   em home.css — aqui repetem-se as mesmas regras porque cada
+   página carrega apenas a sua própria folha de estilo. */
 .nearby-scroll-wrap {
   padding: 0 0 0 var(--pad);
   margin-bottom: 8px;
@@ -273,12 +296,21 @@ body {
   font-family: "Berlin", sans-serif;
   font-size: 10px; color: rgba(23,42,58,0.6);
 }
+/* Nota: na secção "Sugestões" deste mesmo ficheiro, o ícone
+   de "+" (.comm-add-icon) está sempre ativo/clicável, já que
+   por definição estas comunidades sugeridas excluem as que o
+   utilizador já integra (ver loadSuggestions() em communities.js) —
+   ao contrário da secção "Próximas", onde o ícone pode aparecer
+   desativado se o utilizador já for membro dessa comunidade. */
 .comm-add-icon {
   position: absolute; top: 8px; right: 8px;
   width: 22px; height: 22px; object-fit: contain;
 }
 
-/* ── CTA Banner ─────────────────────────────────────── */
+/* ── CTA Banner ─────────────────────────────────────── 
+   Banner de apelo à ação no fundo da página, a incentivar o
+   utilizador a criar a sua própria comunidade caso nenhuma
+   das existentes lhe interesse. */
 .cta-banner {
   margin: 28px var(--pad) 0;
   background: var(--blue);
@@ -355,7 +387,10 @@ body {
   filter: brightness(0) saturate(100%) invert(48%) sepia(79%)
           saturate(476%) hue-rotate(120deg) brightness(95%) contrast(91%);
 }
-/* ── Bottom Sheets ──────────────────────────────────── */
+/* ── Bottom Sheets ──────────────────────────────────── 
+   Sheet usada para mostrar a lista COMPLETA de comunidades
+   (sem limite de itens), aberta a partir do link "Ver tudo"
+   no cabeçalho de secção. Estrutura idêntica à de home.css. */
 .sheet-overlay {
   position:fixed;inset:0;background:rgba(23,42,58,0.5);z-index:2000;
   opacity:0;pointer-events:none;transition:opacity 0.3s ease;backdrop-filter:blur(2px);
@@ -369,6 +404,11 @@ body {
   box-shadow:0 -8px 40px rgba(23,42,58,0.18);
 }
 .bottom-sheet.active { transform:translateX(-50%) translateY(0); }
+/* Nesta página, ao contrário de home.css, em ecrãs >=600px a
+   sheet deixa de estar centrada (left:50% com transform) e
+   passa a ocupar a largura total a partir da esquerda
+   (left:0, sem transform horizontal) — um comportamento de
+   "painel lateral/full width" diferente do usado na home. */
 @media (min-width:600px) {
   .bottom-sheet { max-width:100%;left:0;transform:translateY(100%); }
   .bottom-sheet.active { transform:translateY(0); }

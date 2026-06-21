@@ -1,5 +1,10 @@
 /* ─────────────────────────────────────────────────────
-   ShareBox — add_item.css
+   Estilos do formulário de criar/editar item (add_item.html),
+   usado em modo dual (criação OU edição, controlado pelo
+   parâmetro ?edit=ID, ver add_item.js): grelha de fotos,
+   campos de texto, select de categoria, chips de estado/tipo,
+   lista de seleção de comunidade (radio buttons) e botão de
+   submissão.
 ───────────────────────────────────────────────────── */
 
 :root {
@@ -54,7 +59,12 @@ body {
 }
 .scroll-content::-webkit-scrollbar { display: none; }
 
-/* ── Top Bar ────────────────────────────────────────── */
+/* ── Top Bar ────────────────────────────────────────── 
+   Cabeçalho com botão de voltar, título (dinâmico: "Adicionar
+   item" ou "Editar item", segundo o modo) e botão "Guardar"
+   visível sempre no topo (em vez de só no fundo da página),
+   permitindo submeter o formulário sem precisar de fazer
+   scroll até ao fim. */
 .top-bar {
   display: flex;
   align-items: center;
@@ -96,7 +106,10 @@ body {
 }
 .btn-salvar:hover { background: var(--light-green); }
 
-/* ── Form sections ──────────────────────────────────── */
+/* ── Form sections ──────────────────────────────────── 
+   Estrutura genérica de secção do formulário (título +
+   subtítulo opcional + campo(s)), separadas visualmente por
+   uma linha fina (.divider). */
 .form-section {
   padding: 20px var(--pad);
 }
@@ -118,7 +131,16 @@ body {
   margin: 0 var(--pad);
 }
 
-/* ── Photo grid ─────────────────────────────────────── */
+/* ── Photo grid ─────────────────────────────────────── 
+   Grelha de 4 colunas para upload de fotos (até 4 fotos por
+   item). Cada .photo-slot é um quadrado com borda tracejada
+   verde que funciona como zona de "clique para adicionar foto"
+   — usa um <input type="file"> transparente sobreposto
+   (.file-input com opacity:0) por cima de todo o slot, técnica
+   comum para tornar uma área inteira clicável para upload sem
+   depender do botão feio nativo do input file. Quando há uma
+   foto selecionada, a borda passa de tracejada a sólida
+   (.has-photo) e a imagem real é mostrada via .photo-preview. */
 .photo-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -244,6 +266,11 @@ body {
   transition: border-color 0.15s;
 }
 .field-select:focus { border-color: var(--dark-green); color: var(--blue); }
+/* O <select> nativo perde a seta dropdown do sistema operativo
+   (via appearance:none) e é substituída por este SVG de seta
+   posicionado manualmente — permite estilizar a seta com a
+   mesma cor/estilo do resto da interface, em vez de ficar com
+   o visual diferente de cada browser/sistema operativo. */
 .select-chevron {
   position: absolute;
   right: 12px; top: 50%;
@@ -253,7 +280,11 @@ body {
   pointer-events: none;
 }
 
-/* ── Chips ──────────────────────────────────────────── */
+/* ── Chips ──────────────────────────────────────────── 
+   Botões em forma de "pílula" para seleção única dentro de
+   um grupo (ex: estado do item: Novo/Usado/Como novo) — a
+   lógica de qual chip fica .active é controlada por
+   selectChip() em add_item.js. */
 .chips-wrap {
   display: flex; flex-wrap: wrap; gap: 10px;
 }
@@ -276,7 +307,13 @@ body {
   color: #fff;
 }
 
-/* ── Community list ─────────────────────────────────── */
+/* ── Community list ─────────────────────────────────── 
+   Lista de comunidades do utilizador, apresentada como radio
+   buttons customizados (apenas uma pode estar selecionada —
+   a comunidade à qual o item vai ser associado, ou nenhuma).
+   O input nativo fica invisível (opacity:0) e é substituído
+   visualmente por .radio-custom, que reage ao estado :checked
+   do input real através do seletor de irmão adjacente (+). */
 .community-list {
   background: #fff;
   border-radius: var(--r-md);
@@ -321,6 +358,10 @@ body {
   border-color: var(--dark-green);
   background: var(--dark-green);
 }
+/* "Bolinha" interior do radio button selecionado, criada com
+   um pseudo-elemento posicionado e centrado via transform —
+   técnica padrão para desenhar o ponto central de um radio
+   button customizado sem precisar de nenhuma imagem. */
 .radio-input:checked + .radio-custom::after {
   content: '';
   position: absolute;

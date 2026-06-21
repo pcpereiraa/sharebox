@@ -1,5 +1,9 @@
 /* ─────────────────────────────────────────────────────
-   ShareBox — community-detail.css
+   Estilos da página de detalhe de uma comunidade específica
+   (community_detail.html): hero com imagem de capa, estatísticas,
+   botões de ação (Aderir/Partilhar), descrição, localização,
+   informação do administrador, scroll de itens disponíveis,
+   lista de membros, regras e atividade recente.
 ───────────────────────────────────────────────────── */
 
 :root {
@@ -54,7 +58,12 @@ body {
 }
 .scroll-content::-webkit-scrollbar { display: none; }
 
-/* ── Hero ───────────────────────────────────────────── */
+/* ── Hero ───────────────────────────────────────────── 
+   Imagem de capa da comunidade a toda a largura, com um
+   gradiente escuro sobreposto (de transparente no topo a
+   quase preto no fundo) para garantir que o título branco
+   sobre a imagem permanece legível independentemente das
+   cores da foto de capa escolhida pelo administrador. */
 .hero {
   position: relative;
   width: 100%;
@@ -103,7 +112,10 @@ body {
   color: rgba(255,255,255,0.75);
 }
 
-/* ── Stats ──────────────────────────────────────────── */
+/* ── Stats ──────────────────────────────────────────── 
+   Barra de estatísticas (ex: nº de membros, nº de itens)
+   populada por loadCommunity()/loadItems() em
+   community_detail.js. */
 .comm-stats {
   display: flex;
   background: #fff;
@@ -134,7 +146,11 @@ body {
   flex-shrink: 0;
 }
 
-/* ── Action buttons ─────────────────────────────────── */
+/* ── Action buttons ─────────────────────────────────── 
+   Os dois botões principais da página: "Aderir"/"Sair"/"Editar"
+   (dinâmico, ver setupJoinButton() em community_detail.js) e
+   "Partilhar" (Web Share API). flex:1 em ambos garante que
+   dividem o espaço horizontal igualmente. */
 .action-btns {
   display: flex;
   gap: 12px;
@@ -172,7 +188,11 @@ body {
 }
 .btn-partilhar:hover { background: #1f3d50; }
 
-/* ── Body padding wrapper ───────────────────────────── */
+/* ── Body padding wrapper ───────────────────────────── 
+   Wrapper genérico que aplica o padding horizontal padrão
+   (--pad) a várias secções de texto/conteúdo da página, sem
+   ter de repetir "padding: 0 var(--pad)" em cada secção
+   individualmente. */
 .body-pad { padding: 0 var(--pad); }
 
 /* ── Section title ──────────────────────────────────── */
@@ -220,7 +240,8 @@ body {
   margin-left: 24px;
 }
 
-/* ── Admin box ──────────────────────────────────────── */
+/* ── Admin box ──────────────────────────────────────── 
+   Caixa com o avatar e nome do administrador da comunidade. */
 .admin-box {
   background: #fff;
   border-radius: var(--r-md);
@@ -229,7 +250,11 @@ body {
   box-shadow: var(--shadow-sm);
 }
 
-/* ── Members ────────────────────────────────────────── */
+/* ── Members ────────────────────────────────────────── 
+   Estilos partilhados pelas linhas de membro, tanto na lista
+   resumida (primeiros 5, na página principal) como na lista
+   completa (dentro da bottom sheet, ver openMembersSheet() em
+   community_detail.js). */
 .member-avatar {
   width: 46px; height: 46px;
   border-radius: 50%;
@@ -265,7 +290,16 @@ body {
   color: var(--dark-green);
 }
 
-/* ── Items scroll ───────────────────────────────────── */
+/* ── Items scroll ───────────────────────────────────── 
+   Scroll horizontal dos itens atualmente disponíveis nesta
+   comunidade — visualmente semelhante aos .donation-card de
+   home.css, mas com a classe .item-card (nome diferente,
+   estrutura idêntica). Note-se que o uso de margin negativo
+   seguido de padding-left é uma técnica comum para permitir
+   que o conteúdo do scroll "escape" do padding lateral normal
+   da página, alinhando a primeira imagem com a margem da
+   página enquanto a última pode continuar parcialmente visível
+   até à margem direita do ecrã. */
 .items-scroll-wrap {
   margin: 0 calc(-1 * var(--pad));
   padding-left: var(--pad);
@@ -328,7 +362,10 @@ body {
   font-size: 10px; color: rgba(0,0,0,0.5);
 }
 
-/* ── Members group ──────────────────────────────────── */
+/* ── Members group ──────────────────────────────────── 
+   Lista resumida de membros (limitada a 5 visíveis na página
+   principal, com link "Ver todos" para abrir a sheet completa
+   — ver loadMembers() em community_detail.js). */
 .members-group {
   background: #fff;
   border-radius: var(--r-md);
@@ -353,7 +390,11 @@ body {
   text-decoration: none;
 }
 
-/* ── Rules group ────────────────────────────────────── */
+/* ── Rules group ────────────────────────────────────── 
+   Lista de regras da comunidade — definida no HTML/JS como
+   itens clicáveis com chevron, embora aqui o estilo sugira
+   apenas hover (sem necessariamente navegar para outro sítio;
+   o comportamento de clique real depende do JS da página). */
 .rules-group {
   background: #fff;
   border-radius: var(--r-md);
@@ -380,7 +421,9 @@ body {
   flex-shrink: 0;
 }
 
-/* ── Activity group ─────────────────────────────────── */
+/* ── Activity group ─────────────────────────────────── 
+   Secção de "atividade recente" da comunidade (ex: novos
+   membros, novos itens adicionados). */
 .activity-group {
   background: #fff;
   border-radius: var(--r-md);

@@ -1,5 +1,8 @@
 /* ─────────────────────────────────────────────────────
-   ShareBox — messages.css (inbox + chat)
+   Folha partilhada por DUAS páginas distintas: a lista de
+   conversas (messages.html) e o ecrã de chat individual
+   (chat.html). Por isso o ficheiro está dividido em duas
+   grandes secções claramente marcadas mais abaixo.
 ───────────────────────────────────────────────────── */
 
 :root {
@@ -41,6 +44,11 @@ body {
 
 /* ── ══════════════════════════════════════
    MESSAGES LIST PAGE
+   ──────────────────────────────────────────
+   Lista de conversas (inbox), reconstruída dinamicamente a
+   partir da tabela messages (ver loadConversations() em
+   messages.js — não existe um conceito nativo de "conversa"
+   na base de dados, é tudo agrupado em JavaScript).
 ════════════════════════════════════════ */
 
 .scroll-content {
@@ -49,7 +57,11 @@ body {
 }
 .scroll-content::-webkit-scrollbar { display: none; }
 
-/* Top Bar - dark */
+/* Top Bar - dark
+   Ao contrário da maioria das outras páginas (top-bar com
+   fundo creme/claro), aqui o cabeçalho usa o fundo azul escuro
+   da marca — visualmente distingue esta secção como "diferente"
+   das listas normais de itens/comunidades. */
 .top-bar {
   display: flex; align-items: center;
   justify-content: space-between;
@@ -69,7 +81,10 @@ body {
 }
 .btn-nova:hover { background: var(--light-green); }
 
-/* Search */
+/* Search — pesquisa local (sem nova query à BD) que filtra
+   as conversas já carregadas, por nome OU pelo texto completo
+   do histórico de mensagens (ver filterConversations() em
+   messages.js). */
 .search-wrap { padding: 16px var(--pad); background: var(--bg); }
 .search-bar {
   display: flex; align-items: center; gap: 8px;
@@ -101,6 +116,9 @@ body {
 .conv-avatar {
   width: 54px; height: 54px; border-radius: 50%;
 }
+/* Indicador "online" — círculo pequeno sobreposto ao canto
+   inferior direito do avatar, cinzento por defeito e verde
+   quando o outro utilizador está online (classe .active). */
 .online-dot {
   position: absolute; bottom: 2px; right: 2px;
   width: 13px; height: 13px; border-radius: 50%;
@@ -116,6 +134,11 @@ body {
   font-weight: 600; margin-bottom: 3px;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
+/* Conversas com mensagens não lidas ganham destaque tipográfico:
+   nome em negrito mais forte (700) e a pré-visualização da
+   mensagem em cor mais escura/forte em vez do cinzento padrão
+   — imita o comportamento padrão de apps de mensagens (WhatsApp,
+   Telegram, etc.) para chamar a atenção para conversas pendentes. */
 .conv-item.unread .conv-name { font-weight: 700; }
 .conv-preview {
   font-family: "Berlin", sans-serif;
@@ -132,6 +155,9 @@ body {
   font-family: "Berlin", sans-serif;
   font-size: 12px; color: rgba(23,42,58,0.4);
 }
+/* Pequeno ponto verde indicando "tens mensagens não lidas
+   nesta conversa" — visualmente separado do online-dot (que
+   indica presença, não mensagens). */
 .conv-unread-dot {
   width: 10px; height: 10px; border-radius: 50%;
   background: var(--dark-green);
@@ -143,8 +169,17 @@ body {
 
 /* ── ══════════════════════════════════════
    CHAT PAGE
+   ──────────────────────────────────────────
+   Ecrã de conversa 1-para-1 entre dois utilizadores, com
+   mensagens em tempo real via Supabase Realtime (ver chat.js).
 ════════════════════════════════════════ */
 
+/* position:fixed (em vez de relative, como nas outras páginas)
+   garante que o ecrã de chat ocupa exatamente a janela visível
+   e não faz scroll da página inteira — só a área .chat-messages
+   é que tem scroll interno. Isto é importante em mobile para
+   que o teclado virtual não empurre a barra de input para fora
+   do ecrã visível. */
 .chat-page {
   background: var(--bg);
   display: flex;
@@ -209,7 +244,14 @@ body {
 .chat-menu-btn:hover { background: rgba(255,255,255,0.2); }
 .chat-menu-btn svg { fill: #fff; }
 
-/* Item reference card */
+/* Item reference card 
+   Mini-cartão que aparece no topo do chat quando a conversa
+   está associada a um item específico (ex: o utilizador
+   contactou através do botão "Contactar" na página do item).
+   display:none por defeito; a classe .has-item (adicionada
+   pelo JS quando há um item válido) torna-o visível — ver
+   loadItemReference() em chat.js, que esconde este cartão se
+   o itemId for null/'null'/vazio ou o item não for encontrado. */
 .item-reference {
   display: none; align-items: center; gap: 12px;
   background: #fff; padding: 12px 16px;
@@ -235,7 +277,12 @@ body {
   padding: 5px 12px; border-radius: 50px; white-space: nowrap; flex-shrink: 0;
 }
 
-/* Messages area */
+/* Messages area 
+   flex:1 faz esta área ocupar todo o espaço vertical restante
+   entre o cabeçalho/item-reference e a barra de input —
+   é aqui que ocorre o scroll interno do chat (ver scrollToBottom()
+   em chat.js, chamado sempre que uma nova mensagem é enviada
+   ou recebida, para manter a mensagem mais recente visível). */
 .chat-messages {
   flex: 1; overflow-y: auto; overflow-x: hidden;
   padding: 16px;
@@ -244,6 +291,11 @@ body {
 }
 .chat-messages::-webkit-scrollbar { display: none; }
 
+/* Separador de data (ex: "Hoje", "Ontem", "15 de junho") entre
+   grupos de mensagens de dias diferentes — duas linhas finas
+   com o texto centrado entre elas, construídas com
+   pseudo-elementos ::before/::after que ocupam o espaço
+   restante (flex:1) à esquerda e à direita do texto. */
 .date-separator {
   display: flex; align-items: center; gap: 10px;
   margin: 8px 0;
@@ -258,6 +310,12 @@ body {
   white-space: nowrap;
 }
 
+/* Cada linha de mensagem (.msg-row) é alinhada à direita
+   (.sent, mensagens próprias) ou à esquerda (.received,
+   mensagens do outro utilizador) — padrão clássico de UI de
+   chat. O avatar do remetente só é mostrado em mensagens
+   recebidas (em mensagens enviadas, o próprio utilizador não
+   precisa de ver o seu próprio avatar repetidamente). */
 .msg-row {
   display: flex; align-items: flex-end; gap: 8px;
 }
@@ -274,6 +332,12 @@ body {
   max-width: 75%; padding: 10px 14px;
   border-radius: 18px; position: relative;
 }
+/* Os "cantos pontiagudos" característicos de bolhas de chat:
+   a bolha recebida tem o canto inferior-esquerdo menos
+   arredondado (aponta para o avatar à esquerda), a bolha
+   enviada tem o canto inferior-direito menos arredondado
+   (aponta para onde estaria o avatar do próprio utilizador,
+   à direita) — efeito visual padrão em apps de mensagens. */
 .msg-bubble.received {
   background: #fff;
   border-bottom-left-radius: 4px;
@@ -306,7 +370,10 @@ body {
   font-size: 11px; color: rgba(255,255,255,0.65);
 }
 
-/* Input bar */
+/* Input bar 
+   Barra fixa no fundo do ecrã de chat: botão de anexo +
+   campo de texto + botão de enviar (circular, com ícone de
+   seta/avião de papel). */
 .chat-input-bar {
   display: flex; align-items: center; gap: 10px;
   padding: 12px 14px 16px;
@@ -341,7 +408,11 @@ body {
 .chat-send-btn:hover { background: var(--light-green); }
 .chat-send-btn svg { fill: #fff; }
 
-/* ── NAVBAR ─────────────────────────────────────────── */
+/* ── NAVBAR ─────────────────────────────────────────── 
+   Nota: esta navbar é definida aqui mas não aparece de facto
+   na página de chat (chat.html usa .chat-page com layout
+   fixed que ocupa o ecrã inteiro, sem espaço para a navbar) —
+   é usada apenas na página de lista de conversas (messages.html). */
 .navbar {
   position: sticky; bottom: 0; width: 100%; height: 80px;
   background: var(--blue); border-radius: 24px 24px 0 0;

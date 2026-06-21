@@ -1,5 +1,9 @@
 /* ─────────────────────────────────────────────────────
-   ShareBox — profile.css
+   Estilos da página de perfil do PRÓPRIO utilizador
+   (profile.html): hero com avatar/nome/email, barra de
+   estatísticas, e grupos de menu para navegação (Os meus
+   itens, Comunidades, Favoritos, Definições, etc.) terminando
+   no botão de logout.
 ───────────────────────────────────────────────────── */
 
 :root {
@@ -57,7 +61,10 @@ body {
 }
 .scroll-content::-webkit-scrollbar { display: none; }
 
-/* ── Profile Hero ───────────────────────────────────── */
+/* ── Profile Hero ───────────────────────────────────── 
+   Secção superior com fundo azul escuro, contendo o avatar
+   (circular, com borda verde clara), nome e email do
+   utilizador, e um botão "Editar perfil". */
 .profile-hero {
   background: var(--blue);
   display: flex;
@@ -67,6 +74,10 @@ body {
   gap: 6px;
 }
 
+/* O avatar funciona tanto com foto real (.profile-avatar img)
+   como com um SVG de placeholder genérico (.profile-avatar svg,
+   ver avatarHTML() em auth.js) quando o utilizador ainda não
+   tem foto de perfil definida. */
 .profile-avatar {
   width: 90px;
   height: 90px;
@@ -116,7 +127,13 @@ body {
   border-color: rgba(255,255,255,0.6);
 }
 
-/* ── Stats bar ──────────────────────────────────────── */
+/* ── Stats bar ──────────────────────────────────────── 
+   Barra de estatísticas do utilizador (ex: itens doados,
+   avaliação média com estrela), posicionada logo abaixo do
+   hero azul mas com fundo branco e cantos arredondados só
+   no fundo (border-radius 0 0 r-lg r-lg) — cria um efeito de
+   "continuidade" visual onde a barra parece "encaixar" sob
+   o hero escuro. */
 .profile-stats {
   display: flex;
   align-items: center;
@@ -180,7 +197,12 @@ body {
   text-decoration: none;
 }
 
-/* ── Menu groups ────────────────────────────────────── */
+/* ── Menu groups ────────────────────────────────────── 
+   Cada .menu-group é uma "caixa branca" que agrupa vários
+   .menu-item relacionados (ex: um grupo para "Os meus itens"/
+   "Comunidades"/"Favoritos", outro grupo separado para
+   "Definições"/"Ajuda"), com divisores finos entre os itens
+   do mesmo grupo. */
 .menu-group {
   background: #fff;
   border-radius: var(--r-md);
@@ -225,7 +247,12 @@ body {
   margin: 0 16px;
 }
 
-/* ── Logout button ──────────────────────────────────── */
+/* ── Logout button ──────────────────────────────────── 
+   Botão de "Sair" claramente diferenciado (vermelho) e
+   separado dos grupos de menu normais por uma margem maior
+   (margin-top:28px) — sinaliza visualmente que é uma ação
+   distinta e potencialmente irreversível em termos de sessão
+   (chama logout() em auth.js). */
 .logout-btn {
   display: block;
   width: 100%;

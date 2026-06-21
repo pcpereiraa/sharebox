@@ -10,6 +10,37 @@
 </head>
 <body>
 
+<!--
+  admin/index.html
+  -----------------
+  Dashboard principal do painel de administração: mostra
+  estatísticas globais da plataforma (utilizadores, itens,
+  comunidades) e três tabelas de "recentes" (últimos 5 utilizadores,
+  itens e comunidades registados), cada uma com um link "Ver todos"
+  para a respetiva página de gestão completa.
+
+  Pontos a destacar na defesa (bugs/inconsistências reais encontrados
+  neste ficheiro):
+
+  1. `loadStats()` tenta escrever a contagem de pedidos (`requests`)
+     no elemento `#stat-requests`, mas esse elemento NÃO existe no
+     HTML desta página (só existem `#stat-users`, `#stat-items` e
+     `#stat-communities` — não há um 4º cartão de stats para
+     "Pedidos"). `document.getElementById()` devolve `null` nesse
+     caso, e a tentativa de atribuir `.textContent` falharia com um
+     erro de runtime ("Cannot set properties of null") visível na
+     consola — não é um erro silencioso, mas também não impede o
+     resto da página de funcionar (o erro fica isolado a essa linha).
+
+  2. `deleteCommunity(id)` é chamado a partir da tabela passando
+     `c.owner_id` (o UUID do CRIADOR da comunidade) como argumento, e
+     a função apaga com `.eq('owner_id', id)`. Isto significa que
+     clicar em "Eliminar" numa comunidade elimina, na verdade, TODAS
+     as comunidades criadas por esse mesmo utilizador — não apenas a
+     linha clicada. O comportamento correto seria passar o `id` da
+     própria comunidade (`c.id`) e filtrar com `.eq('id', id)`.
+-->
+
 <div class="admin-layout">
 
   <!-- Sidebar -->
@@ -172,6 +203,15 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // ── Guard: só admins ─────────────────────────────────
+/**
+ * adminGuard
+ * ----------
+ * Proteção padrão das páginas de admin: exige sessão válida E
+ * `is_admin = true` no perfil, caso contrário redireciona para o
+ * login (sem sessão) ou para a home (sem permissões).
+ *
+ * @returns {Promise<boolean>} true se o acesso for permitido.
+ */
 async function adminGuard() {
   const { data: { session } } = await sb.auth.getSession();
   if (!session) { window.location.href = '../login.html'; return false; }
@@ -194,6 +234,21 @@ document.getElementById('current-date').textContent = new Date().toLocaleDateStr
 });
 
 // ── Carregar stats ───────────────────────────────────
+/**
+ * loadStats
+ * ---------
+ * Calcula as 3 estatísticas globais mostradas no topo do dashboard
+ * (utilizadores, itens, comunidades), usando 4 contagens feitas em
+ * PARALELO com `Promise.all` — cada uma pedida com
+ * `{ count: 'exact', head: true }`, que devolve apenas o número total
+ * de linhas da tabela sem transferir os dados em si (muito mais
+ * eficiente do que buscar todas as linhas só para as contar).
+ *
+ * Nota: a 4ª contagem (`requests`) é pedida mas o resultado nunca é
+ * usado para nada visível, porque o elemento `#stat-requests` não
+ * existe nesta página (ver aviso no topo do ficheiro) — a query é
+ * feita "em vão".
+ */
 async function loadStats() {
   const [users, items, communities, requests] = await Promise.all([
     sb.from('profiles').select('*', { count: 'exact', head: true }),
@@ -208,6 +263,13 @@ async function loadStats() {
 }
 
 // ── Carregar utilizadores recentes ───────────────────
+/**
+ * loadUsers
+ * ---------
+ * Carrega os 5 utilizadores mais recentemente registados (ordenados
+ * por `created_at` descendente, limitados com `.limit(5)`) para a
+ * tabela "Utilizadores recentes".
+ */
 async function loadUsers() {
   const { data } = await sb.from('profiles').select('full_name, username, is_admin, created_at').order('created_at', { ascending: false }).limit(5);
   const tbody = document.getElementById('users-table-body');
@@ -223,6 +285,18 @@ async function loadUsers() {
 }
 
 // ── Carregar itens recentes ──────────────────────────
+/**
+ * loadItems
+ * ---------
+ * Carrega os 5 itens mais recentemente publicados para a tabela
+ * "Itens recentes".
+ *
+ * Nota: a comparação `i.status === 'disponível'` (com acento) nunca
+ * coincide com os valores reais guardados na BD, que usam
+ * 'disponivel' (sem acento, ver `formatStatus()` em my_items.js).
+ * Na prática, todos os itens acabam a mostrar o badge cinzento
+ * "other" em vez do verde "available" — outro pequeno bug a notar.
+ */
 async function loadItems() {
   const { data } = await sb.from('items').select('title, condition, type, status, created_at').order('created_at', { ascending: false }).limit(5);
   const tbody = document.getElementById('items-table-body');
@@ -238,6 +312,15 @@ async function loadItems() {
 }
 
 // ── Carregar comunidades recentes ────────────────────
+/**
+ * loadCommunities
+ * ----------------
+ * Carrega as 5 comunidades mais recentes, com o nome do criador
+ * obtido através de um embed direto no `.select()`
+ * (`profiles(full_name)`), já que aqui o volume de dados é pequeno
+ * (só 5 linhas) — diferente do padrão de "fan-out manual" usado nas
+ * páginas com listagens maiores (ver nota em my_items.js).
+ */
 async function loadCommunities() {
   const { data } = await sb.from('communities').select('name, is_private, created_at, owner_id, profiles(full_name)').order('created_at', { ascending: false }).limit(5);
   const tbody = document.getElementById('communities-table-body');
@@ -255,18 +338,49 @@ async function loadCommunities() {
   `).join('');
 }
 
+/**
+ * deleteCommunity
+ * ----------------
+ * Elimina uma comunidade — mas ATENÇÃO (ver aviso no topo do
+ * ficheiro): o `id` recebido aqui é, na realidade, o `owner_id` da
+ * comunidade (passado erradamente em `loadCommunities()`), e o
+ * filtro usado é `.eq('owner_id', id)`. O resultado real desta
+ * função é apagar TODAS as comunidades criadas por esse utilizador,
+ * não apenas a linha em que se clicou em "Eliminar" — um bug
+ * funcional a corrigir (devia receber e filtrar pelo `id` da própria
+ * comunidade).
+ *
+ * @param {string} id - Na prática, o owner_id do criador da
+ *                       comunidade (não o id da comunidade).
+ */
 async function deleteCommunity(id) {
   if (!confirm('Tens a certeza que queres eliminar esta comunidade?')) return;
   await sb.from('communities').delete().eq('owner_id', id);
   loadCommunities();
 }
 
+/**
+ * formatDate
+ * ----------
+ * Formata uma data ISO para o formato curto pt-PT (DD-MM-AAAA).
+ *
+ * @param {string|null} iso - Data em formato ISO, ou null/undefined.
+ * @returns {string} Data formatada, ou '—' se não existir.
+ */
 function formatDate(iso) {
   if (!iso) return '—';
   return new Date(iso).toLocaleDateString('pt-PT', { day: '2-digit', month: '2-digit', year: 'numeric' });
 }
 
 // ── Init ─────────────────────────────────────────────
+/**
+ * init
+ * ----
+ * Ponto de entrada da página: valida o acesso de admin e, se válido,
+ * carrega TODAS as secções do dashboard em paralelo (stats +
+ * utilizadores + itens + comunidades recentes), reduzindo o tempo de
+ * carregamento total da página.
+ */
 async function init() {
   const ok = await adminGuard();
   if (!ok) return;
