@@ -55,7 +55,11 @@ async function loadCommunityForEdit(commId, userId) {
     showMsg('comm-feedback', 'Comunidade não encontrada.', 'error'); return;
   }
   if (comm.owner_id !== userId) {
-    showMsg('comm-feedback', 'Não tens permissão para editar esta comunidade.', 'error'); return;
+    const isAdmin = await checkIsAdmin(userId);
+    console.log('[AddCommunity] owner_id:', comm.owner_id, '| current user:', userId, '| isAdmin:', isAdmin);
+    if (!isAdmin) {
+      showMsg('comm-feedback', 'Não tens permissão para editar esta comunidade.', 'error'); return;
+    }
   }
 
   // Preencher campos

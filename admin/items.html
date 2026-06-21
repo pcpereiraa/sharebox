@@ -2,10 +2,16 @@
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
+<link rel="manifest" href="../manifest.json">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ShareBox Admin — Itens</title>
 <link rel="stylesheet" href="admin.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Apple PWA -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="ShareBox">
+  <link rel="apple-touch-icon" href="../images/Logo/apple-touch-icon.png">
 </head>
 <body>
 <div class="admin-layout">
@@ -50,6 +56,7 @@
             <option value="pendente">Pendente</option>
             <option value="expirado">Expirado</option>
           </select>
+          <a href="../add_item.html" class="btn-action" style="background:var(--dark-green);color:#fff;text-decoration:none;padding:8px 16px;border-radius:8px;font-family:'Berlin',sans-serif;font-size:13px;white-space:nowrap">+ Adicionar item</a>
         </div>
       </div>
       <table class="data-table">
@@ -128,7 +135,10 @@ function renderItems(items, imgMap, profileMap) {
       <td><span class="badge ${statusCls}">${item.status||'—'}</span></td>
       <td class="text-muted">${item.location||'—'}</td>
       <td class="text-muted">${formatDate(item.created_at)}</td>
-      <td><button class="btn-action delete" onclick="deleteItem('${item.id}')">Eliminar</button></td>
+      <td style="display:flex;gap:6px">
+        <button class="btn-action" onclick="editItem('${item.id}')">Editar</button>
+        <button class="btn-action delete" onclick="deleteItem('${item.id}')">Eliminar</button>
+      </td>
     </tr>`;
   }).join('');
 }
@@ -142,6 +152,10 @@ function filterItems() {
   if (q) filtered = filtered.filter(i => (i.title||'').toLowerCase().includes(q) || (i.location||'').toLowerCase().includes(q));
   if (status) filtered = filtered.filter(i => i.status === status);
   renderItems(filtered);
+}
+
+function editItem(id) {
+  window.location.href = `../add_item.html?edit=${id}`;
 }
 
 async function deleteItem(id) {
@@ -159,6 +173,16 @@ function formatDate(iso) {
 
 async function init() { const ok = await adminGuard(); if (ok) loadItems(); }
 init();
+</script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('../sw.js')
+        .then(reg => console.log('[SW] Registado:', reg.scope))
+        .catch(err => console.error('[SW] Erro:', err));
+    });
+  }
 </script>
 </body>
 </html>

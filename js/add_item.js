@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   ]);
 
   if (editItemId) {
-    await loadItemForEdit(editItemId);
+    await loadItemForEdit(editItemId, session);
   }
 
   // Botões
@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 });
 
 // ── Carregar item para edição ─────────────────────────
-async function loadItemForEdit(itemId) {
+async function loadItemForEdit(itemId, session) {
   // Mudar títulos
   const pageTitle = document.getElementById('page-title');
   if (pageTitle) pageTitle.textContent = 'Editar item';
@@ -59,9 +59,10 @@ async function loadItemForEdit(itemId) {
     return;
   }
 
-  // Verificar que é o dono
-  const { data: { session } } = await supabaseClient.auth.getSession();
-  if (item.owner_id !== session.user.id) {
+  // Verificar que é o dono OU um admin
+  const isAdmin = await checkIsAdmin(session.user.id);
+  console.log('[AddItem] owner_id:', item.owner_id, '| current user:', session.user.id, '| isAdmin:', isAdmin);
+  if (item.owner_id !== session.user.id && !isAdmin) {
     showMsg('item-feedback', 'Não tens permissão para editar este item.', 'error');
     return;
   }
@@ -174,6 +175,14 @@ async function loadMyCommunities(userId) {
     </label>
     ${i < communities.length - 1 ? '<div class="comm-divider"></div>' : ''}
   `).join('');
+}
+
+// ── Selecção de chips (estado/entrega) ────────────────
+function selectChip(chip, group) {
+  const wrapper = chip.closest('.chips-wrap');
+  if (!wrapper) return;
+  wrapper.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
 }
 
 // ── Preview de fotos ──────────────────────────────────

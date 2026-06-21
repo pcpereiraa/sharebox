@@ -2,11 +2,12 @@
    ShareBox — sw.js
 ───────────────────────────────────────────────────── */
 
-const CACHE_NAME  = 'sharebox-v2';
-const OFFLINE_URL = 'index.html';
+const CACHE_NAME  = 'sharebox-v3';
+const OFFLINE_URL = 'offline.html';
 
 const APP_SHELL = [
   'index.html',
+  'offline.html',
   'home.html',
   'login.html',
   'register.html',
@@ -27,6 +28,9 @@ const APP_SHELL = [
   'terms.html',
   'my_items.html',
   'my_communities.html',
+  'favorites.html',
+  'forgot_password.html',
+  'reset_password.html',
   'manifest.json',
 
   // CSS
@@ -113,11 +117,36 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // Tudo o resto → Cache First
+  // Navegação entre páginas (mudar de URL/abrir link) → tratamento especial
+  if (event.request.mode === 'navigate') {
+    event.respondWith(navigationHandler(event.request));
+    return;
+  }
+
+  // Tudo o resto (CSS, JS, imagens locais) → Cache First
   if (event.request.method === 'GET') {
     event.respondWith(cacheFirst(event.request));
   }
 });
+
+// ── Navegação: tenta rede, cai para cache, cai para offline.html ────
+async function navigationHandler(request) {
+  try {
+    const response = await fetch(request);
+    if (response && response.ok) {
+      const cache = await caches.open(CACHE_NAME);
+      cache.put(request, response.clone());
+      return response;
+    }
+    throw new Error('Resposta inválida');
+  } catch {
+    const cached = await caches.match(request);
+    if (cached) return cached;
+    const offline = await caches.match(OFFLINE_URL);
+    if (offline) return offline;
+    return new Response('Sem ligação à internet.', { status: 503, headers: { 'Content-Type': 'text/plain' } });
+  }
+}
 
 async function cacheFirst(request) {
   const cached = await caches.match(request);

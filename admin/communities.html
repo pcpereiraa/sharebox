@@ -2,10 +2,16 @@
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
+<link rel="manifest" href="../manifest.json">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ShareBox Admin — Comunidades</title>
 <link rel="stylesheet" href="admin.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Apple PWA -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="ShareBox">
+  <link rel="apple-touch-icon" href="../images/Logo/apple-touch-icon.png">
 </head>
 <body>
 <div class="admin-layout">
@@ -40,7 +46,10 @@
     <div class="table-card">
       <div class="table-card-header">
         <h2>Todas as comunidades</h2>
-        <input type="text" id="search-input" placeholder="Pesquisar..." style="padding:8px 14px;border:1px solid rgba(23,42,58,0.15);border-radius:8px;font-family:'Berlin',sans-serif;font-size:13px;outline:none;width:220px">
+        <div style="display:flex;gap:10px;align-items:center">
+          <input type="text" id="search-input" placeholder="Pesquisar..." style="padding:8px 14px;border:1px solid rgba(23,42,58,0.15);border-radius:8px;font-family:'Berlin',sans-serif;font-size:13px;outline:none;width:220px">
+          <a href="../add_community.html" class="btn-action" style="background:var(--dark-green);color:#fff;text-decoration:none;padding:8px 16px;border-radius:8px;font-family:'Berlin',sans-serif;font-size:13px;white-space:nowrap">+ Nova comunidade</a>
+        </div>
       </div>
       <table class="data-table">
         <thead>
@@ -110,7 +119,10 @@ function renderComms(comms, profileMap) {
     <td class="text-muted">${memberMap[c.id]||0} membros</td>
     <td><span class="badge ${c.is_private?'private':'public'}">${c.is_private?'Privada':'Pública'}</span></td>
     <td class="text-muted">${formatDate(c.created_at)}</td>
-    <td><button class="btn-action delete" onclick="deleteComm('${c.id}')">Eliminar</button></td>
+    <td style="display:flex;gap:6px">
+      <button class="btn-action" onclick="editComm('${c.id}')">Editar</button>
+      <button class="btn-action delete" onclick="deleteComm('${c.id}')">Eliminar</button>
+    </td>
   </tr>`).join('');
 }
 
@@ -118,6 +130,10 @@ document.getElementById('search-input').addEventListener('input', function() {
   const q = this.value.toLowerCase();
   renderComms(q ? allComms.filter(c => (c.name||'').toLowerCase().includes(q) || (c.location||'').toLowerCase().includes(q)) : allComms);
 });
+
+function editComm(id) {
+  window.location.href = `../add_community.html?edit=${id}`;
+}
 
 async function deleteComm(id) {
   if (!confirm('Tens a certeza que queres eliminar esta comunidade?')) return;
@@ -129,6 +145,16 @@ async function deleteComm(id) {
 function formatDate(iso) { return iso ? new Date(iso).toLocaleDateString('pt-PT', { day:'2-digit', month:'2-digit', year:'numeric' }) : '—'; }
 async function init() { const ok = await adminGuard(); if (ok) loadCommunities(); }
 init();
+</script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('../sw.js')
+        .then(reg => console.log('[SW] Registado:', reg.scope))
+        .catch(err => console.error('[SW] Erro:', err));
+    });
+  }
 </script>
 </body>
 </html>
