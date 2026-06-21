@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<link rel="shortcut icon" href="images/Logo/favicon.ico" type="image/x-icon">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#016e58">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ShareBox">
+<link rel="apple-touch-icon" href="images/Logo/apple-touch-icon.png">
+<title>ShareBox — Perfil</title>
+<link rel="stylesheet" href="css/global.css">
+<link rel="stylesheet" href="css/animations.css">
+<link rel="stylesheet" href="css/profile.css">
+<style>
+.top-bar-vp {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  z-index: 10;
+}
+.btn-back-vp {
+  width: 36px; height: 36px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  text-decoration: none;
+}
+.btn-back-vp svg { width: 20px; height: 20px; fill: #fff; }
+
+.empty-mini {
+  text-align: center;
+  padding: 32px 20px;
+  font-family: "Berlin", sans-serif;
+  font-size: 14px;
+  color: rgba(23,42,58,0.45);
+}
+
+.vp-item-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fff;
+  border-radius: 14px;
+  padding: 10px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+}
+.vp-item-img {
+  width: 56px; height: 56px;
+  border-radius: 10px;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: #f0f2f5;
+}
+.vp-item-info { flex: 1; min-width: 0; }
+.vp-item-title {
+  font-family: "Berlin", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--blue);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.vp-item-meta {
+  font-family: "Berlin", sans-serif;
+  font-size: 12px;
+  color: rgba(23,42,58,0.45);
+  margin-top: 2px;
+}
+.vp-item-status {
+  font-family: "Berlin", sans-serif;
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 50px;
+  flex-shrink: 0;
+}
+.vp-item-status.available { background: rgba(1,110,88,0.1); color: var(--dark-green); }
+.vp-item-status.donated { background: rgba(23,42,58,0.08); color: rgba(23,42,58,0.5); }
+
+.vp-comm-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fff;
+  border-radius: 14px;
+  padding: 10px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+}
+.vp-comm-img {
+  width: 48px; height: 48px;
+  border-radius: 10px;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: linear-gradient(135deg,#c8e6d4,#b2dfdb);
+}
+.vp-comm-name {
+  font-family: "Berlin", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--blue);
+}
+.vp-comm-meta {
+  font-family: "Berlin", sans-serif;
+  font-size: 12px;
+  color: rgba(23,42,58,0.45);
+  margin-top: 2px;
+}
+
+.profile-edit-btn.report-btn {
+  background: transparent;
+  border: 1.5px solid rgba(192,57,43,0.3);
+  color: #c0392b;
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <main class="scroll-content">
+
+    <div class="top-bar-vp">
+      <a href="#" id="btn-back" class="btn-back-vp" onclick="history.back(); return false;">
+        <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+      </a>
+    </div>
+
+    <!-- Hero -->
+    <div class="profile-hero">
+      <div class="profile-avatar" id="profile-avatar">
+        <img src="images/Icons/icone5@4x-8.png" alt="Avatar" id="profile-avatar-img">
+      </div>
+      <div class="profile-name" id="profile-name">—</div>
+      <div class="profile-email" id="profile-location">—</div>
+      <a class="profile-edit-btn" href="#" id="btn-contact">Enviar mensagem</a>
+    </div>
+
+    <!-- Stats -->
+    <div class="profile-stats">
+      <div class="stat-item">
+        <div class="stat-value" id="stat-items">—</div>
+        <div class="stat-label">Anúncios</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <div class="stat-value" id="stat-donations">—</div>
+        <div class="stat-label">Doações</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <div class="stat-value" id="stat-communities">—</div>
+        <div class="stat-label">Comunidades</div>
+      </div>
+    </div>
+
+    <div class="profile-body">
+
+      <!-- Bio -->
+      <div id="bio-section" style="display:none">
+        <div class="section-header"><span class="section-title">Sobre</span></div>
+        <p id="profile-bio" style="font-family:'Berlin',sans-serif;font-size:14px;color:rgba(23,42,58,0.7);line-height:1.6;padding:0 0 16px"></p>
+      </div>
+
+      <!-- Itens publicados -->
+      <div class="section-header">
+        <span class="section-title">Itens publicados</span>
+      </div>
+      <div id="items-list"></div>
+      <div id="items-empty" class="empty-mini" style="display:none">Ainda não publicou itens.</div>
+
+      <!-- Comunidades -->
+      <div class="section-header" style="margin-top:20px">
+        <span class="section-title">Comunidades</span>
+      </div>
+      <div id="comms-list"></div>
+      <div id="comms-empty" class="empty-mini" style="display:none">Não pertence a nenhuma comunidade.</div>
+
+      <div style="height:40px"></div>
+    </div>
+
+  </main>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/view_profile.js"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => navigator.serviceWorker.register('sw.js'));
+  }
+</script>
+</body>
+</html>

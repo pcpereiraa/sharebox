@@ -57,11 +57,8 @@ async function loadCommunity() {
   const adminAvatar = document.getElementById('admin-avatar');
   if (adminName)   adminName.textContent = owner?.full_name || '—';
   if (adminAvatar) {
-    if (owner?.avatar_url) {
-      adminAvatar.innerHTML = `<img src="${owner.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
-    } else {
-      adminAvatar.textContent = (owner?.full_name || 'A').charAt(0).toUpperCase();
-    }
+    adminAvatar.style.cssText = 'display:flex;align-items:center;justify-content:center;background:#e8eef0;overflow:hidden';
+    adminAvatar.innerHTML = avatarHTML(owner?.avatar_url);
   }
 }
 
@@ -168,10 +165,8 @@ async function loadMembers() {
 
     return `
       <div class="member-row">
-        <div class="member-avatar" style="background:${colors[i % colors.length]};display:flex;align-items:center;justify-content:center;font-family:'Berlin',sans-serif;font-size:18px;color:var(--blue);overflow:hidden">
-          ${p.avatar_url
-            ? `<img src="${p.avatar_url}" style="width:100%;height:100%;object-fit:cover">`
-            : name.charAt(0).toUpperCase()}
+        <div class="member-avatar" style="background:#e8eef0;display:flex;align-items:center;justify-content:center;overflow:hidden">
+          ${avatarHTML(p.avatar_url)}
         </div>
         <div class="member-info">
           <div class="member-name">${name}</div>
@@ -251,9 +246,9 @@ async function leaveCommunity() {
 function showToast(msg) {
   const t = document.createElement('div');
   t.textContent = msg;
-  t.style.cssText = 'position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:var(--dark-green);color:#fff;font-family:"Berlin",sans-serif;font-size:14px;padding:12px 24px;border-radius:50px;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.2);white-space:nowrap';
+  t.style.cssText = 'position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:var(--dark-green);color:#fff;font-family:"Berlin",sans-serif;font-size:14px;padding:12px 24px;border-radius:50px;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.2);white-space:nowrap;animation:toastIn 0.3s ease;';
   document.body.appendChild(t);
-  setTimeout(() => { t.style.transition = 'opacity 0.3s'; t.style.opacity = '0'; setTimeout(() => t.remove(), 300); }, 2500);
+  setTimeout(() => { t.style.transition = 'opacity 0.3s, transform 0.3s'; t.style.opacity = '0'; t.style.transform = 'translate(-50%, 8px)'; setTimeout(() => t.remove(), 300); }, 2500);
 }
 
 // ── Sheet de membros ──────────────────────────────────
@@ -298,10 +293,8 @@ async function openMembersSheet() {
 
     return `
       <div class="sheet-member-row">
-        <div class="sheet-member-avatar" style="background:${colors[i % colors.length]}">
-          ${p.avatar_url
-            ? `<img src="${p.avatar_url}" style="width:100%;height:100%;object-fit:cover">`
-            : name.charAt(0).toUpperCase()}
+        <div class="sheet-member-avatar" style="background:#e8eef0;display:flex;align-items:center;justify-content:center;overflow:hidden">
+          ${avatarHTML(p.avatar_url)}
         </div>
         <div style="flex:1;min-width:0">
           <div class="sheet-member-name">${name}</div>

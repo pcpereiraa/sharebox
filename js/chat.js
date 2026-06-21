@@ -67,14 +67,15 @@ async function loadOtherUserInfo() {
   const nameEl = document.getElementById('chat-name');
   if (nameEl) nameEl.textContent = profile.full_name || 'Utilizador';
 
+  const profileLink1 = document.getElementById('chat-profile-link');
+  const profileLink2 = document.getElementById('chat-profile-link-2');
+  if (profileLink1) profileLink1.href = `view_profile.html?id=${otherUserId}`;
+  if (profileLink2) profileLink2.href = `view_profile.html?id=${otherUserId}`;
+
   const avatarEl = document.getElementById('chat-avatar');
   if (avatarEl) {
-    if (profile.avatar_url) {
-      avatarEl.innerHTML = `<img src="${profile.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
-    } else {
-      avatarEl.textContent = (profile.full_name || 'U').charAt(0).toUpperCase();
-      avatarEl.style.cssText = 'display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff;font-family:"Berlin",sans-serif;';
-    }
+    avatarEl.style.cssText = 'display:flex;align-items:center;justify-content:center;background:#e8eef0;overflow:hidden';
+    avatarEl.innerHTML = avatarHTML(profile.avatar_url);
   }
 }
 

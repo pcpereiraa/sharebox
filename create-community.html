@@ -2,18 +2,15 @@
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
-<link rel="manifest" href="manifest.json">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<link rel="shortcut icon" href="images/Logo/favicon.ico" type="image/x-icon">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#016e58">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="images/Logo/logoinicial.png">
 <title>ShareBox — Criar Comunidade</title>
 <link rel="stylesheet" href="css/global.css">
-<link rel="stylesheet" href="css/animations.css">
-<link rel="stylesheet" href="css/add_community.css">
-  <!-- Apple PWA -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="ShareBox">
-  <link rel="apple-touch-icon" href="images/Logo/logoinicial.png">
+<link rel="stylesheet" href="css/create-community.css">
 </head>
 <body>
 <div class="page">
@@ -33,7 +30,7 @@
     <div class="form-section">
       <div class="section-title">Foto de capa</div>
       <div class="section-sub">Dá uma cara à tua comunidade. Podes alterar depois.</div>
-      <div class="cover-upload" id="cover-upload">
+      <div class="cover-upload" id="cover-upload" onclick="triggerCoverUpload()">
         <input type="file" accept="image/*" id="cover-input" style="display:none" onchange="previewCover(this)">
         <div class="cover-placeholder" id="cover-placeholder">
           <div class="cover-avatar-preview"></div>
@@ -53,7 +50,7 @@
 
       <div class="field-group">
         <label class="field-label">Nome da comunidade</label>
-        <input class="field-input" type="text" id="comm-name" placeholder="Nome da comunidade">
+        <input class="field-input" type="text" placeholder="Ver todas">
       </div>
 
       <div class="field-group">
@@ -61,7 +58,7 @@
           <label class="field-label">Descrição</label>
           <span class="field-optional">Opcional</span>
         </div>
-        <textarea class="field-textarea" id="comm-desc" placeholder="Descreve a comunidade..." rows="4"></textarea>
+        <textarea class="field-textarea" placeholder="Ver todas" rows="4"></textarea>
       </div>
     </div>
 
@@ -71,7 +68,7 @@
     <div class="form-section">
       <div class="section-title">Categoria</div>
       <div class="field-select-wrap">
-        <select class="field-select" id="comm-category">
+        <select class="field-select">
           <option value="" disabled selected>Ver todas</option>
           <option>Roupas</option>
           <option>Livros</option>
@@ -96,7 +93,7 @@
 
       <div class="field-group">
         <label class="field-label">Cidade</label>
-        <input class="field-input" type="text" id="comm-city" placeholder="Ex: Porto">
+        <input class="field-input" type="text" placeholder="Ver todas">
       </div>
 
       <div class="field-group">
@@ -104,7 +101,7 @@
           <label class="field-label">Bairro / Zona</label>
           <span class="field-optional">Opcional</span>
         </div>
-        <input class="field-input" type="text" id="comm-neighborhood" placeholder="Ex: Bolhão">
+        <input class="field-input" type="text" placeholder="Ver todas">
       </div>
     </div>
 
@@ -123,7 +120,7 @@
             <div class="toggle-sub">Qualquer pessoa pode encontrar e aderir</div>
           </div>
           <label class="toggle-switch">
-            <input type="checkbox" id="toggle-public" checked>
+            <input type="checkbox" checked onchange="handleToggle(this)">
             <span class="toggle-track"></span>
           </label>
         </div>
@@ -169,7 +166,7 @@
           <label class="field-label">Regra 1</label>
           <span class="field-optional">Opcional</span>
         </div>
-        <input class="field-input" type="text" id="rule-1" placeholder="Ex: Respeitar todos os membros">
+        <input class="field-input" type="text" placeholder="Ver todas">
       </div>
 
       <div class="field-group">
@@ -177,10 +174,10 @@
           <label class="field-label">Regra 2</label>
           <span class="field-optional">Opcional</span>
         </div>
-        <input class="field-input" type="text" id="rule-2" placeholder="Ex: Apenas itens em bom estado">
+        <input class="field-input" type="text" placeholder="Ver todas">
       </div>
 
-      <button class="btn-add-rule" id="btn-add-rule">+ Adicionar regra</button>
+      <button class="btn-add-rule" onclick="addRule()">+ Adicionar regra</button>
     </div>
 
     <div class="divider"></div>
@@ -194,7 +191,7 @@
         <input class="field-input" type="text" placeholder="Ver todas" id="invite-input">
       </div>
 
-      <div class="invite-list" id="invite-list">
+      <div class="invite-list">
 
         <div class="invite-row">
           <div class="invite-avatar" style="background:#c8e6d4"></div>
@@ -232,15 +229,14 @@
       <!-- Link de partilha -->
       <div class="share-link-box">
         <span class="share-link-text">sharebox.app/comunidade/link...</span>
-        <button class="btn-copiar" id="btn-copiar">Copiar</button>
+        <button class="btn-copiar" onclick="copyLink()">Copiar</button>
       </div>
 
     </div>
 
     <!-- Botão criar -->
-    <div id="comm-feedback" style="margin:0 20px"></div>
     <div class="submit-wrap">
-      <button class="btn-submit" id="btn-submit-comm">Criar comunidade</button>
+      <button class="btn-submit" onclick="submitForm()">Criar comunidade</button>
     </div>
 
     <div style="height: 90px"></div>
@@ -251,22 +247,64 @@
   <nav class="navbar">
     <a class="nav-item" href="home.html"><img src="images/Icons/family_home.png" alt="Home"></a>
     <a class="nav-item active" href="communities.html"><img src="images/Icons/icone2@4x-8.png" alt="Comunidades"></a>
-    <a class="nav-item nav-add" href="add_item.html"><img src="images/Icons/add_circle.png" alt="Adicionar"></a>
-    <a class="nav-item" href="messages.html"><img src="images/Icons/business_messages.png" alt="Trocas"></a>
+    <a class="nav-item nav-add" href="#"><img src="images/Icons/add_circle.png" alt="Adicionar"></a>
+    <a class="nav-item" href="#"><img src="images/Icons/business_messages.png" alt="Trocas"></a>
     <a class="nav-item" href="profile.html"><img src="images/Icons/icone5@4x-8.png" alt="Perfil"></a>
   </nav>
 
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js"></script>
-<script src="js/auth.js"></script>
-<script src="js/add_community.js"></script>
+<script>
+function triggerCoverUpload() {
+  document.getElementById('cover-input').click();
+}
+function previewCover(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const preview = document.getElementById('cover-preview');
+    preview.src = e.target.result;
+    preview.style.display = 'block';
+    document.getElementById('cover-placeholder').style.display = 'none';
+    document.getElementById('cover-upload').classList.add('has-photo');
+  };
+  reader.readAsDataURL(file);
+}
+let ruleCount = 2;
+function addRule() {
+  ruleCount++;
+  const btn = document.querySelector('.btn-add-rule');
+  const group = document.createElement('div');
+  group.className = 'field-group';
+  group.innerHTML = `
+    <div class="field-label-row">
+      <label class="field-label">Regra ${ruleCount}</label>
+      <span class="field-optional">Opcional</span>
+    </div>
+    <input class="field-input" type="text" placeholder="Ver todas">
+  `;
+  btn.parentNode.insertBefore(group, btn);
+}
+function handleToggle(input) {
+  // handled by CSS
+}
+function copyLink() {
+  navigator.clipboard?.writeText('https://sharebox.app/comunidade/link').then(() => {
+    const btn = document.querySelector('.btn-copiar');
+    btn.textContent = 'Copiado!';
+    setTimeout(() => btn.textContent = 'Copiar', 2000);
+  });
+}
+function submitForm() {
+  alert('Comunidade criada com sucesso!');
+}
+</script>
 
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('sw.js')
+      navigator.serviceWorker.register('/service-worker.js')
         .then(reg => console.log('[SW] Registado:', reg.scope))
         .catch(err => console.error('[SW] Erro:', err));
     });

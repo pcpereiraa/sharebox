@@ -133,3 +133,11 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
 });
+// ── Avatar placeholder (ícone de pessoa quando não há foto) ──
+function avatarHTML(avatarUrl, size) {
+  size = size || '60%';
+  if (avatarUrl) {
+    return `<img src="${avatarUrl}" style="width:100%;height:100%;object-fit:cover">`;
+  }
+  return `<svg viewBox="0 0 24 24" width="${size}" height="${size}" fill="rgba(23,42,58,0.35)"><path d="M12 12c2.7 0 8 1.34 8 4v2H4v-2c0-2.66 5.3-4 8-4zm0-2a4 4 0 1 1 0-8 4 4 0 0 1 0 8z"/></svg>`;
+}

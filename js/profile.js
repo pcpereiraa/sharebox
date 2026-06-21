@@ -36,7 +36,7 @@ async function loadProfile(userId) {
   const emailEl = document.getElementById('profile-email');
   if (emailEl) emailEl.textContent = user?.email || '';
 
-  // Avatar — inicial do nome
+  // Avatar — foto ou ícone placeholder
   const avatarEl = document.getElementById('profile-avatar');
   if (avatarEl) {
     if (profile.avatar_url) {
@@ -50,9 +50,10 @@ async function loadProfile(userId) {
         img.style.opacity = '1';
       }
     } else {
-      // Mostrar inicial
-      const initial = (profile.full_name || 'U').charAt(0).toUpperCase();
-      avatarEl.innerHTML = `<span style="font-family:'Berlin',sans-serif;font-size:36px;color:#fff;font-weight:600">${initial}</span>`;
+      avatarEl.style.display = 'flex';
+      avatarEl.style.alignItems = 'center';
+      avatarEl.style.justifyContent = 'center';
+      avatarEl.innerHTML = avatarHTML(null, '55%');
     }
   }
 }

@@ -68,7 +68,9 @@ async function loadConversations(userId) {
   container.innerHTML = conversations.map((conv, i) => {
     const profile   = profileMap[conv.otherId] || {};
     const name      = profile.full_name || 'Utilizador';
-    const initial   = name.charAt(0).toUpperCase();
+    const avatarHTML = profile.avatar_url
+      ? `<img src="${profile.avatar_url}" style="width:100%;height:100%;object-fit:cover">`
+      : `<svg viewBox="0 0 24 24" width="60%" height="60%" fill="rgba(23,42,58,0.35)"><path d="M12 12c2.7 0 8 1.34 8 4v2H4v-2c0-2.66 5.3-4 8-4zm0-2a4 4 0 1 1 0-8 4 4 0 0 1 0 8z"/></svg>`;
     const preview   = conv.lastMsg.content.length > 40
       ? conv.lastMsg.content.substring(0, 40) + '...'
       : conv.lastMsg.content;
@@ -83,10 +85,8 @@ async function loadConversations(userId) {
          href="chat.html?with=${conv.otherId}&item=${itemId}"
          style="text-decoration:none">
         <div class="conv-avatar-wrap">
-          <div class="conv-avatar" style="background:#b2dfdb;display:flex;align-items:center;justify-content:center;font-family:'Berlin',sans-serif;font-size:20px;color:var(--blue);overflow:hidden">
-            ${profile.avatar_url
-              ? `<img src="${profile.avatar_url}" style="width:100%;height:100%;object-fit:cover">`
-              : initial}
+          <div class="conv-avatar" style="background:#e8eef0;display:flex;align-items:center;justify-content:center;overflow:hidden">
+            ${avatarHTML}
           </div>
           <span class="online-dot"></span>
         </div>
