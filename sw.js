@@ -28,6 +28,7 @@ const APP_SHELL = [
   'terms.html',
   'my_items.html',
   'my_communities.html',
+  'view_profile.html',
   'favorites.html',
   'forgot_password.html',
   'reset_password.html',

@@ -7,6 +7,7 @@
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#016e58">
 <link rel="stylesheet" href="css/global.css">
+<link rel="stylesheet" href="css/animations.css">
 <link rel="stylesheet" href="css/messages.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/supabase.js"></script>
@@ -20,16 +21,16 @@
     <a class="btn-back" href="messages.html">
       <svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
     </a>
-    <div class="chat-avatar-wrap">
+    <a class="chat-avatar-wrap" id="chat-profile-link" href="#" style="text-decoration:none">
       <div class="chat-avatar" id="chat-avatar"></div>
       <span class="online-dot active"></span>
-    </div>
-    <div class="chat-header-info">
+    </a>
+    <a class="chat-header-info" id="chat-profile-link-2" href="#" style="text-decoration:none;flex:1">
       <div class="chat-name" id="chat-name">...</div>
       <div class="chat-status" id="chat-status">
         <span class="online-indicator"></span> Online agora
       </div>
-    </div>
+    </a>
     <button class="chat-menu-btn">
       <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
     </button>

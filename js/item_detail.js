@@ -50,11 +50,20 @@ async function loadItem(itemId) {
 
   // Buscar comunidade
   let community = null;
+  let communityMembers = 0;
   if (item.community_id) {
     try {
       const { data: comm } = await supabaseClient
-        .from('communities').select('id, name').eq('id', item.community_id).maybeSingle();
+        .from('communities').select('id, name, location').eq('id', item.community_id).maybeSingle();
       community = comm;
+
+      if (community) {
+        const { count } = await supabaseClient
+          .from('communities_members')
+          .select('*', { count: 'exact', head: true })
+          .eq('community_id', community.id);
+        communityMembers = count || 0;
+      }
     } catch {}
   }
 
@@ -109,16 +118,12 @@ async function loadItem(itemId) {
 
     const avatarEl = document.querySelector('.advertiser-avatar');
     if (avatarEl) {
-      if (owner.avatar_url) {
-        avatarEl.innerHTML = `<img src="${owner.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
-      } else {
-        avatarEl.textContent = (owner.full_name || 'U').charAt(0).toUpperCase();
-        avatarEl.style.cssText = 'display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff;font-family:"Berlin",sans-serif;';
-      }
+      avatarEl.style.cssText = 'display:flex;align-items:center;justify-content:center;background:#e8eef0;overflow:hidden;border-radius:50%';
+      avatarEl.innerHTML = avatarHTML(owner.avatar_url);
     }
 
     const perfilBtn = document.querySelector('.btn-ver-perfil');
-    if (perfilBtn) perfilBtn.href = `profile.html?id=${owner.id}`;
+    if (perfilBtn) perfilBtn.href = `view_profile.html?id=${owner.id}`;
   }
 
   // ── Comunidade
@@ -127,6 +132,13 @@ async function loadItem(itemId) {
     if (community) {
       const commName = commBox.querySelector('.community-name');
       if (commName) commName.textContent = community.name;
+
+      const commMeta = commBox.querySelector('.community-meta');
+      if (commMeta) {
+        const loc = community.location || 'Portugal';
+        commMeta.textContent = `${loc} · ${communityMembers} membro${communityMembers !== 1 ? 's' : ''}`;
+      }
+
       commBox.style.cursor = 'pointer';
       commBox.onclick = () => window.location.href = `community_detail.html?id=${community.id}`;
     } else {
@@ -262,11 +274,12 @@ function updateFavIcon(faved) {
 function showToast(msg) {
   const toast = document.createElement('div');
   toast.textContent = msg;
-  toast.style.cssText = 'position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:var(--dark-green);color:#fff;font-family:"Berlin",sans-serif;font-size:14px;padding:12px 24px;border-radius:50px;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.2);white-space:nowrap';
+  toast.style.cssText = 'position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:var(--dark-green);color:#fff;font-family:"Berlin",sans-serif;font-size:14px;padding:12px 24px;border-radius:50px;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.2);white-space:nowrap;animation:toastIn 0.3s ease;';
   document.body.appendChild(toast);
   setTimeout(() => {
-    toast.style.transition = 'opacity 0.3s';
+    toast.style.transition = 'opacity 0.3s, transform 0.3s';
     toast.style.opacity = '0';
+    toast.style.transform = 'translate(-50%, 8px)';
     setTimeout(() => toast.remove(), 300);
   }, 2500);
 }
