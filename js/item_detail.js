@@ -85,6 +85,15 @@ async function loadItem(itemId) {
   const titleEl = document.querySelector('.item-title');
   if (titleEl) titleEl.textContent = item.title || '—';
 
+  // Contagem real de favoritos
+  const { count: likesCount } = await supabaseClient
+    .from('favorites')
+    .select('*', { count: 'exact', head: true })
+    .eq('item_id', itemId);
+
+  const likesEl = document.getElementById('item-likes-count');
+  if (likesEl) likesEl.textContent = likesCount || 0;
+
   const tagsEl = document.querySelector('.item-tags');
   if (tagsEl) {
     const statusBadge = item.status === 'doado'
@@ -253,6 +262,13 @@ async function toggleFav(btn) {
     b.classList.toggle('active', !isFaved);
   });
   updateFavIcon(!isFaved);
+
+  // Actualizar contador localmente (optimista)
+  const likesEl = document.getElementById('item-likes-count');
+  if (likesEl) {
+    const current = parseInt(likesEl.textContent, 10) || 0;
+    likesEl.textContent = isFaved ? Math.max(0, current - 1) : current + 1;
+  }
 
   if (isFaved) {
     await supabaseClient.from('favorites').delete()

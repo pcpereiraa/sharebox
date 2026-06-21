@@ -227,7 +227,30 @@ async function sendMessage() {
     // Remover mensagem temporária
     const tempEl = document.querySelector(`[data-temp-id="${tempMsg.id}"]`);
     if (tempEl) tempEl.remove();
+    return;
   }
+
+  // Disparar notificação push para o destinatário (não bloqueia o envio se falhar)
+  notifyNewMessage(text).catch(err => console.warn('[Push] Não foi possível notificar:', err));
+}
+
+// ── Notificação push de nova mensagem ─────────────────
+async function notifyNewMessage(messageText) {
+  const { data: { session } } = await supabaseClient.auth.getSession();
+  const { data: myProfile } = await supabaseClient
+    .from('profiles').select('full_name').eq('id', currentUserId).maybeSingle();
+
+  const senderName = myProfile?.full_name || 'Alguém';
+  const preview = messageText.length > 60 ? messageText.substring(0, 60) + '...' : messageText;
+
+  await supabaseClient.functions.invoke('send-push-notification', {
+    body: {
+      user_id: otherUserId,
+      title:   senderName,
+      body:    preview,
+      url:     `chat.html?with=${currentUserId}`,
+    },
+  });
 }
 
 // ── Marcar como lidas ─────────────────────────────────

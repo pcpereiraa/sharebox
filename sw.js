@@ -36,6 +36,9 @@ const APP_SHELL = [
 
   // CSS
   'css/global.css',
+  'css/animations.css',
+  'css/components.css',
+  'css/index.css',
   'css/home.css',
   'css/communities.css',
   'css/community_detail.css',
@@ -45,6 +48,7 @@ const APP_SHELL = [
   'css/add_community.css',
   'css/profile.css',
   'css/login.css',
+  'css/register.css',
   'css/my_items.css',
 
   // JS
@@ -61,6 +65,7 @@ const APP_SHELL = [
   'js/profile.js',
   'js/my_items.js',
   'js/my_communities.js',
+  'js/view_profile.js',
 
   // Fontes
   'fonts/BRLNSR.TTF',
