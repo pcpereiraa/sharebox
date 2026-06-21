@@ -3,6 +3,8 @@
    Lista de conversas
 ───────────────────────────────────────────────────── */
 
+let _allConversations = [];
+
 document.addEventListener('DOMContentLoaded', async function () {
 
   const session = await requireAuth();
@@ -45,8 +47,10 @@ async function loadConversations(userId) {
     const otherId = msg.sender_id === userId ? msg.receiver_id : msg.sender_id;
     const key = [userId, otherId].sort().join('_');
     if (!conversationMap[key]) {
-      conversationMap[key] = { otherId, lastMsg: msg, unread: 0 };
+      conversationMap[key] = { otherId, lastMsg: msg, unread: 0, allText: '' };
     }
+    // Acumular todo o conteúdo da conversa para pesquisa por palavra/sílaba
+    conversationMap[key].allText += ' ' + (msg.content || '');
     // Contar não lidas
     if (msg.receiver_id === userId && !msg.read) {
       conversationMap[key].unread++;
@@ -65,18 +69,66 @@ async function loadConversations(userId) {
   const profileMap = {};
   (profiles || []).forEach(p => { profileMap[p.id] = p; });
 
+  // Guardar conversas processadas globalmente (para a pesquisa filtrar localmente)
+  _allConversations = conversations.map(conv => {
+    const profile = profileMap[conv.otherId] || {};
+    return {
+      ...conv,
+      name: profile.full_name || 'Utilizador',
+      avatarUrl: profile.avatar_url || null,
+    };
+  });
+
+  renderConversations(_allConversations, userId);
+}
+
+// ── Renderiza a lista de conversas ────────────────────
+function renderConversations(conversations, userId, searchQuery) {
+  const container = document.getElementById('conv-list');
+  const emptyEl    = document.getElementById('search-empty');
+  if (!container) return;
+
+  if (!conversations.length) {
+    container.innerHTML = '';
+    container.style.display = 'none';
+    if (emptyEl) emptyEl.style.display = 'block';
+    return;
+  }
+
+  container.style.display = '';
+  if (emptyEl) emptyEl.style.display = 'none';
+
+  const q = (searchQuery || '').trim().toLowerCase();
+
   container.innerHTML = conversations.map((conv, i) => {
-    const profile   = profileMap[conv.otherId] || {};
-    const name      = profile.full_name || 'Utilizador';
-    const avatarHTML = profile.avatar_url
-      ? `<img src="${profile.avatar_url}" style="width:100%;height:100%;object-fit:cover">`
+    const name      = conv.name;
+    const avatarHTML = conv.avatarUrl
+      ? `<img src="${conv.avatarUrl}" style="width:100%;height:100%;object-fit:cover">`
       : `<svg viewBox="0 0 24 24" width="60%" height="60%" fill="rgba(23,42,58,0.35)"><path d="M12 12c2.7 0 8 1.34 8 4v2H4v-2c0-2.66 5.3-4 8-4zm0-2a4 4 0 1 1 0-8 4 4 0 0 1 0 8z"/></svg>`;
-    const preview   = conv.lastMsg.content.length > 40
-      ? conv.lastMsg.content.substring(0, 40) + '...'
-      : conv.lastMsg.content;
+
+    // Se a pesquisa não encontrar o termo na última mensagem mas existir
+    // em algum ponto da conversa, mostrar um trecho relevante com destaque
+    let previewText  = conv.lastMsg.content;
+    let isSentPrefix = conv.lastMsg.sender_id === userId ? 'Tu: ' : '';
+    const lastMsgMatches = q && previewText.toLowerCase().includes(q);
+
+    if (q && !lastMsgMatches && conv.allText) {
+      const idx = conv.allText.toLowerCase().indexOf(q);
+      if (idx !== -1) {
+        const start = Math.max(0, idx - 20);
+        const snippet = conv.allText.substring(start, idx + q.length + 20).trim();
+        previewText = (start > 0 ? '...' : '') + snippet + (idx + q.length + 20 < conv.allText.length ? '...' : '');
+        isSentPrefix = '';
+      }
+    }
+
+    const preview = previewText.length > 40 ? previewText.substring(0, 40) + '...' : previewText;
+    const previewHTML = q
+      ? highlightMatch(preview, q)
+      : preview;
+
     const time      = formatTime(conv.lastMsg.created_at);
     const unread    = conv.unread > 0;
-    const isSent    = conv.lastMsg.sender_id === userId;
     const itemId    = conv.lastMsg.item_id || '';
     const divider   = i < conversations.length - 1 ? '<div class="conv-divider"></div>' : '';
 
@@ -92,7 +144,7 @@ async function loadConversations(userId) {
         </div>
         <div class="conv-info">
           <div class="conv-name">${name}</div>
-          <div class="conv-preview">${isSent ? 'Tu: ' : ''}${preview}</div>
+          <div class="conv-preview">${isSentPrefix}${previewHTML}</div>
         </div>
         <div class="conv-meta">
           <span class="conv-time">${time}</span>
@@ -102,6 +154,44 @@ async function loadConversations(userId) {
       ${divider}
     `;
   }).join('');
+}
+
+// ── Pesquisa de conversas ──────────────────────────────
+// Procura tanto no nome da pessoa como em todo o texto trocado na conversa
+function filterConversations(query) {
+  const q = query.trim().toLowerCase();
+
+  supabaseClient.auth.getSession().then(({ data }) => {
+    const userId = data.session?.user?.id;
+    if (!q) {
+      renderConversations(_allConversations, userId);
+      return;
+    }
+    const filtered = _allConversations.filter(c => {
+      const nameMatch = c.name.toLowerCase().includes(q);
+      const textMatch = (c.allText || '').toLowerCase().includes(q);
+      return nameMatch || textMatch;
+    });
+    renderConversations(filtered, userId, q);
+  });
+}
+
+// ── Destaca o termo pesquisado dentro do texto ────────
+function highlightMatch(text, query) {
+  if (!query) return escapeHTML(text);
+  const escaped = escapeHTML(text);
+  const idx = escaped.toLowerCase().indexOf(query.toLowerCase());
+  if (idx === -1) return escaped;
+  const before = escaped.substring(0, idx);
+  const match  = escaped.substring(idx, idx + query.length);
+  const after  = escaped.substring(idx + query.length);
+  return `${before}<mark style="background:rgba(1,110,88,0.18);color:var(--dark-green);border-radius:3px;padding:0 1px">${match}</mark>${after}`;
+}
+
+function escapeHTML(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
 }
 
 function formatTime(iso) {

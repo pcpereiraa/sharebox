@@ -6,11 +6,13 @@ let _allItems   = [];
 let _imgMap     = {};
 let _profileMap = {};
 let _activecat  = null;
+let _currentUserId = null;
 
 document.addEventListener('DOMContentLoaded', async function () {
 
   const session = await requireAuth();
   if (!session) return;
+  _currentUserId = session.user.id;
 
   await Promise.all([
     loadItems(),
@@ -20,7 +22,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   await loadUserFavorites(session.user.id);
 
   // ── Clique em categoria
-  document.addEventListener('click', function (e) {
+  document.addEventListener('click', async function (e) {
     const catCard = e.target.closest('.cat-card');
     if (catCard) {
       const catId   = catCard.dataset.id   || null;
@@ -31,15 +33,50 @@ document.addEventListener('DOMContentLoaded', async function () {
         _activecat = null;
         document.querySelectorAll('.cat-card').forEach(c => c.classList.remove('active'));
         renderItems(_allItems, 'Recomendações para ti');
-      } else {
-        _activecat = catId;
-        document.querySelectorAll('.cat-card').forEach(c => c.classList.remove('active'));
-        catCard.classList.add('active');
-        const filtered = catId
-          ? _allItems.filter(i => i.category_id === catId)
-          : _allItems;
-        renderItems(filtered, catName || 'Recomendações para ti');
+        return;
       }
+
+      _activecat = catId;
+      document.querySelectorAll('.cat-card').forEach(c => c.classList.remove('active'));
+      catCard.classList.add('active');
+
+      if (!catId) {
+        renderItems(_allItems, 'Recomendações para ti');
+        return;
+      }
+
+      // Buscar TODOS os itens desta categoria directamente da BD
+      // (não filtrar localmente, pois _allItems só tem os 10 mais recentes)
+      const container = document.getElementById('items-row');
+      if (container) container.innerHTML = '<p style="font-family:\'Berlin\',sans-serif;font-size:13px;color:rgba(23,42,58,0.4);padding:8px 4px">A carregar...</p>';
+
+      const { data: catItems, error: catErr } = await supabaseClient
+        .from('items')
+        .select('id, title, location, condition, type, owner_id, category_id, created_at')
+        .eq('status', 'disponivel')
+        .eq('category_id', catId)
+        .neq('owner_id', _currentUserId)
+        .order('created_at', { ascending: false });
+
+      if (catErr) { console.error('[Home] Erro filtro categoria:', catErr); return; }
+
+      if (catItems?.length) {
+        // Buscar imagens e perfis destes itens (caso não estejam já em cache)
+        const newIds = catItems.map(i => i.id).filter(id => !_imgMap[id]);
+        if (newIds.length) {
+          const { data: images } = await supabaseClient
+            .from('item_images').select('item_id, image_url, position').in('item_id', newIds);
+          (images || []).forEach(img => { if (!_imgMap[img.item_id]) _imgMap[img.item_id] = img.image_url; });
+        }
+        const ownerIds = [...new Set(catItems.map(i => i.owner_id).filter(id => id && !_profileMap[id]))];
+        if (ownerIds.length) {
+          const { data: profiles } = await supabaseClient
+            .from('profiles').select('id, full_name').in('id', ownerIds);
+          (profiles || []).forEach(p => { _profileMap[p.id] = p.full_name; });
+        }
+      }
+
+      renderItems(catItems || [], catName || 'Recomendações para ti');
       return;
     }
 
@@ -69,6 +106,7 @@ async function loadItems() {
     .from('items')
     .select('id, title, location, condition, type, owner_id, category_id, created_at')
     .eq('status', 'disponivel')
+    .neq('owner_id', _currentUserId)
     .order('created_at', { ascending: false })
     .limit(10);
 
@@ -181,12 +219,26 @@ async function loadCommunities() {
   const container = document.getElementById('communities-row');
   if (!container) return;
 
-  const { data: communities, error } = await supabaseClient
+  // Comunidades a que o utilizador já pertence (como membro ou admin) — para excluir
+  const { data: myMemberships } = await supabaseClient
+    .from('communities_members')
+    .select('community_id')
+    .eq('user_id', _currentUserId);
+  const myCommIds = (myMemberships || []).map(m => m.community_id);
+
+  let query = supabaseClient
     .from('communities')
-    .select('id, name, image_url, is_private, created_at')
+    .select('id, name, image_url, is_private, owner_id, created_at')
     .eq('is_private', false)
+    .neq('owner_id', _currentUserId)
     .order('created_at', { ascending: false })
     .limit(8);
+
+  if (myCommIds.length) {
+    query = query.not('id', 'in', `(${myCommIds.join(',')})`);
+  }
+
+  const { data: communities, error } = await query;
 
   if (error || !communities?.length) return;
 

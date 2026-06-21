@@ -280,8 +280,8 @@ body {
   display: flex; align-items: center; justify-content: center;
   transition: transform 0.15s ease;
 }
-.cat-thumb img { width: 38px; height: 38px; object-fit: contain; opacity: 0.75; }
-.cat-thumb svg { width: 38px; height: 38px; fill: var(--blue); opacity: 0.7; }
+.cat-thumb img { width: 38px; height: 38px; object-fit: contain; opacity: 0.85; }
+.cat-thumb svg { width: 38px; height: 38px; fill: var(--dark-green); opacity: 0.85; }
 .cat-card:hover .cat-thumb { transform: scale(1.05); }
 .cat-label {
   font-family: "Berlin", sans-serif;

@@ -26,6 +26,17 @@
   <main class="scroll-content">
     <div class="settings-form">
 
+      <!-- Permissão de notificações push do dispositivo -->
+      <div class="toggle-group" style="padding:16px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+          <div class="toggle-info">
+            <div class="toggle-title">Notificações push</div>
+            <div class="toggle-sub" id="push-status-text">A verificar...</div>
+          </div>
+          <button id="btn-push-toggle" class="btn-push-action" onclick="togglePush()" disabled>...</button>
+        </div>
+      </div>
+
       <div class="toggle-group">
 
         <div class="toggle-row">
@@ -85,9 +96,92 @@
 </div>
 
 <script>
+const VAPID_PUBLIC_KEY = 'BMhHTE2mYkNh0VcVmZJDV9gmJk1n1dd9H724DMWp62AKkXMKbf6fTKAByBYh3BgQgRaQPtSjSSytcmhOzB3VMhQ';
+
+function urlBase64ToUint8Array(base64String) {
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+  const rawData = window.atob(base64);
+  return Uint8Array.from([...rawData].map(c => c.charCodeAt(0)));
+}
+
+async function updatePushUI() {
+  const statusText = document.getElementById('push-status-text');
+  const btn        = document.getElementById('btn-push-toggle');
+
+  if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+    statusText.textContent = 'Não suportado neste navegador';
+    btn.style.display = 'none';
+    return;
+  }
+
+  if (Notification.permission === 'denied') {
+    statusText.textContent = 'Bloqueadas nas definições do navegador';
+    btn.textContent = 'Bloqueado';
+    btn.disabled = true;
+    return;
+  }
+
+  const reg = await navigator.serviceWorker.ready;
+  const sub = await reg.pushManager.getSubscription();
+
+  btn.disabled = false;
+  if (sub) {
+    statusText.textContent = 'Activas neste dispositivo';
+    btn.textContent = 'Desactivar';
+    btn.classList.add('active');
+  } else {
+    statusText.textContent = 'Recebe alertas mesmo com a app fechada';
+    btn.textContent = 'Activar';
+    btn.classList.remove('active');
+  }
+}
+
+async function togglePush() {
+  const btn = document.getElementById('btn-push-toggle');
+  btn.disabled = true;
+
+  const reg = await navigator.serviceWorker.ready;
+  const existingSub = await reg.pushManager.getSubscription();
+
+  const { data: { session } } = await supabaseClient.auth.getSession();
+
+  if (existingSub) {
+    // Desactivar
+    await existingSub.unsubscribe();
+    await supabaseClient.from('profiles').update({ push_subscription: null }).eq('id', session.user.id);
+  } else {
+    // Pedir permissão e subscrever
+    const permission = await Notification.requestPermission();
+    if (permission !== 'granted') {
+      await updatePushUI();
+      return;
+    }
+
+    try {
+      const sub = await reg.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
+      });
+
+      // Guardar a subscrição no perfil para um backend a poder usar depois
+      await supabaseClient.from('profiles')
+        .update({ push_subscription: sub.toJSON() })
+        .eq('id', session.user.id);
+    } catch (err) {
+      console.error('[Push] Erro ao subscrever:', err);
+      alert('Não foi possível activar as notificações push.');
+    }
+  }
+
+  await updatePushUI();
+}
+
 document.addEventListener('DOMContentLoaded', async function () {
   const session = await requireAuth();
   if (!session) return;
+
+  await updatePushUI();
 
   // Carregar preferências actuais da BD
   const { data: profile } = await supabaseClient
@@ -136,6 +230,23 @@ async function saveNotifications() {
 .page-title-white { font-family:"Berlin",sans-serif;font-size:20px;color:#fff;font-weight:400;flex:1;text-align:center; }
 .settings-form { padding:24px 20px; }
 .toggle-group { background:#fff;border-radius:14px;padding:4px 16px;box-shadow:0 2px 10px rgba(23,42,58,0.08);margin-bottom:20px; }
+.btn-push-action {
+  font-family: "Berlin", sans-serif;
+  font-size: 13px;
+  padding: 8px 16px;
+  border-radius: 50px;
+  border: 1.5px solid var(--dark-green);
+  background: transparent;
+  color: var(--dark-green);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s;
+}
+.btn-push-action.active {
+  background: var(--dark-green);
+  color: #fff;
+}
+.btn-push-action:disabled { opacity: 0.5; cursor: default; }
 .toggle-row { display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 0; }
 .toggle-info { flex:1; }
 .toggle-title { font-family:"Berlin",sans-serif;font-size:15px;color:var(--blue);font-weight:600;margin-bottom:3px; }
