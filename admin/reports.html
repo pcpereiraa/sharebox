@@ -9,6 +9,22 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
+<!--
+  admin/reports.html
+  -------------------
+  Painel de Reportes do admin: mostra pedidos de denúncia/reporte de
+  utilizadores ou itens, e uma tabela de atividade recente de
+  mensagens (últimas 10 trocadas na plataforma, para fins de
+  moderação/auditoria).
+
+  PONTO IMPORTANTE para a defesa do projeto: a secção de "Pedidos de
+  reportes" usa dados MOCK (fixos no próprio código, ver
+  `mockReports` mais abaixo) porque não existe nenhuma tabela
+  `reports` na base de dados — isto é uma funcionalidade
+  visual/protótipo, não uma funcionalidade real ligada ao Supabase.
+  A secção de "Atividade de mensagens", essa sim, usa dados reais da
+  tabela `messages`.
+-->
 <div class="admin-layout">
 
   <aside class="sidebar">
@@ -77,6 +93,14 @@ const SUPABASE_URL = 'https://ijswdmvksmqldhkyghwr.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlqc3dkbXZrc21xbGRoa3lnaHdyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg3NjYxODgsImV4cCI6MjA5NDM0MjE4OH0.8JuKWiWxKQ0GN-7MmfIcuZE1BAfbNR3oxPMY89amBAM';
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+/**
+ * adminGuard
+ * ----------
+ * Mesmo padrão de proteção usado em todas as páginas de admin:
+ * exige sessão válida E `is_admin = true`, caso contrário redireciona.
+ *
+ * @returns {Promise<boolean>} true se o acesso for permitido.
+ */
 async function adminGuard() {
   const { data: { session } } = await sb.auth.getSession();
   if (!session) { window.location.href = '../login.html'; return false; }
@@ -91,17 +115,33 @@ document.getElementById('logout-btn').addEventListener('click', async () => { aw
 document.getElementById('current-date').textContent = new Date().toLocaleDateString('pt-PT', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
 
 // Dados mock de reportes (tabela de reportes não existe na BD)
+// Estes 3 reportes são fixos/inventados — servem apenas para mostrar
+// visualmente como a funcionalidade de moderação FUNCIONARIA, sem
+// existir ainda uma tabela `reports` real no Supabase. Qualquer
+// alteração de estado feita aqui (resolver/ignorar) só persiste
+// enquanto a página não for recarregada, porque vive apenas em
+// memória (array `mockReports`), não na base de dados.
 const mockReports = [
   { id: 1, created_at: new Date().toISOString(), user: 'Rafael Pereira', type: 'Conteúdo inapropriado', item: 'Planta Jiboia', status: 'pendente' },
   { id: 2, created_at: new Date(Date.now() - 86400000).toISOString(), user: 'Plinio Nicollay', type: 'Utilizador suspeito', item: '—', status: 'resolvido' },
   { id: 3, created_at: new Date(Date.now() - 172800000).toISOString(), user: 'Rafael Admin', type: 'Item fraudulento', item: 'Guitarra Acústica', status: 'ignorado' },
 ];
 
+/**
+ * loadReports
+ * -----------
+ * Aplica o filtro de estado selecionado (Todos/Pendentes/Resolvidos/
+ * Ignorados) sobre os dados mock e (re)desenha a tabela de reportes,
+ * atualizando também os cartões de estatísticas no topo.
+ */
 function loadReports() {
   const filter   = document.getElementById('filter-status').value;
   const filtered = filter ? mockReports.filter(r => r.status === filter) : mockReports;
   const today    = new Date().toDateString();
 
+  // As estatísticas são sempre calculadas sobre o TOTAL
+  // (mockReports), não sobre a lista já filtrada — ou seja, os
+  // cartões de stats não mudam quando se usa o filtro, só a tabela.
   document.getElementById('stat-total').textContent    = mockReports.length;
   document.getElementById('stat-pending').textContent  = mockReports.filter(r => r.status === 'pendente').length;
   document.getElementById('stat-resolved').textContent = mockReports.filter(r => r.status === 'resolvido').length;
@@ -111,6 +151,8 @@ function loadReports() {
   if (!filtered.length) { tbody.innerHTML = '<tr><td colspan="6" class="empty-row">Sem reportes</td></tr>'; return; }
 
   tbody.innerHTML = filtered.map(r => {
+    // Cor do badge de estado varia conforme o estado do reporte
+    // (laranja=pendente, verde=resolvido, cinzento=ignorado).
     const statusColor = r.status === 'pendente' ? '#e67e22' : r.status === 'resolvido' ? '#27ae60' : 'rgba(23,42,58,0.4)';
     return `<tr>
       <td class="text-muted">${formatDate(r.created_at)}</td>
@@ -128,11 +170,35 @@ function loadReports() {
   }).join('');
 }
 
+/**
+ * updateReport
+ * ------------
+ * Altera o estado de um reporte mock (resolver ou ignorar) e
+ * re-renderiza a tabela. Como referido acima, esta alteração só
+ * existe em memória (array `mockReports`) — não é persistida em
+ * nenhuma base de dados.
+ *
+ * @param {number} id - Identificador (índice) do reporte mock.
+ * @param {string} status - Novo estado ('resolvido' ou 'ignorado').
+ */
 function updateReport(id, status) {
   const report = mockReports.find(r => r.id === id);
   if (report) { report.status = status; loadReports(); }
 }
 
+/**
+ * loadMessages
+ * ------------
+ * Carrega as 10 mensagens mais recentes de TODA a plataforma (não
+ * filtradas por utilizador — visão de admin/moderação), e mostra
+ * remetente, destinatário, conteúdo e data.
+ *
+ * Tal como noutras páginas, usa o padrão de "fan-out manual": busca
+ * as mensagens primeiro, depois os perfis dos utilizadores envolvidos
+ * (remetentes E destinatários, unidos num único array sem duplicados
+ * via `new Set`) numa segunda query, e mapeia em memória (`pm`,
+ * "profile map") para mostrar nomes em vez de UUIDs.
+ */
 async function loadMessages() {
   const { data: msgs } = await sb.from('messages').select('id, content, created_at, sender_id, receiver_id').order('created_at', { ascending: false }).limit(10);
   if (!msgs?.length) { document.getElementById('messages-tbody').innerHTML = '<tr><td colspan="4" class="empty-row">Sem mensagens</td></tr>'; return; }
@@ -151,8 +217,22 @@ async function loadMessages() {
 
 document.getElementById('filter-status').addEventListener('change', loadReports);
 
+/**
+ * formatDate
+ * ----------
+ * Formata uma data ISO para o formato curto pt-PT (DD-MM-AAAA).
+ *
+ * @param {string|null} iso - Data em formato ISO, ou null/undefined.
+ * @returns {string} Data formatada, ou '—' se não existir.
+ */
 function formatDate(iso) { return iso ? new Date(iso).toLocaleDateString('pt-PT', { day:'2-digit', month:'2-digit', year:'numeric' }) : '—'; }
 
+/**
+ * init
+ * ----
+ * Ponto de entrada da página: valida o acesso de admin e, se válido,
+ * carrega em simultâneo os reportes (mock) e as mensagens (reais).
+ */
 async function init() {
   const ok = await adminGuard();
   if (ok) { loadReports(); loadMessages(); }

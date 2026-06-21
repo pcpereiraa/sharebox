@@ -1,4 +1,16 @@
-/* ── Layout geral ──────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════
+   Estilos da página de LOGIN (e também usados, por partilharem
+   praticamente a mesma estrutura visual, nas páginas de
+   "Recuperar password" e "Repor password" — ver os seletores
+   de feedback no fim do ficheiro que cobrem #forgot-feedback
+   e #reset-feedback além de #login-feedback).
+═══════════════════════════════════════════════════════════ */
+
+/* ── Layout geral ──────────────────────────────────── 
+   Ecrã centrado verticalmente e horizontalmente, ocupando
+   toda a altura visível (min-height:100vh permite que o
+   conteúdo cresça além do ecrã se necessário, ao contrário
+   de height:100vh que cortaria conteúdo extra). */
 .login-screen {
     min-height: 100vh;
     display: flex;
@@ -17,7 +29,10 @@
 }
 .logo { width: 200px; max-width: 60vw; }
 
-/* ── Formulário ────────────────────────────────────── */
+/* ── Formulário ────────────────────────────────────── 
+   Largura máxima de 380px centrada com margin:0 auto —
+   garante que o formulário não fica demasiado largo (e
+   portanto difícil de ler) em ecrãs maiores. */
 .login-form {
     width: 100%;
     max-width: 380px;
@@ -34,6 +49,8 @@
     margin-bottom: 4px;
 }
 
+/* Texto de ajuda/instrução abaixo do título do formulário
+   (ex: explicação no ecrã de "recuperar password"). */
 .form-hint {
     font-family: "Berlin", sans-serif;
     font-size: 14px;
@@ -42,7 +59,14 @@
     margin: 0;
 }
 
-/* ── Inputs ────────────────────────────────────────── */
+/* ── Inputs ────────────────────────────────────────── 
+   Versão LOCAL do estilo de input, distinta da .input
+   definida em components.css (aqui a altura é 52px em vez
+   de 60px, e o border-radius é 12px em vez de 25px — um
+   visual mais "quadrado"/moderno em vez de totalmente pill-
+   shaped). Tal como em index.css, qual das duas regras
+   ".input" prevalece depende da ordem de carregamento das
+   folhas CSS na página HTML. */
 .input {
     width: 100%;
     height: 52px;
@@ -60,6 +84,10 @@
 .input::placeholder { color: rgba(255,255,255,0.4); }
 .input:focus { border-color: var(--dark-green); }
 
+/* Link "Esqueceu-se da password?", alinhado à direita e logo
+   abaixo do campo de password. margin-top negativo "cola"
+   este link ao campo de input anterior, reduzindo o espaçamento
+   que o gap:16px do .login-form aplicaria por defeito. */
 .rec-pwd {
     display: block;
     color: var(--dark-green);
@@ -70,7 +98,12 @@
     margin-top: -4px;
 }
 
-/* ── Botões ────────────────────────────────────────── */
+/* ── Botões ────────────────────────────────────────── 
+   Mesma estrutura de .btn/.btn-primary/.btn-secondary já vista
+   em index.css — cada página de autenticação repete esta
+   definição localmente em vez de partilhar uma única fonte
+   (oportunidade de refactor: poderia ser extraído para
+   components.css e reutilizado, evitando esta duplicação). */
 .buttons-container {
     width: 100%;
     display: flex;
@@ -108,7 +141,14 @@
 }
 .btn-secondary:hover { background: rgba(255,255,255,0.08); }
 
-/* ── Feedback ──────────────────────────────────────── */
+/* ── Feedback ──────────────────────────────────────── 
+   Estilo de texto partilhado pelas mensagens de erro/sucesso
+   mostradas pelo JavaScript (auth.js → showError()/showSuccess())
+   em QUATRO páginas diferentes que partilham esta folha de
+   estilo: login, registo, "esqueci a password" e "repor
+   password". Note-se que aqui só se define o tamanho/fonte —
+   a cor (vermelho para erro, verde para sucesso) é aplicada
+   inline pelo JavaScript, não por esta folha CSS. */
 #login-feedback, #register-feedback, #forgot-feedback, #reset-feedback {
     font-family: "Berlin", sans-serif;
     font-size: 14px;

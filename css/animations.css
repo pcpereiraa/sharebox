@@ -1,9 +1,20 @@
 /* ─────────────────────────────────────────────────────
-   ShareBox — animations.css
-   Sistema global de transições e micro-interações
+   Esta folha NÃO define layout nem cores — define apenas
+   ANIMAÇÕES e TRANSIÇÕES que dão "vida" à interface:
+   entrada de páginas, cascata de cards, feedback ao toque
+   em botões, elevação ao passar o rato, "pop" de favoritos,
+   skeletons de carregamento, etc.
+
+   Por ser uma folha transversal, os seletores aqui aplicam-se
+   a classes já definidas noutras folhas CSS (ex: .donation-card,
+   .item-card) — esta folha apenas acrescenta comportamento de
+   animação a essas classes, sem alterar o seu layout ou cores.
 ───────────────────────────────────────────────────── */
 
-/* ── Entrada de página (fade + slide subtil) ─────────── */
+/* ── Entrada de página (fade + slide subtil) ─────────── 
+   Sempre que uma página (.page) é carregada, aparece com um
+   ligeiro deslizar de baixo para cima e fade-in — dá uma
+   sensação mais suave do que aparecer instantaneamente. */
 .page {
   animation: pageEnter 0.28s ease-out;
 }
@@ -12,7 +23,12 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ── Cards: aparecem em cascata ao carregar ──────────── */
+/* ── Cards: aparecem em cascata ao carregar ──────────── 
+   Quando uma lista de cards é renderizada (itens, comunidades,
+   favoritos, membros), cada card entra com fade + scale-up.
+   "backwards" no fill-mode da animação garante que o card fica
+   invisível (opacity:0) ANTES da animação começar, evitando
+   um "flash" do conteúdo final antes do delay ser aplicado. */
 .donation-card,
 .item-card,
 .comm-card-full,
@@ -25,7 +41,13 @@
   from { opacity: 0; transform: translateY(10px) scale(0.98); }
   to   { opacity: 1; transform: translateY(0) scale(1); }
 }
-/* Cascata: cada card subsequente entra com um pequeno atraso */
+/* Cascata: cada card subsequente entra com um pequeno atraso.
+   Usa-se :nth-child para atribuir um animation-delay crescente
+   aos primeiros 5 cards, criando o efeito de "cascata" em vez
+   de todos aparecerem ao mesmo tempo. A partir do 6º card
+   (nth-child(n+6)), o delay fica fixo em 0.20s — evita que
+   listas muito longas demorem demasiado tempo a aparecer
+   por completo. */
 .donation-card:nth-child(1), .item-card:nth-child(1), .comm-card-full:nth-child(1) { animation-delay: 0.02s; }
 .donation-card:nth-child(2), .item-card:nth-child(2), .comm-card-full:nth-child(2) { animation-delay: 0.06s; }
 .donation-card:nth-child(3), .item-card:nth-child(3), .comm-card-full:nth-child(3) { animation-delay: 0.10s; }
@@ -33,7 +55,12 @@
 .donation-card:nth-child(5), .item-card:nth-child(5), .comm-card-full:nth-child(5) { animation-delay: 0.18s; }
 .donation-card:nth-child(n+6), .item-card:nth-child(n+6), .comm-card-full:nth-child(n+6) { animation-delay: 0.20s; }
 
-/* ── Botões: feedback ao toque ────────────────────────── */
+/* ── Botões: feedback ao toque ────────────────────────── 
+   Lista extensa de seletores de botões/links de todo o site.
+   Ao premir (:active), o elemento encolhe ligeiramente
+   (scale 0.96) — imita o feedback tátil de um botão físico
+   e confirma visualmente ao utilizador que o toque foi
+   registado, mesmo antes de qualquer ação assíncrona terminar. */
 button, .btn, .btn-primary, .btn-secondary, .btn-ver, .btn-sair,
 .btn-edit, .btn-delete, .btn-empty, .btn-action, .btn-aderir,
 a.nav-item, .gallery-btn, .bottom-fav, .fav-btn {
@@ -44,7 +71,13 @@ button:active, .btn:active, .btn-primary:active, .btn-secondary:active,
   transform: scale(0.96);
 }
 
-/* ── Cards: leve elevação ao passar o rato (desktop) ──── */
+/* ── Cards: leve elevação ao passar o rato (desktop) ──── 
+   @media (hover:hover) detecta dispositivos com rato real
+   (desktop), excluindo touchscreens onde "hover" não faz
+   sentido (em touch, :hover ficaria "pendurado" depois do
+   toque, criando um efeito visual estranho). Em desktop, os
+   cards sobem ligeiramente e ganham uma sombra mais pronunciada
+   ao passar o rato — sinaliza que o card é clicável. */
 @media (hover: hover) {
   .donation-card, .item-card, .comm-card-full, .fav-card {
     transition: transform 0.18s ease, box-shadow 0.18s ease;
@@ -55,7 +88,13 @@ button:active, .btn:active, .btn-primary:active, .btn-secondary:active,
   }
 }
 
-/* ── Favoritos: "pop" ao marcar ───────────────────────── */
+/* ── Favoritos: "pop" ao marcar ───────────────────────── 
+   Quando um item é marcado como favorito, o ícone faz uma
+   pequena animação de "pulsação" (cresce, encolhe ligeiramente
+   abaixo do tamanho normal, e estabiliza) — chama a atenção
+   para a mudança de estado sem ser demasiado exagerado.
+   Aplica-se a vários botões de favoritos espalhados pelo site
+   (cards na home, galeria do item, barra inferior do detalhe). */
 @keyframes favPop {
   0%   { transform: scale(1); }
   35%  { transform: scale(1.35); }
@@ -66,7 +105,13 @@ button:active, .btn:active, .btn-primary:active, .btn-secondary:active,
   animation: favPop 0.4s ease;
 }
 
-/* ── Bottom sheets: entrada suave já existente, reforçar saída ── */
+/* ── Bottom sheets: entrada suave já existente, reforçar saída ── 
+   As bottom sheets (painéis que deslizam a partir do fundo do
+   ecrã, como o painel de comunidades ou membros) já tinham a
+   sua transição base definida nas folhas CSS específicas de
+   cada página — aqui reforça-se a curva de easing (cubic-bezier
+   com "overshoot" ligeiro) para um movimento mais natural,
+   semelhante ao usado em apps nativas iOS/Android. */
 .bottom-sheet {
   transition: transform 0.35s cubic-bezier(0.32,0.72,0,1);
 }
@@ -74,13 +119,24 @@ button:active, .btn:active, .btn-primary:active, .btn-secondary:active,
   transition: opacity 0.3s ease;
 }
 
-/* ── Toast: entrada com bounce subtil ─────────────────── */
+/* ── Toast: entrada com bounce subtil ─────────────────── 
+   Animação de entrada para as notificações toast temporárias
+   (ex: "Item marcado como doado", "Link copiado"). Nota: esta
+   keyframe está definida mas não é referenciada diretamente
+   por nenhuma classe nesta folha — a aplicação do toast (classe
+   e timing) é feita via JavaScript/inline style nos ficheiros
+   que mostram o toast (ex: showToast() em item_detail.js). */
 @keyframes toastIn {
   from { opacity: 0; transform: translate(-50%, 12px) scale(0.95); }
   to   { opacity: 1; transform: translate(-50%, 0) scale(1); }
 }
 
-/* ── Skeleton loading (para listas a carregar) ────────── */
+/* ── Skeleton loading (para listas a carregar) ────────── 
+   Efeito de "shimmer" (brilho a deslizar) usado em placeholders
+   skeleton enquanto os dados reais ainda não chegaram do
+   Supabase — um gradiente horizontal que se desloca da direita
+   para a esquerda continuamente, dando a sensação de carregamento
+   ativo em vez de um bloco cinzento estático. */
 .skeleton {
   background: linear-gradient(90deg, rgba(23,42,58,0.06) 25%, rgba(23,42,58,0.12) 37%, rgba(23,42,58,0.06) 63%);
   background-size: 400% 100%;
@@ -92,7 +148,13 @@ button:active, .btn:active, .btn-primary:active, .btn-secondary:active,
   100% { background-position: 0% 50%; }
 }
 
-/* ── Status badges: pulso suave quando "disponível" ───── */
+/* ── Status badges: pulso suave quando "disponível" ───── 
+   Nota: define-se aqui position:relative (necessário como base
+   para um possível pseudo-elemento ::before/::after de pulso),
+   mas a keyframe softPulse não está atualmente associada a
+   nenhuma destas classes via animation — parece ser uma
+   funcionalidade preparada/parcialmente implementada, possível
+   ponto de melhoria futura a mencionar na defesa do projeto. */
 @keyframes softPulse {
   0%, 100% { opacity: 1; }
   50%      { opacity: 0.7; }
@@ -101,7 +163,11 @@ button:active, .btn:active, .btn-primary:active, .btn-secondary:active,
   position: relative;
 }
 
-/* ── Navbar: ícone activo "salta" ligeiramente ao trocar ─ */
+/* ── Navbar: ícone activo "salta" ligeiramente ao trocar ─ 
+   Quando o utilizador navega para uma nova página e o ícone
+   correspondente na navbar passa a estar "ativo", o ícone faz
+   uma pequena animação de scale-up-e-volta (como um "salto"),
+   chamando a atenção para a mudança de secção. */
 .nav-item img {
   transition: opacity 0.18s ease, transform 0.18s ease;
 }
@@ -114,12 +180,22 @@ button:active, .btn:active, .btn-primary:active, .btn-secondary:active,
   100% { transform: scale(1); }
 }
 
-/* ── Inputs: foco suave ───────────────────────────────── */
+/* ── Inputs: foco suave ───────────────────────────────── 
+   Transição genérica aplicada a TODOS os campos de formulário
+   do site (input, textarea, select, e a classe .input usada
+   nos formulários de login/registo), para que a mudança de cor
+   da borda e da sombra ao focar/desfocar seja sempre animada
+   de forma consistente, independentemente da página. */
 .input, input, textarea, select {
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* ── Checkmark de sucesso (item doado, comunidade criada) ── */
+/* ── Checkmark de sucesso (item doado, comunidade criada) ── 
+   Animação de "pop" com efeito de elasticidade (cubic-bezier
+   com overshoot acima de 1, definido pelo valor 1.56) usada em
+   ícones de confirmação — por exemplo, ao marcar um item como
+   doado com sucesso. Começa invisível e a tamanho zero, cresce
+   ligeiramente acima do tamanho final antes de estabilizar. */
 @keyframes checkPop {
   0%   { transform: scale(0); opacity: 0; }
   60%  { transform: scale(1.2); opacity: 1; }
@@ -129,7 +205,14 @@ button:active, .btn:active, .btn-primary:active, .btn-secondary:active,
   animation: checkPop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* ── Respeitar preferências de acessibilidade ─────────── */
+/* ── Respeitar preferências de acessibilidade ─────────── 
+   Importante para acessibilidade (e um bom ponto a referir na
+   defesa do projeto): utilizadores que ativaram "reduzir
+   movimento" nas definições do sistema operativo/browser
+   (por motivos de saúde, ex: vertigens induzidas por animação)
+   veem TODAS as animações e transições do site reduzidas a
+   praticamente zero (0.01ms), sem quebrar a funcionalidade —
+   os elementos continuam a mudar de estado, só não animam. */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;

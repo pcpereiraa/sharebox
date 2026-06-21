@@ -1,5 +1,10 @@
 /* ─────────────────────────────────────────────────────
-   ShareBox — create-community.css
+   Estilos do formulário de criar/editar comunidade
+   (add_community.html), em modo dual (criação/edição via
+   ?edit=ID, ver add_community.js): upload de foto de capa,
+   campos de texto, toggle de privacidade, secção de regras,
+   lista de convite de membros, link de partilha e botão de
+   submissão.
 ───────────────────────────────────────────────────── */
 
 :root {
@@ -80,7 +85,12 @@ body {
 }
 .divider { height: 1px; background: rgba(23,42,58,0.08); margin: 0 var(--pad); }
 
-/* ── Cover upload ───────────────────────────────────── */
+/* ── Cover upload ───────────────────────────────────── 
+   Zona de upload da foto de capa da comunidade — mesma
+   técnica de input file invisível sobreposto já vista em
+   add_item.css (.photo-slot), mas aqui só existe UM slot
+   (a comunidade tem apenas uma capa, ao contrário do item
+   que pode ter até 4 fotos). */
 .cover-upload {
   width: 100%; height: 150px;
   border: 2px dashed var(--dark-green);
@@ -163,7 +173,14 @@ body {
   fill: rgba(23,42,58,0.4); pointer-events: none;
 }
 
-/* ── Toggle group ───────────────────────────────────── */
+/* ── Toggle group ───────────────────────────────────── 
+   Interruptor (switch) "Comunidade privada" — controla se a
+   comunidade aparece na pesquisa pública (relacionado com
+   is_private na base de dados). Construído com um checkbox
+   nativo invisível (.toggle-switch input) e um track visual
+   customizado que muda de cor/desloca a "bolinha" interior
+   conforme o estado :checked, à semelhança da técnica usada
+   nos radio buttons de add_item.css. */
 .toggle-group {
   background: #fff; border-radius: var(--r-md);
   padding: 4px 16px; box-shadow: var(--shadow-sm);
@@ -191,6 +208,9 @@ body {
   background: rgba(23,42,58,0.15); border-radius: 14px;
   position: relative; transition: background 0.2s;
 }
+/* A "bolinha" branca do switch, posicionada inicialmente à
+   esquerda (left:3px) e deslocada para a direita via
+   transform:translateX quando o input fica :checked. */
 .toggle-track::after {
   content: ''; position: absolute;
   top: 3px; left: 3px;
@@ -205,7 +225,14 @@ body {
   transform: translateX(20px);
 }
 
-/* ── Add rule button ────────────────────────────────── */
+/* ── Add rule button ────────────────────────────────── 
+   Botão "+ Adicionar regra" que insere dinamicamente um novo
+   campo "Regra N" no formulário (ver addRule() em
+   add_community.js). Nota: estes campos de regra adicionados
+   dinamicamente não são atualmente lidos/guardados por
+   submitCommunity() — funcionalidade visualmente presente mas
+   ainda não persistida na base de dados, possível ponto a
+   referir como limitação conhecida na defesa do projeto. */
 .btn-add-rule {
   display: inline-flex; align-items: center;
   margin-top: 8px; padding: 8px 16px;
@@ -217,7 +244,13 @@ body {
 }
 .btn-add-rule:hover { background: rgba(1,110,88,0.14); }
 
-/* ── Invite list ────────────────────────────────────── */
+/* ── Invite list ────────────────────────────────────── 
+   Lista de outros utilizadores que podem ser convidados para
+   a nova comunidade (máximo 10, excluindo o próprio criador
+   — ver loadUsersToInvite() em add_community.js). Cada linha
+   tem um botão "Convidar" que alterna visualmente para
+   "Convidado" (.invited) ao ser clicado, mantendo o estado
+   num array invitedIds[] em JavaScript. */
 .invite-list {
   background: #fff; border-radius: var(--r-md);
   padding: 4px 16px; box-shadow: var(--shadow-sm);
@@ -253,7 +286,12 @@ body {
   background: var(--dark-green); color: #fff; border-color: var(--dark-green);
 }
 
-/* ── Share link ─────────────────────────────────────── */
+/* ── Share link ─────────────────────────────────────── 
+   Caixa com um link de partilha + botão "Copiar". Nota: o
+   texto do link mostrado aqui é um placeholder estático (não
+   é gerado dinamicamente com o ID real da comunidade) — ver
+   copyLink() em add_community.js, que copia sempre o mesmo
+   URL fixo independentemente da comunidade. */
 .share-link-box {
   display: flex; align-items: center; gap: 10px;
   background: rgba(23,42,58,0.05);

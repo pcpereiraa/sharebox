@@ -1,29 +1,49 @@
 @charset "UTF-8";
 
+/* ═══════════════════════════════════════════════════════════
+   Biblioteca de COMPONENTES REUTILIZÁVEIS partilhados por
+   várias páginas: logo, botões (.btn-primary / .btn-secondary),
+   inputs de formulário, separador "ou", inputs de nome duplo
+   (registo), botões de login social (Google/Apple) e a navbar
+   inferior fixa.
+
+   Ao centralizar estes componentes numa única folha, qualquer
+   alteração visual a um botão ou à navbar propaga-se automati-
+   camente a todas as páginas que os usam, sem duplicar CSS.
+═══════════════════════════════════════════════════════════ */
+
+/* ── Logo ──────────────────────────────────────────────────
+   Largura fixa do logótipo ShareBox; altura automática mantém
+   a proporção original da imagem (evita distorção). */
 .logo {
     width: 203px;
     height: auto;
 }
 
-/* BOTÕES */
-
+/* ═══════════════════════════════════════════════════════════
+   BOTÕES
+   Dois estilos principais de botão, partilhando a mesma base
+   (.btn) e diferindo apenas na cor de fundo:
+     - .btn-primary   → ação principal (verde claro)
+     - .btn-secondary → ação secundária/alternativa (verde escuro)
+═══════════════════════════════════════════════════════════ */
 .btn {
     display: flex;
     justify-content: center;
     align-items: center;
 
     width: 100%;
-    max-width: 429px;
+    max-width: 429px;   /* impede que o botão fique demasiado largo em ecrãs grandes */
 
     height: 52px;
 
     padding: 10px;
 
     border: none;
-    border-radius: 25px;
+    border-radius: 25px;   /* metade da altura → cantos totalmente arredondados (pill shape) */
 
     color: var(--cream);
-    text-decoration: none;
+    text-decoration: none;  /* necessário quando o .btn é um <a> em vez de <button> */
     font-size: 19px;
 
     cursor: pointer;
@@ -37,6 +57,8 @@
     background-color: var(--dark-green);
 }
 
+/* Contentor vertical que agrupa botões com espaçamento
+   consistente entre eles (ex: "Entrar" + "Criar conta"). */
 .buttons-container {
     display: flex;
     flex-direction: column;
@@ -47,6 +69,11 @@
     gap: 12px;
 }
 
+/* ── Input de formulário ────────────────────────────────────
+   Estilo base para campos de texto (email, password, nome).
+   Fundo semi-transparente sobre o fundo azul escuro do body,
+   com borda transparente que se torna visível (verde) ao focar
+   — dá feedback visual claro sobre qual campo está ativo. */
 .input {
     width: 100%;
     max-width: 429px;
@@ -56,7 +83,7 @@
     padding: 12px 20px;
 
     border-radius: 25px;
-    border: 2px solid transparent;
+    border: 2px solid transparent;   /* transparente por defeito, fica verde no :focus */
 
     background-color: rgba(255, 255, 255, 0.1);
 
@@ -64,20 +91,24 @@
     font-family: "Berlin";
     font-size: 15px;
 
-    transition: all 0.2s ease;
+    transition: all 0.2s ease;   /* anima a transição da borda ao focar/desfocar */
 }
 
 .input:focus {
     border-color: var(--dark-green);
-    outline: none;
+    outline: none;   /* remove o contorno azul nativo do browser, já temos a nossa própria borda */
 }
 
 .input::placeholder {
-    color: rgba(246, 247, 235, 0.45);
+    color: rgba(246, 247, 235, 0.45);   /* texto de placeholder mais ténue que o texto normal */
     font-family: "Berlin";
     font-size: 15px;
 }
 
+/* ── Separador "ou" ──────────────────────────────────────────
+   Usado entre o formulário de login normal e os botões de
+   login social (ex: "── ou ──"). Duas linhas horizontais
+   (.line) com o texto "ou" centrado entre elas. */
 .separator-container {
     display: flex;
     align-items: center;
@@ -86,7 +117,7 @@
 }
 
 .line {
-    flex-grow: 1;
+    flex-grow: 1;   /* cada linha ocupa o espaço disponível de ambos os lados do texto */
     border: none;
     height: 1px;
     background-color: var(--cream-light);
@@ -99,6 +130,10 @@
     font-size: 16px;
 }
 
+/* ── Par de inputs de nome (registo) ──────────────────────
+   No formulário de registo, "Primeiro nome" e "Último nome"
+   aparecem lado a lado. .name-input é o contentor flex e
+   .input-name é cada campo individual dentro dele. */
 .name-input {
     display: flex;
     flex-direction: column;
@@ -106,12 +141,11 @@
 }
 
 .input-name {
-    flex: 1;
-    min-width: 0;
+    flex: 1;       /* cada campo ocupa espaço igual */
+    min-width: 0;  /* permite que o campo encolha abaixo do seu conteúdo mínimo, evitando overflow */
 }
 
-/* Google / Apple */
-
+/* ── Botões de login social (Google / Apple) ────────────── */
 .login-btns {
     display: flex;
     gap: 10px;
@@ -129,7 +163,7 @@
     border-radius: 25px;
     padding: 10px;
 
-    flex: 1;
+    flex: 1;   /* os dois botões (Google/Apple) dividem o espaço disponível em igual largura */
 
     color: var(--cream);
     text-align: center;
@@ -140,33 +174,58 @@
     margin-bottom: 15px;
 }
 
+/* ═══════════════════════════════════════════════════════════
+   NAVBAR — barra de navegação inferior fixa
+   ───────────────────────────────────────────────────────────
+   Presente em quase todas as páginas autenticadas (Início,
+   Comunidades, Adicionar, Mensagens, Perfil). position:sticky
+   com bottom:0 mantém a navbar colada ao fundo do ecrã mesmo
+   com scroll, sem sair do fluxo normal do documento (ao
+   contrário de position:fixed, que pode causar sobreposições
+   inesperadas em layouts flex como o usado aqui).
+═══════════════════════════════════════════════════════════ */
 .navbar {
   position: sticky;
   bottom: 0;
   width: 100%;
   height: 80px;
   background: var(--blue);
-  border-radius: 24px 24px 0 0;
+  border-radius: 24px 24px 0 0;   /* cantos arredondados só no topo, parece um "cartão" flutuante */
   display: flex;
   align-items: center;
-  justify-content: space-around;
+  justify-content: space-around;   /* distribui os ícones uniformemente pela largura */
   padding: 0 20px;
-  z-index: 1000;
-  flex-shrink: 0;
-  margin-top: auto;
+  z-index: 1000;   /* garante que a navbar fica sempre por cima do conteúdo da página */
+  flex-shrink: 0;   /* impede que a navbar encolha quando o conteúdo da página é maior que o ecrã */
+  margin-top: auto;   /* empurra a navbar para o fundo do contentor flex .page */
 }
 .nav-item {
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
   flex: 1; cursor: pointer; text-decoration: none;
 }
+/* Ícones da navbar: por defeito ficam semi-transparentes (45%)
+   e a cores invertidas (brightness(0) invert(1) transforma
+   qualquer ícone escuro em branco), simulando o estado "inativo". */
 .nav-item img {
   width: 32px; height: 32px; object-fit: contain;
   opacity: 0.45;
   filter: brightness(0) invert(1);
   transition: opacity 0.15s ease;
 }
+/* Estado "ativo" (página atual): aqui usa-se filter:none, ou
+   seja, mostra o ícone com as suas cores originais (sem o
+   filtro branco). Nota: noutras folhas de estilo específicas
+   de cada página este mesmo seletor (.nav-item.active img) é
+   redefinido com um filtro CSS diferente (sépia/hue-rotate)
+   para tingir o ícone de verde — esta versão em components.css
+   é a base/fallback mais simples. */
 .nav-item.active img { opacity: 1; filter: none; }
+/* Botão central "+" (adicionar item/comunidade): sempre visível
+   a 100% de opacidade e tingido de verde através da combinação
+   de filtros brightness/saturate/invert/sepia/hue-rotate — esta
+   é a técnica usada para colorir um ícone PNG monocromático
+   sem precisar de ter uma versão do ficheiro para cada cor. */
 .nav-add img {
   width: 40px; height: 40px;
   opacity: 1;

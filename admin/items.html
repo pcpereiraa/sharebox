@@ -15,6 +15,19 @@
   <link rel="apple-touch-icon" href="../images/Logo/apple-touch-icon.png">
 </head>
 <body>
+<!--
+  admin/items.html
+  -----------------
+  Painel de gestão de TODOS os itens da plataforma (não só os do
+  admin) — listagem, pesquisa, filtro por estado e eliminação, com
+  estatísticas-resumo no topo.
+
+  Nota de defesa: o `deleteItem()` desta página apaga `item_images` e
+  `favorites`, mas — ao contrário do `deleteItem()` equivalente em
+  my_items.js (página do próprio utilizador) — NÃO apaga `requests`
+  nem desliga `messages.item_id`. É uma inconsistência entre os dois
+  fluxos de remoção que vale a pena referir como possível melhoria.
+-->
 <div class="admin-layout">
 
   <aside class="sidebar">
@@ -76,8 +89,18 @@
 const SUPABASE_URL = 'https://ijswdmvksmqldhkyghwr.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlqc3dkbXZrc21xbGRoa3lnaHdyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg3NjYxODgsImV4cCI6MjA5NDM0MjE4OH0.8JuKWiWxKQ0GN-7MmfIcuZE1BAfbNR3oxPMY89amBAM';
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// `allItems` guarda a lista completa carregada uma vez — pesquisa e
+// filtro de estado trabalham só sobre este array, sem nova query.
 let allItems = [];
 
+/**
+ * adminGuard
+ * ----------
+ * Proteção padrão das páginas de admin: confirma sessão válida E
+ * `is_admin = true`; caso contrário, redireciona.
+ *
+ * @returns {Promise<boolean>} true se o acesso for permitido.
+ */
 async function adminGuard() {
   const { data: { session } } = await sb.auth.getSession();
   if (!session) { window.location.href = '../login.html'; return false; }
@@ -91,6 +114,17 @@ async function adminGuard() {
 document.getElementById('logout-btn').addEventListener('click', async () => { await sb.auth.signOut(); window.location.href = '../login.html'; });
 document.getElementById('current-date').textContent = new Date().toLocaleDateString('pt-PT', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
 
+/**
+ * loadItems
+ * ---------
+ * Carrega TODOS os itens da plataforma (de todos os utilizadores) e
+ * os dados associados necessários para a tabela: imagem de capa e
+ * nome do dono. Segue o padrão de "fan-out manual" habitual no
+ * projeto: 1ª query traz os itens; depois, em paralelo, busca-se as
+ * imagens (`item_images`, filtradas por `.in('item_id', ids)`) e os
+ * perfis dos donos (`.in('id', ownerIds)`), unindo tudo em memória
+ * através de `imgMap` e `profileMap`.
+ */
 async function loadItems() {
   const { data: items } = await sb.from('items').select('id, title, condition, status, location, created_at, owner_id, category_id').order('created_at', { ascending: false });
   allItems = items || [];
@@ -105,6 +139,8 @@ async function loadItems() {
   ]);
 
   const imgMap = {};
+  // Só guarda a primeira imagem encontrada por item_id (suficiente
+  // para a miniatura da tabela; não interessa qual a posição/ordem).
   (images||[]).forEach(img => { if (!imgMap[img.item_id]) imgMap[img.item_id] = img.image_url; });
   const profileMap = {};
   (profiles||[]).forEach(p => { profileMap[p.id] = p.full_name; });
@@ -116,10 +152,27 @@ async function loadItems() {
   document.getElementById('stat-pending').textContent   = allItems.filter(i => i.status === 'pendente').length;
 
   renderItems(allItems, imgMap, profileMap);
+  // Guarda os mapas globalmente para que `renderItems()` os possa
+  // reutilizar mais tarde (chamado pela pesquisa/filtro) sem ter de
+  // os receber sempre explicitamente como argumento.
   window._imgMap = imgMap;
   window._profileMap = profileMap;
 }
 
+/**
+ * renderItems
+ * -----------
+ * Constrói as linhas da tabela de itens a partir de uma lista (pode
+ * ser a lista completa ou um subconjunto já filtrado pela pesquisa
+ * ou pelo seletor de estado).
+ *
+ * @param {Array<Object>} items - Lista de itens a desenhar.
+ * @param {Object} [imgMap] - Mapa item_id→URL de imagem; se omitido,
+ *                             usa o último guardado em `window._imgMap`.
+ * @param {Object} [profileMap] - Mapa owner_id→nome; se omitido, usa
+ *                                 o último guardado em
+ *                                 `window._profileMap`.
+ */
 function renderItems(items, imgMap, profileMap) {
   imgMap     = imgMap     || window._imgMap     || {};
   profileMap = profileMap || window._profileMap || {};
@@ -127,6 +180,10 @@ function renderItems(items, imgMap, profileMap) {
   if (!items.length) { tbody.innerHTML = '<tr><td colspan="8" class="empty-row">Sem itens</td></tr>'; return; }
   tbody.innerHTML = items.map(item => {
     const img = imgMap[item.id];
+    // Nota: aqui só há duas classes possíveis de badge — 'available'
+    // para 'disponivel', e 'other' para qualquer outro estado
+    // (doado, pendente, expirado) — diferente de getStatusClass() em
+    // my_items.js, que tem uma classe própria por estado.
     const statusCls = item.status === 'disponivel' ? 'available' : 'other';
     return `<tr>
       <td>${img ? `<img src="${img}" style="width:48px;height:48px;object-fit:cover;border-radius:8px">` : '<div style="width:48px;height:48px;background:#f0f2f5;border-radius:8px"></div>'}</td>
@@ -146,6 +203,13 @@ function renderItems(items, imgMap, profileMap) {
 
 document.getElementById('search-input').addEventListener('input', filterItems);
 document.getElementById('filter-status').addEventListener('change', filterItems);
+/**
+ * filterItems
+ * -----------
+ * Aplica em conjunto a pesquisa de texto (título ou localização) e o
+ * filtro de estado escolhido sobre a lista completa `allItems`,
+ * SEM nova query à BD, e redesenha a tabela.
+ */
 function filterItems() {
   const q      = document.getElementById('search-input').value.toLowerCase();
   const status = document.getElementById('filter-status').value;
@@ -155,10 +219,28 @@ function filterItems() {
   renderItems(filtered);
 }
 
+/**
+ * editItem
+ * --------
+ * Redireciona para o formulário de edição de itens, reutilizando
+ * add_item.html em modo edição — exatamente como em my_items.js,
+ * mas aqui o admin pode editar QUALQUER item, não só os próprios.
+ *
+ * @param {string} id - UUID do item a editar.
+ */
 function editItem(id) {
   window.location.href = `../add_item.html?edit=${id}`;
 }
 
+/**
+ * deleteItem
+ * ----------
+ * Elimina permanentemente um item da plataforma, apagando primeiro
+ * as suas dependências diretas (imagens e favoritos) para respeitar
+ * as constraints de chave estrangeira.
+ *
+ * @param {string} id - UUID do item a eliminar.
+ */
 async function deleteItem(id) {
   if (!confirm('Tens a certeza que queres eliminar este item?')) return;
   await sb.from('item_images').delete().eq('item_id', id);
@@ -167,11 +249,25 @@ async function deleteItem(id) {
   loadItems();
 }
 
+/**
+ * formatDate
+ * ----------
+ * Formata uma data ISO para o formato curto pt-PT (DD-MM-AAAA).
+ *
+ * @param {string|null} iso - Data em formato ISO, ou null/undefined.
+ * @returns {string} Data formatada, ou '—' se não existir.
+ */
 function formatDate(iso) {
   if (!iso) return '—';
   return new Date(iso).toLocaleDateString('pt-PT', { day:'2-digit', month:'2-digit', year:'numeric' });
 }
 
+/**
+ * init
+ * ----
+ * Ponto de entrada da página: valida o acesso de admin e, se válido,
+ * carrega a listagem de itens.
+ */
 async function init() { const ok = await adminGuard(); if (ok) loadItems(); }
 init();
 </script>

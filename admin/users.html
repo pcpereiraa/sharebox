@@ -9,6 +9,22 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
+<!--
+  admin/users.html
+  ------------------
+  Painel de gestão de utilizadores: lista todos os perfis, permite
+  pesquisar/filtrar por tipo (admin/normal), editar nome e estatuto
+  de admin através de um modal, e eliminar utilizadores.
+
+  Nota de defesa: `deleteUser()` apaga apenas a linha em `profiles` —
+  NÃO apaga o utilizador correspondente em `auth.users` (a tabela
+  interna de autenticação do Supabase, que só pode ser gerida via
+  API administrativa/service role, não pela anon key usada aqui),
+  nem os itens, comunidades ou mensagens criados por esse utilizador.
+  Na prática isto deixa dados "orfãos" associados a um id de
+  utilizador que já não tem perfil — um ponto a referir como possível
+  limitação/melhoria futura.
+-->
 <div class="admin-layout">
 
   <aside class="sidebar">
@@ -107,6 +123,8 @@
   </main>
 </div>
 
+<!-- Modal de edição de utilizador: reutilizado para qualquer
+     utilizador clicado em "Editar" (controlado por `editingId`) -->
 <div id="modal-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center">
   <div style="background:#fff;border-radius:16px;padding:28px;width:400px;max-width:90vw">
     <h3 style="font-family:'Berlin',sans-serif;font-size:18px;color:#172a3a;margin-bottom:20px" id="modal-title">Editar Utilizador</h3>
@@ -133,9 +151,20 @@ const SUPABASE_URL = 'https://ijswdmvksmqldhkyghwr.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlqc3dkbXZrc21xbGRoa3lnaHdyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg3NjYxODgsImV4cCI6MjA5NDM0MjE4OH0.8JuKWiWxKQ0GN-7MmfIcuZE1BAfbNR3oxPMY89amBAM';
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+// `allUsers` guarda a lista completa para pesquisa/filtro local;
+// `editingId` guarda o id do utilizador atualmente a ser editado no
+// modal (null quando o modal está fechado).
 let allUsers = [];
 let editingId = null;
 
+/**
+ * adminGuard
+ * ----------
+ * Proteção padrão das páginas de admin: exige sessão válida E
+ * `is_admin = true`, caso contrário redireciona.
+ *
+ * @returns {Promise<boolean>} true se o acesso for permitido.
+ */
 async function adminGuard() {
   const { data: { session } } = await sb.auth.getSession();
   if (!session) { window.location.href = '../login.html'; return false; }
@@ -151,6 +180,14 @@ document.getElementById('logout-btn').addEventListener('click', async () => {
 });
 document.getElementById('current-date').textContent = new Date().toLocaleDateString('pt-PT', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
 
+/**
+ * loadUsers
+ * ---------
+ * Carrega todos os perfis da plataforma e calcula as estatísticas do
+ * topo (total, nº de admins, nº de novos registos nos últimos 7
+ * dias). Estas estatísticas são todas calculadas em memória com
+ * `.filter()` sobre o array já carregado, sem queries extra à BD.
+ */
 async function loadUsers() {
   const { data } = await sb.from('profiles').select('id, full_name, username, location, is_admin, created_at').order('created_at', { ascending: false });
   allUsers = data || [];
@@ -158,12 +195,23 @@ async function loadUsers() {
   // Stats
   document.getElementById('stat-total').textContent = allUsers.length;
   document.getElementById('stat-admins').textContent = allUsers.filter(u => u.is_admin).length;
+  // Calcula a data de "há 7 dias" subtraindo diretamente ao objeto
+  // Date atual, e depois filtra os utilizadores criados depois dessa
+  // data — abordagem simples, sem precisar de fazer isto na BD.
   const weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate() - 7);
   document.getElementById('stat-new').textContent = allUsers.filter(u => new Date(u.created_at) > weekAgo).length;
 
   renderUsers(allUsers);
 }
 
+/**
+ * renderUsers
+ * -----------
+ * Constrói as linhas da tabela de utilizadores a partir de uma lista
+ * (completa ou já filtrada pela pesquisa/seletor de admin).
+ *
+ * @param {Array<Object>} users - Lista de perfis a desenhar.
+ */
 function renderUsers(users) {
   const tbody = document.getElementById('users-tbody');
   if (!users.length) { tbody.innerHTML = '<tr><td colspan="6" class="empty-row">Sem utilizadores</td></tr>'; return; }
@@ -183,28 +231,67 @@ function renderUsers(users) {
 }
 
 // Search + filter
+// Pesquisa local por nome/username e filtro por estatuto de admin —
+// ambos atuam sobre `allUsers` já carregado, sem nova query à BD.
 document.getElementById('search-input').addEventListener('input', filterUsers);
 document.getElementById('filter-admin').addEventListener('change', filterUsers);
+/**
+ * filterUsers
+ * -----------
+ * Aplica a pesquisa de texto e o filtro de estatuto de admin sobre a
+ * lista completa de utilizadores e redesenha a tabela.
+ */
 function filterUsers() {
   const q     = document.getElementById('search-input').value.toLowerCase();
   const admin = document.getElementById('filter-admin').value;
   let filtered = allUsers;
   if (q) filtered = filtered.filter(u => (u.full_name||'').toLowerCase().includes(q) || (u.username||'').toLowerCase().includes(q));
+  // O valor do <select> vem sempre como string ('true'/'false'/''),
+  // por isso compara-se com `String(u.is_admin)` em vez do booleano
+  // diretamente.
   if (admin !== '') filtered = filtered.filter(u => String(u.is_admin) === admin);
   renderUsers(filtered);
 }
 
 // Edit modal
+/**
+ * openEdit
+ * --------
+ * Abre o modal de edição pré-preenchido com os dados atuais do
+ * utilizador selecionado, e guarda o seu id em `editingId` para que
+ * `saveUser()` saiba a quem aplicar as alterações.
+ *
+ * @param {string} id - UUID do utilizador a editar.
+ * @param {string} name - Nome atual (já escapado de aspas simples no
+ *                         `onclick` que invoca esta função).
+ * @param {boolean} isAdmin - Estatuto atual de admin.
+ */
 function openEdit(id, name, isAdmin) {
   editingId = id;
   document.getElementById('modal-name').value = name;
   document.getElementById('modal-admin').value = String(isAdmin);
   document.getElementById('modal-overlay').style.display = 'flex';
 }
+/**
+ * closeModal
+ * ----------
+ * Fecha o modal de edição e limpa o `editingId` (evita que um
+ * "Guardar" tardio afete o utilizador errado).
+ */
 function closeModal() {
   document.getElementById('modal-overlay').style.display = 'none';
   editingId = null;
 }
+/**
+ * saveUser
+ * --------
+ * Aplica as alterações feitas no modal (nome e estatuto de admin) ao
+ * perfil identificado por `editingId`, e recarrega a lista.
+ *
+ * Nota: alterar `is_admin` aqui é uma operação sensível — concede ou
+ * retira poder total de administração sobre toda a plataforma a um
+ * utilizador.
+ */
 async function saveUser() {
   const name    = document.getElementById('modal-name').value.trim();
   const isAdmin = document.getElementById('modal-admin').value === 'true';
@@ -213,17 +300,40 @@ async function saveUser() {
   loadUsers();
 }
 
+/**
+ * deleteUser
+ * ----------
+ * Elimina o perfil de um utilizador (ver nota no topo do ficheiro
+ * sobre as limitações desta operação — não remove o utilizador de
+ * `auth.users` nem os seus itens/comunidades/mensagens).
+ *
+ * @param {string} id - UUID do perfil a eliminar.
+ */
 async function deleteUser(id) {
   if (!confirm('Tens a certeza que queres eliminar este utilizador?')) return;
   await sb.from('profiles').delete().eq('id', id);
   loadUsers();
 }
 
+/**
+ * formatDate
+ * ----------
+ * Formata uma data ISO para o formato curto pt-PT (DD-MM-AAAA).
+ *
+ * @param {string|null} iso - Data em formato ISO, ou null/undefined.
+ * @returns {string} Data formatada, ou '—' se não existir.
+ */
 function formatDate(iso) {
   if (!iso) return '—';
   return new Date(iso).toLocaleDateString('pt-PT', { day:'2-digit', month:'2-digit', year:'numeric' });
 }
 
+/**
+ * init
+ * ----
+ * Ponto de entrada da página: valida o acesso de admin e, se válido,
+ * carrega a lista de utilizadores.
+ */
 async function init() {
   const ok = await adminGuard();
   if (ok) loadUsers();

@@ -1,4 +1,15 @@
-/* ── Layout geral ──────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════
+   Estilos da página de REGISTO de nova conta. Estrutura quase
+   idêntica a login.css (mesmo layout geral, mesmos inputs e
+   botões), com a adição de um estilo de erro com fundo
+   destacado (#register-error) em vez do texto simples de
+   login.css — o registo tem mais campos e por isso justifica
+   uma mensagem de erro mais visível/persistente.
+═══════════════════════════════════════════════════════════ */
+
+/* ── Layout geral ──────────────────────────────────── 
+   Idêntico ao .login-screen de login.css: ecrã centrado
+   vertical e horizontalmente, altura mínima de 100vh. */
 .register-screen {
     min-height: 100vh;
     display: flex;
@@ -17,7 +28,10 @@
 }
 .logo { width: 200px; max-width: 60vw; }
 
-/* ── Formulário ────────────────────────────────────── */
+/* ── Formulário ────────────────────────────────────── 
+   Mesma largura máxima (380px) que o formulário de login,
+   para manter consistência visual entre as duas páginas
+   de autenticação. */
 .register-form {
     width: 100%;
     max-width: 380px;
@@ -34,7 +48,12 @@
     margin-bottom: 4px;
 }
 
-/* ── Inputs ────────────────────────────────────────── */
+/* ── Inputs ────────────────────────────────────────── 
+   Mesma definição local de .input que em login.css (52px de
+   altura, 12px de border-radius) — repetida aqui porque cada
+   página de autenticação carrega apenas a sua própria folha
+   CSS específica, sem partilhar este estilo de input entre
+   páginas (ver nota equivalente em login.css). */
 .input {
     width: 100%;
     height: 52px;
@@ -90,7 +109,14 @@
 }
 .btn-secondary:hover { background: rgba(255,255,255,0.08); }
 
-/* ── Erro ──────────────────────────────────────────── */
+/* ── Erro ──────────────────────────────────────────── 
+   Diferente do simples texto usado em login.css — aqui o erro
+   de registo (ex: "email já registado", "passwords não coincidem")
+   ganha destaque visual próprio: fundo vermelho muito ténue,
+   cantos arredondados e padding, funcionando como uma pequena
+   "caixa de alerta" em vez de texto solto. Provavelmente
+   porque o registo tem mais formas de falhar (vários campos
+   obrigatórios) do que o login, justificando um erro mais visível. */
 #register-error {
     font-family: "Berlin", sans-serif;
     font-size: 14px;

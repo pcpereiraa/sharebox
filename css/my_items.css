@@ -1,5 +1,11 @@
 @charset "UTF-8";
 
+/* ─────────────────────────────────────────────────────
+   Estilos da página "Os meus itens" (my_items.html), onde o
+   utilizador gere os itens que publicou: vê o estado de cada
+   um (disponível/reservado/doado) e pode editar ou eliminar.
+───────────────────────────────────────────────────── */
+
 :root {
     --bg: #f5f5eb;
     --pad: 20px;
@@ -42,7 +48,9 @@ body {
     }
 }
 
-/* Header */
+/* Header 
+   Cabeçalho com fundo azul escuro (consistente com a página
+   de mensagens), título e botão de voltar. */
 
 .top-bar {
     background: var(--blue);
@@ -79,6 +87,8 @@ body {
     padding: 24px var(--pad);
 }
 
+/* Pastilha informativa no topo da lista (ex: a indicar quantos
+   itens o utilizador tem ativos, ou uma mensagem de contexto). */
 .status-banner {
     margin-bottom: 18px;
 }
@@ -102,7 +112,12 @@ body {
     gap: 16px;
 }
 
-/* Card */
+/* Card 
+   Cartão de item em formato "lista" (imagem larga acima do
+   texto em mobile), diferente dos cards pequenos em scroll
+   horizontal usados na home — aqui cada item ocupa uma linha
+   completa, mostrando mais detalhes e os botões de
+   editar/eliminar diretamente visíveis. */
 
 .item-card {
     background: white;
@@ -155,6 +170,10 @@ body {
     margin-top: 4px;
 }
 
+/* Pastilha de estado do item — cor diferente para cada um dos
+   3 estados possíveis (disponível/reservado/doado), dando
+   feedback visual imediato sobre a situação de cada item sem
+   precisar de ler o texto completo. */
 .item-status {
     padding: 6px 10px;
 
@@ -180,7 +199,11 @@ body {
     color: #2980b9;
 }
 
-/* Botões */
+/* Botões 
+   Par de botões editar/eliminar, lado a lado com flex:1 cada
+   (dividem o espaço igualmente). O botão de eliminar usa cores
+   vermelhas muito ténues para sinalizar "ação destrutiva" sem
+   ser visualmente agressivo, mantendo a coerência da paleta. */
 
 .item-actions {
     display: flex;
@@ -214,7 +237,10 @@ body {
     color: #c0392b;
 }
 
-/* Estado vazio */
+/* Estado vazio 
+   Mostrado quando o utilizador ainda não publicou nenhum
+   item — mensagem de boas-vindas + botão a incentivar a
+   primeira publicação (link direto para add_item.html). */
 
 .empty-state {
     text-align: center;
@@ -245,7 +271,12 @@ body {
     border-radius: 999px;
 }
 
-/* Desktop */
+/* Desktop 
+   Em ecrãs grandes, os cards passam de layout vertical
+   (imagem acima, texto abaixo) para layout horizontal (imagem
+   à esquerda com largura fixa, texto à direita ocupando o
+   espaço restante) — aproveita melhor a largura disponível
+   em vez de cards estreitos e altos. */
 
 @media (min-width: 768px) {
 

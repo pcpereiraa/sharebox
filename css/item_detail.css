@@ -1,5 +1,10 @@
 /* ─────────────────────────────────────────────────────
-   ShareBox — item_detail.css
+   Estilos da página de detalhe de um item (item_detail.html):
+   galeria de fotos com thumbnails, título/tags/localização,
+   descrição, detalhes (categoria, estado, tipo), localização,
+   anunciante, comunidade associada, scroll de "mais itens",
+   link de denúncia, e a barra de ações fixa no fundo (favorito
+   + contactar/marcar como doado).
 ───────────────────────────────────────────────────── */
 
 :root {
@@ -55,7 +60,12 @@ body {
 }
 .scroll-content::-webkit-scrollbar { display: none; }
 
-/* ── Gallery ────────────────────────────────────────── */
+/* ── Gallery ────────────────────────────────────────── 
+   Galeria de fotos do item: imagem principal grande no topo
+   (trocável via thumbnails), com botão de voltar e ações
+   (favorito/partilhar) sobrepostos. Fundo azul-escuro por
+   trás da galeria para criar contraste com a foto enquanto
+   esta ainda está a carregar. */
 .gallery {
   background: var(--blue);
   padding-bottom: 16px;
@@ -102,9 +112,16 @@ body {
 .gallery-btn:hover { background: rgba(255,255,255,0.3); }
 .gallery-btn img { width: 18px; height: 18px; object-fit: contain; filter: brightness(0) invert(1); }
 .gallery-btn svg { fill: #fff; }
+/* Quando o botão de favorito está "ativo" (item já favoritado),
+   remove-se o filtro que tornava o ícone branco — presume-se
+   que o próprio ficheiro de imagem do ícone "ativo" já vem
+   com a cor correta (ex: coração vermelho), por isso não
+   precisa do filtro brightness/invert aplicado por defeito. */
 .gallery-btn.active img { filter: none; }
 
-/* Thumbnails */
+/* Thumbnails — miniaturas clicáveis abaixo da imagem principal,
+   permitem trocar qual foto é mostrada em .gallery-main (lógica
+   de troca implementada em switchImg(), dentro de item_detail.js). */
 .gallery-thumbs {
   display: flex;
   gap: 10px;
@@ -127,7 +144,9 @@ body {
   padding: 20px var(--pad) 0;
 }
 
-/* ── Item header ────────────────────────────────────── */
+/* ── Item header ────────────────────────────────────── 
+   Título do item + contador de "gostos"/favoritos, seguido
+   de tags de categoria e localização. */
 .item-header { margin-bottom: 16px; }
 
 .item-title-row {
@@ -201,7 +220,11 @@ body {
   box-shadow: var(--shadow-sm);
 }
 
-/* ── Details box ────────────────────────────────────── */
+/* ── Details box ────────────────────────────────────── 
+   Lista de pares label/valor (ex: "Categoria: Eletrónica",
+   "Estado: Usado", "Tipo: Doação") com linhas separadas por
+   divisores finos — semelhante visualmente a uma tabela de
+   especificações de produto. */
 .details-box {
   background: #fff;
   border-radius: var(--r-md);
@@ -255,7 +278,9 @@ body {
   display: block;
 }
 
-/* ── Advertiser box ─────────────────────────────────── */
+/* ── Advertiser box ─────────────────────────────────── 
+   Caixa com o avatar/nome de quem publicou o item, e botão
+   "Ver perfil" que navega para view_profile.html. */
 .advertiser-box {
   background: #fff;
   border-radius: var(--r-md);
@@ -296,7 +321,11 @@ body {
 }
 .btn-ver-perfil:hover { background: rgba(23,42,58,0.05); }
 
-/* ── Community box ──────────────────────────────────── */
+/* ── Community box ──────────────────────────────────── 
+   Indica a qual comunidade este item pertence (se alguma) —
+   item.community_id é opcional, por isso esta caixa só é
+   mostrada quando há uma comunidade associada (lógica
+   controlada em loadItem(), item_detail.js). */
 .community-box {
   background: #fff;
   border-radius: var(--r-md);
@@ -322,7 +351,11 @@ body {
   font-weight: 600;
 }
 
-/* ── More items scroll ──────────────────────────────── */
+/* ── More items scroll ──────────────────────────────── 
+   Scroll horizontal de "itens parecidos" / sugestões no fundo
+   da página, mesma técnica de margin negativo + padding-left
+   já vista em community_detail.css para fazer o conteúdo
+   "escapar" do padding lateral padrão da página. */
 .more-items-scroll-wrap {
   margin: 0 calc(-1 * var(--pad));
   padding-left: var(--pad);
@@ -382,7 +415,11 @@ body {
   font-size: 9px; color: rgba(0,0,0,0.5);
 }
 
-/* ── Report link ────────────────────────────────────── */
+/* ── Report link ────────────────────────────────────── 
+   Link discreto no fundo da página para denunciar o item
+   (texto muito ténue por defeito, fica mais visível ao
+   passar o rato — é uma ação secundária que não deve competir
+   visualmente com o conteúdo principal). */
 .report-link {
   display: flex; align-items: center; justify-content: center; gap: 6px;
   margin-top: 24px;
@@ -395,7 +432,14 @@ body {
 .report-link svg { fill: rgba(23,42,58,0.4); }
 .report-link:hover { color: rgba(23,42,58,0.7); }
 
-/* ── Bottom action bar ──────────────────────────────── */
+/* ── Bottom action bar ──────────────────────────────── 
+   Barra fixa no fundo da página (sticky), com o botão de
+   favorito circular à esquerda e o botão de ação principal
+   à direita. O conteúdo do botão de ação principal muda
+   dinamicamente segundo se o utilizador é o dono do item
+   (botão "Marcar como doado"/"Reativar") ou um visitante
+   (botão "Contactar", que abre o chat) — ver
+   renderBottomBar() em item_detail.js. */
 .bottom-bar {
   position: sticky;
   bottom: 0;
@@ -472,7 +516,13 @@ body {
   filter: brightness(0) saturate(100%) invert(48%) sepia(79%)
           saturate(476%) hue-rotate(120deg) brightness(95%) contrast(91%);
 }
-/* ── Botão marcar como doado ──────────────────────────*/
+/* ── Botão marcar como doado ──────────────────────────
+   Variante do botão de ação principal usada quando o
+   utilizador é o DONO do item: verde escuro para "Marcar
+   como doado" (ação ainda disponível) ou estado desativado/
+   cinzento depois de já ter sido doado (.btn-disabled remove
+   a possibilidade de clique via pointer-events:none e reduz
+   a opacidade para sinalizar visualmente que está bloqueado). */
 .btn-donate {
   background: var(--dark-green) !important;
   flex: 1;
@@ -482,6 +532,8 @@ body {
   pointer-events: none;
   opacity: 0.6;
 }
+/* Tag cinzenta usada para o estado "Doado" (em contraste com
+   a .tag.green usada para categorias/estado "Disponível"). */
 .tag.grey {
   background: rgba(23,42,58,0.08);
   color: rgba(23,42,58,0.5);

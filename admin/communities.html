@@ -15,6 +15,20 @@
   <link rel="apple-touch-icon" href="../images/Logo/apple-touch-icon.png">
 </head>
 <body>
+<!--
+  admin/communities.html
+  -----------------------
+  Página de administração de COMUNIDADES. Permite ao admin ver
+  estatísticas gerais (total, públicas, privadas), pesquisar, editar
+  (reencaminha para add_community.html em modo edição) e eliminar
+  qualquer comunidade da plataforma.
+
+  Tal como nas outras páginas de admin, o JavaScript está embutido
+  diretamente no HTML (sem ficheiro .js externo), e usa um cliente
+  Supabase próprio criado aqui mesmo (variável `sb`), distinto do
+  `supabaseClient` global definido em js/supabase.js para o resto da
+  aplicação — por isso este painel não depende de auth.js.
+-->
 <div class="admin-layout">
 
   <aside class="sidebar">
@@ -65,16 +79,34 @@
 </div>
 
 <script>
+// Cliente Supabase próprio desta página de admin — note-se que a
+// anon key está hardcoded aqui (tal como em js/supabase.js); isto é
+// seguro porque a anon key é pública por natureza, a segurança real
+// vem das políticas de RLS (Row Level Security) definidas na BD.
 const SUPABASE_URL = 'https://ijswdmvksmqldhkyghwr.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlqc3dkbXZrc21xbGRoa3lnaHdyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg3NjYxODgsImV4cCI6MjA5NDM0MjE4OH0.8JuKWiWxKQ0GN-7MmfIcuZE1BAfbNR3oxPMY89amBAM';
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// `allComms` guarda a lista completa de comunidades já carregada
+// (usada para pesquisa local sem nova query); `memberMap` guarda a
+// contagem de membros por comunidade (community_id → nº de membros).
 let allComms = []; let memberMap = {};
 
+/**
+ * adminGuard
+ * ----------
+ * Protege esta página: confirma que existe sessão ativa E que o
+ * utilizador tem `is_admin = true` no perfil. Caso contrário,
+ * redireciona para o login (sem sessão) ou para a home (sessão válida
+ * mas sem permissões de admin).
+ *
+ * @returns {Promise<boolean>} true se o acesso for permitido.
+ */
 async function adminGuard() {
   const { data: { session } } = await sb.auth.getSession();
   if (!session) { window.location.href = '../login.html'; return false; }
   const { data } = await sb.from('profiles').select('is_admin, full_name').eq('id', session.user.id).single();
   if (!data?.is_admin) { window.location.href = '../home.html'; return false; }
+  // Preenche o nome e a inicial do avatar do admin no rodapé da barra lateral.
   document.getElementById('admin-name').textContent = data.full_name || 'Admin';
   document.getElementById('admin-avatar').textContent = (data.full_name || 'A')[0].toUpperCase();
   return true;
@@ -83,10 +115,26 @@ async function adminGuard() {
 document.getElementById('logout-btn').addEventListener('click', async () => { await sb.auth.signOut(); window.location.href = '../login.html'; });
 document.getElementById('current-date').textContent = new Date().toLocaleDateString('pt-PT', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
 
+/**
+ * loadCommunities
+ * ---------------
+ * Carrega todas as comunidades da plataforma e os dados associados
+ * necessários para a tabela: nome do criador (owner) e contagem de
+ * membros de cada uma.
+ *
+ * Segue o padrão de "fan-out manual" já visto no resto do projeto:
+ * 1ª query traz as comunidades; depois, em paralelo (`Promise.all`),
+ * busca-se os perfis dos criadores (`.in('id', ownerIds)`) e todas as
+ * linhas de pertença a comunidades (`.in('community_id', commIds)`)
+ * para poder contar membros por comunidade no lado do cliente.
+ */
 async function loadCommunities() {
   const { data: comms } = await sb.from('communities').select('id, name, image_url, location, is_private, created_at, owner_id').order('created_at', { ascending: false });
   allComms = comms || [];
 
+  // `[...new Set(...)]` remove owner_ids duplicados (várias
+  // comunidades podem ter o mesmo criador) antes de consultar os
+  // perfis — evita pedir o mesmo perfil mais do que uma vez.
   const ownerIds = [...new Set(allComms.map(c => c.owner_id).filter(Boolean))];
   const commIds  = allComms.map(c => c.id);
 
@@ -98,6 +146,9 @@ async function loadCommunities() {
   const profileMap = {};
   (profiles||[]).forEach(p => { profileMap[p.id] = p.full_name; });
   memberMap = {};
+  // Conta quantas linhas de `communities_members` existem por
+  // community_id — não traz dados de cada membro, só a contagem,
+  // construída incrementando o mapa linha a linha.
   (members||[]).forEach(m => { memberMap[m.community_id] = (memberMap[m.community_id]||0)+1; });
 
   document.getElementById('stat-total').textContent   = allComms.length;
@@ -105,9 +156,24 @@ async function loadCommunities() {
   document.getElementById('stat-private').textContent = allComms.filter(c => c.is_private).length;
 
   renderComms(allComms, profileMap);
+  // Guarda o profileMap numa propriedade global (`window._profileMap`)
+  // para que `renderComms()` possa ser chamada de novo mais tarde
+  // (ex: pela pesquisa) sem precisar de o receber explicitamente.
   window._profileMap = profileMap;
 }
 
+/**
+ * renderComms
+ * -----------
+ * Constrói as linhas da tabela de comunidades a partir de uma lista
+ * (que pode ser a lista completa ou um subconjunto filtrado pela
+ * pesquisa).
+ *
+ * @param {Array<Object>} comms - Lista de comunidades a desenhar.
+ * @param {Object} [profileMap] - Mapa id→nome dos criadores; se
+ *                                 omitido, usa o último guardado em
+ *                                 `window._profileMap`.
+ */
 function renderComms(comms, profileMap) {
   profileMap = profileMap || window._profileMap || {};
   const tbody = document.getElementById('comms-tbody');
@@ -127,15 +193,37 @@ function renderComms(comms, profileMap) {
   </tr>`).join('');
 }
 
+// Pesquisa local (sem nova query à BD): filtra o array `allComms` já
+// carregado em memória por nome OU localização, e re-renderiza.
 document.getElementById('search-input').addEventListener('input', function() {
   const q = this.value.toLowerCase();
   renderComms(q ? allComms.filter(c => (c.name||'').toLowerCase().includes(q) || (c.location||'').toLowerCase().includes(q)) : allComms);
 });
 
+/**
+ * editComm
+ * --------
+ * Redireciona para o formulário de criação/edição de comunidades,
+ * reaproveitando add_community.html em modo edição (tal como
+ * acontece em my_items.js para itens).
+ *
+ * @param {string} id - UUID da comunidade a editar.
+ */
 function editComm(id) {
   window.location.href = `../add_community.html?edit=${id}`;
 }
 
+/**
+ * deleteComm
+ * ----------
+ * Elimina permanentemente uma comunidade, como qualquer admin pode
+ * fazer a qualquer comunidade da plataforma (não só às próprias).
+ * Apaga primeiro as suas relações de pertença (`communities_members`)
+ * para respeitar as constraints de chave estrangeira, à semelhança
+ * do que acontece em my_communities.js (`deleteCommunity`).
+ *
+ * @param {string} id - UUID da comunidade a eliminar.
+ */
 async function deleteComm(id) {
   if (!confirm('Tens a certeza que queres eliminar esta comunidade?')) return;
   await sb.from('communities_members').delete().eq('community_id', id);
@@ -143,7 +231,22 @@ async function deleteComm(id) {
   loadCommunities();
 }
 
+/**
+ * formatDate
+ * ----------
+ * Formata uma data ISO para o formato curto pt-PT (DD-MM-AAAA).
+ *
+ * @param {string|null} iso - Data em formato ISO, ou null/undefined.
+ * @returns {string} Data formatada, ou '—' se não existir.
+ */
 function formatDate(iso) { return iso ? new Date(iso).toLocaleDateString('pt-PT', { day:'2-digit', month:'2-digit', year:'numeric' }) : '—'; }
+
+/**
+ * init
+ * ----
+ * Ponto de entrada da página: corre o `adminGuard()` e só carrega os
+ * dados das comunidades se o acesso for validado.
+ */
 async function init() { const ok = await adminGuard(); if (ok) loadCommunities(); }
 init();
 </script>

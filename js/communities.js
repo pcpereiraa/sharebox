@@ -1,20 +1,78 @@
-// ── Sheet functions ───────────────────────────────────
+/* ─────────────────────────────────────────────────────────────────
+   Lógica da página de listagem de comunidades (communities.html),
+   dividida em 4 secções principais que aparecem na página:
+     1. "As minhas comunidades"      → loadMyCommunities()
+     2. "Comunidades perto de mim"   → loadNearbyCommunities()
+     3. "Sugestões para ti"          → loadSuggestions()
+     4. Pesquisa de comunidades      → searchCommunities() + debounce
+
+   Tal como em home.js, o padrão de acesso a dados é sempre o mesmo:
+     a) ir buscar as comunidades relevantes (filtros diferentes por secção);
+     b) ir buscar a CONTAGEM de membros de cada uma, fazendo um SELECT
+        de todas as linhas de communities_members para esses ids e
+        agregando manualmente em memória (memberMap), porque a anon
+        key não permite fazer COUNT/GROUP BY diretamente via REST;
+     c) gerar o HTML dos cards.
+
+   Há também um sistema de "bottom sheets" (modais que deslizam de
+   baixo para cima) para cada secção, que mostram a LISTA COMPLETA
+   quando o utilizador clica em "ver todas".
+───────────────────────────────────────────────────────────────────── */
+
+/* ── Funções genéricas de "Sheet" (bottom-sheet/modal) ──────────────
+   Reutilizadas por qualquer secção: abrem/fecham o modal identificado
+   por id, e bloqueiam o scroll de fundo enquanto estiver aberto.
+   Aparecem ANTES do resto do ficheiro porque são usadas logo no
+   DOMContentLoaded (ver mais abaixo, "Ver todas").
+───────────────────────────────────────────────────────────────────── */
+
+/**
+ * openSheet
+ * ---------
+ * Abre o bottom-sheet identificado por `id`, mostrando também o
+ * overlay escurecido de fundo (#sheet-overlay) e bloqueando o
+ * scroll da página por trás.
+ *
+ * @param {string} id - id do elemento .bottom-sheet a mostrar.
+ */
 function openSheet(id) {
   document.getElementById('sheet-overlay').classList.add('active');
   document.getElementById(id).classList.add('active');
   document.body.style.overflow = 'hidden';
 }
+
+/**
+ * closeSheet
+ * ----------
+ * Fecha QUALQUER bottom-sheet que esteja aberto (percorre todos os
+ * .bottom-sheet e remove a classe "active" de todos, não só do
+ * último aberto) e repõe o scroll normal da página.
+ */
 function closeSheet() {
   document.getElementById('sheet-overlay').classList.remove('active');
   document.querySelectorAll('.bottom-sheet').forEach(s => s.classList.remove('active'));
   document.body.style.overflow = '';
 }
+
+// Fechar qualquer sheet aberto com a tecla ESC.
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheet(); });
 
-/* ─────────────────────────────────────────────────────
-   ShareBox — communities.js
-───────────────────────────────────────────────────── */
-
+/**
+ * Ponto de entrada da página communities.html. Corre quando o DOM
+ * está pronto:
+ *   1. Garante autenticação (requireAuth).
+ *   2. Carrega as 3 secções principais em paralelo (Promise.all),
+ *      já que são independentes umas das outras.
+ *   3. Liga os links "Ver todas" de cada secção ao sheet
+ *      correspondente, identificando a secção pelo TEXTO do título
+ *      (.section-title) em vez de por um id fixo — uma forma simples
+ *      (mas um pouco frágil, porque depende do texto exato em PT)
+ *      de relacionar o link com o sheet certo.
+ *   4. Regista delegação de eventos para clique nos cards de
+ *      comunidade (tanto .comm-card como .my-comm-card), navegando
+ *      para community_detail.html — exceto se o clique foi no ícone
+ *      de aderir (.comm-add-icon) ou no botão de criar (.btn-criar).
+ */
 document.addEventListener('DOMContentLoaded', async function () {
 
   const session = await requireAuth();
@@ -28,7 +86,10 @@ document.addEventListener('DOMContentLoaded', async function () {
     loadSuggestions(userId),
   ]);
 
-  // Ver todas — abrir modais
+  // Ver todas — abrir modais.
+  // Em vez de cada link ter um id/atributo data- a indicar qual sheet
+  // abrir, esta lógica lê o texto do título da secção pai e decide
+  // por correspondência parcial de palavras-chave em português.
   document.querySelectorAll('.section-link').forEach(link => {
     link.addEventListener('click', function(e) {
       e.preventDefault();
@@ -40,7 +101,9 @@ document.addEventListener('DOMContentLoaded', async function () {
     });
   });
 
-  // Delegação de eventos — clique em comm-card
+  // Delegação de eventos — clique em comm-card (sugestões/perto de
+  // mim) ou my-comm-card (as minhas comunidades). Não navega se o
+  // clique foi no ícone de aderir ou no botão "criar comunidade".
   document.addEventListener('click', function (e) {
     const card = e.target.closest('.comm-card, .my-comm-card');
     if (card && !e.target.closest('.comm-add-icon, .btn-criar')) {
@@ -50,7 +113,31 @@ document.addEventListener('DOMContentLoaded', async function () {
   });
 });
 
-// ── As minhas comunidades ─────────────────────────────
+/**
+ * loadMyCommunities
+ * -------------------
+ * Carrega as comunidades de que o utilizador atual JÁ é membro
+ * (independentemente de ser "member" ou "admin"), mostrando:
+ *   - a sua role/badge (Admin ou Membro) em cada card;
+ *   - o número de membros de cada comunidade;
+ *   - tanto no carrossel principal (#my-communities) como na versão
+ *     em lista completa do bottom-sheet (#sheet-my-list).
+ *
+ * Fluxo de dados:
+ *   1. SELECT a communities_members filtrando por user_id — dá a
+ *      lista de community_id + role do utilizador.
+ *   2. Se não houver nenhuma (erro ou lista vazia), mostra mensagem
+ *      "Ainda não fazes parte de nenhuma comunidade." e termina.
+ *   3. Constrói roleMap (community_id → role) a partir do passo 1.
+ *   4. SELECT aos dados das comunidades (nome, imagem, localização)
+ *      cujo id esteja na lista obtida (.in('id', commIds)).
+ *   5. SELECT à contagem de membros de todas essas comunidades
+ *      (agregada manualmente em memberMap).
+ *   6. Desenha o sheet (lista completa) e o carrossel (cards com
+ *      badge de role).
+ *
+ * @param {string} userId
+ */
 async function loadMyCommunities(userId) {
   const container = document.getElementById('my-communities');
   if (!container) return;
@@ -74,7 +161,8 @@ async function loadMyCommunities(userId) {
     .select('id, name, image_url, location')
     .in('id', commIds);
 
-  // Contar membros
+  // Contar membros (mesma técnica de agregação manual usada em todo
+  // o ficheiro: SELECT em massa + reduce/forEach em memória).
   const { data: memberCounts } = await supabaseClient
     .from('communities_members')
     .select('community_id')
@@ -87,15 +175,18 @@ async function loadMyCommunities(userId) {
 
   if (!communities?.length) return;
 
-  // Popula sheet
+  // Popula a versão completa em lista (sheet).
   const sheetList = document.getElementById('sheet-my-list');
   if (sheetList) {
     sheetList.innerHTML = communities.map(comm => {
       const members = memberMap[comm.id] || 0;
+      // isMember = true sempre aqui, porque esta secção É a lista
+      // de comunidades de que o utilizador já é membro.
       return renderCommListItem(comm, members, true, userId);
     }).join('');
   }
 
+  // Popula o carrossel principal, com badge "Admin"/"Membro".
   container.innerHTML = communities.map(comm => {
     const role    = roleMap[comm.id] === 'admin' ? 'Admin' : 'Membro';
     const badgeCls = roleMap[comm.id] === 'admin' ? 'admin' : 'membro';
@@ -118,12 +209,35 @@ async function loadMyCommunities(userId) {
   }).join('');
 }
 
-// ── Comunidades perto de mim ─────────────────────────
+/**
+ * loadNearbyCommunities
+ * -----------------------
+ * Carrega até 8 comunidades PÚBLICAS recentes (secção "Comunidades
+ * perto de mim" — note-se que, tal como em home.js, a "proximidade"
+ * aqui não é geográfica real, é apenas mais-recentes-primeiro).
+ *
+ * Diferença importante face a loadMyCommunities: aqui o utilizador
+ * PODE já ser membro de algumas destas comunidades (não são
+ * excluídas da query), e por isso cada card precisa de saber
+ * individualmente se o utilizador já aderiu (isMember), para
+ * desenhar o botão de "Aderir" desativado quando já é membro, em
+ * vez de simplesmente não mostrar a comunidade.
+ *
+ * Fluxo:
+ *   1. SELECT até 8 comunidades públicas, mais recentes primeiro.
+ *   2. SELECT a communities_members para saber quais destas 8 o
+ *      utilizador já integra (myCommIds, um Set para lookup rápido).
+ *   3. Contar membros de cada uma (memberMap, mesmo padrão habitual).
+ *   4. Desenhar sheet + carrossel, com o botão de aderir
+ *      condicional a isMember.
+ *
+ * @param {string} userId
+ */
 async function loadNearbyCommunities(userId) {
   const container = document.getElementById('nearby-scroll');
   if (!container) return;
 
-  // Buscar todas as comunidades públicas
+  // Buscar todas as comunidades públicas (mais recentes primeiro).
   const { data: communities } = await supabaseClient
     .from('communities')
     .select('id, name, image_url, location')
@@ -133,7 +247,7 @@ async function loadNearbyCommunities(userId) {
 
   if (!communities?.length) return;
 
-  // Verificar quais o utilizador já faz parte
+  // Verificar de quais destas o utilizador já faz parte.
   const commIds = communities.map(c => c.id);
   const { data: myMemberships } = await supabaseClient
     .from('communities_members')
@@ -143,7 +257,7 @@ async function loadNearbyCommunities(userId) {
 
   const myCommIds = new Set((myMemberships || []).map(m => m.community_id));
 
-  // Contar membros
+  // Contar membros.
   const { data: memberCounts } = await supabaseClient
     .from('communities_members')
     .select('community_id')
@@ -154,7 +268,7 @@ async function loadNearbyCommunities(userId) {
     memberMap[m.community_id] = (memberMap[m.community_id] || 0) + 1;
   });
 
-  // Popula sheet
+  // Popula sheet (lista completa).
   const sheetNearby = document.getElementById('sheet-nearby-list');
   if (sheetNearby) {
     sheetNearby.innerHTML = communities.map(comm => {
@@ -164,6 +278,7 @@ async function loadNearbyCommunities(userId) {
     }).join('');
   }
 
+  // Popula carrossel principal.
   container.innerHTML = communities.map(comm => {
     const img     = comm.image_url || 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=300&h=160&fit=crop';
     const members = memberMap[comm.id] || 0;
@@ -196,12 +311,33 @@ async function loadNearbyCommunities(userId) {
   }).join('');
 }
 
-// ── Sugestões para ti ────────────────────────────────
+/**
+ * loadSuggestions
+ * -----------------
+ * Carrega comunidades públicas que o utilizador AINDA NÃO integra
+ * (secção "Sugestões para ti") — ao contrário de loadNearbyCommunities,
+ * aqui são explicitamente EXCLUÍDAS as comunidades onde já é membro
+ * (usando .not('id','in', ...)), por isso todos os cards desta
+ * secção mostram sempre o botão de "Aderir" ativo (isMember é
+ * sempre false ao desenhar o card/sheet).
+ *
+ * Fluxo:
+ *   1. SELECT a communities_members do utilizador → myCommIds.
+ *   2. SELECT a communities públicas, excluindo myCommIds (se
+ *      houver alguma), limitado a 8.
+ *   3. Se não restar nenhuma comunidade (já é membro de todas),
+ *      mostra mensagem "Já fazes parte de todas as comunidades
+ *      disponíveis!".
+ *   4. Contar membros (memberMap).
+ *   5. Desenhar sheet + carrossel.
+ *
+ * @param {string} userId
+ */
 async function loadSuggestions(userId) {
   const container = document.getElementById('suggestions-scroll');
   if (!container) return;
 
-  // Buscar comunidades que o utilizador NÃO faz parte
+  // Buscar comunidades de que o utilizador NÃO faz parte.
   const { data: myMemberships } = await supabaseClient
     .from('communities_members')
     .select('community_id')
@@ -226,7 +362,7 @@ async function loadSuggestions(userId) {
     return;
   }
 
-  // Contar membros
+  // Contar membros.
   const commIds = communities.map(c => c.id);
   const { data: memberCounts } = await supabaseClient
     .from('communities_members')
@@ -238,7 +374,7 @@ async function loadSuggestions(userId) {
     memberMap[m.community_id] = (memberMap[m.community_id] || 0) + 1;
   });
 
-  // Popula sheet
+  // Popula sheet.
   const sheetSugg = document.getElementById('sheet-suggestions-list');
   if (sheetSugg) {
     sheetSugg.innerHTML = communities.map(comm => {
@@ -275,7 +411,24 @@ async function loadSuggestions(userId) {
   }).join('');
 }
 
-// ── Aderir a comunidade ───────────────────────────────
+/**
+ * joinCommunity
+ * --------------
+ * Handler partilhado pelos vários botões de "Aderir" (carrosséis e
+ * sheets) desta página. Faz upsert na tabela communities_members
+ * com role 'member' (upsert para ser seguro contra cliques
+ * duplicados / já ser membro por algum outro motivo).
+ *
+ * Diferença em relação ao joinCommunity de home.js: aqui, depois de
+ * aderir com sucesso, RECARREGA explicitamente a secção "as minhas
+ * comunidades" (loadMyCommunities) para que o novo card apareça
+ * imediatamente nessa lista, já que estamos na própria página de
+ * comunidades (faz sentido manter tudo sincronizado visualmente).
+ *
+ * @param {Event} event
+ * @param {string} communityId
+ * @param {HTMLElement} btn - ícone clicado.
+ */
 async function joinCommunity(event, communityId, btn) {
   event.stopPropagation();
 
@@ -287,16 +440,33 @@ async function joinCommunity(event, communityId, btn) {
     .upsert({ community_id: communityId, user_id: session.user.id, role: 'member' });
 
   if (!error) {
-    // Substituir botão por "Membro"
+    // Substituir botão por "Membro" (efeito visual imediato).
     btn.style.opacity = '0.3'; btn.style.pointerEvents = 'none';
-    // Recarregar "as minhas comunidades"
+    // Recarregar "as minhas comunidades" para refletir a nova adesão.
     const { data: { session: s } } = await supabaseClient.auth.getSession();
     loadMyCommunities(s.user.id);
   }
 }
 
 
-// ── Helper: renderiza item de lista para sheet ────────
+/**
+ * renderCommListItem
+ * --------------------
+ * Helper de UI partilhado pelas 3 secções (minhas/perto/sugestões)
+ * para desenhar uma linha da versão em LISTA (usada dentro dos
+ * bottom-sheets, quando o utilizador clica "Ver todas"). Mostra
+ * imagem, nome, localização, número de membros, e:
+ *   - se isMember=false → ícone de "Aderir" (com stopPropagation
+ *     extra para não disparar a navegação do onclick do contentor pai);
+ *   - se isMember=true  → badge de texto "Membro" (sem ação).
+ *
+ * @param {Object} comm - linha da tabela communities.
+ * @param {number} members - número de membros já calculado.
+ * @param {boolean} isMember - se o utilizador atual já é membro.
+ * @param {string} userId - (não usado diretamente no HTML gerado,
+ *        mas mantido na assinatura para consistência/possível uso futuro).
+ * @returns {string} HTML da linha.
+ */
 function renderCommListItem(comm, members, isMember, userId) {
   const img = comm.image_url || 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=100&h=100&fit=crop';
   return `
@@ -316,9 +486,21 @@ function renderCommListItem(comm, members, isMember, userId) {
     </div>
   `;
 }
-// ── Pesquisa de comunidades ───────────────────────────
+
+/* ───────────────────────────────────────────────────────────────
+   Pesquisa de comunidades (overlay fullscreen)
+   ─────────────────────────────────────────────────────────────── */
+
+// Timer do debounce (igual ao padrão usado em home.js).
 let _searchTimeout = null;
 
+/**
+ * openSearch
+ * ----------
+ * Abre o overlay de pesquisa e foca o campo de input (com pequeno
+ * delay, igual ao home.js, para garantir que o display já mudou
+ * antes de tentar focar).
+ */
 function openSearch() {
   const overlay = document.getElementById('search-overlay');
   if (!overlay) return;
@@ -327,6 +509,12 @@ function openSearch() {
   setTimeout(() => document.getElementById('search-real-input')?.focus(), 100);
 }
 
+/**
+ * closeSearch
+ * -----------
+ * Fecha o overlay e limpa todo o estado (texto, resultados, botão
+ * de limpar), repondo o scroll normal da página.
+ */
 function closeSearch() {
   const overlay = document.getElementById('search-overlay');
   if (!overlay) return;
@@ -337,6 +525,12 @@ function closeSearch() {
   document.getElementById('search-clear').style.display = 'none';
 }
 
+/**
+ * clearSearch
+ * -----------
+ * Limpa apenas o texto/resultados, mantendo o overlay aberto (botão
+ * "X" dentro da caixa de pesquisa).
+ */
 function clearSearch() {
   document.getElementById('search-real-input').value = '';
   document.getElementById('search-results').innerHTML = '';
@@ -344,6 +538,16 @@ function clearSearch() {
   document.getElementById('search-real-input').focus();
 }
 
+/**
+ * handleSearch
+ * ------------
+ * Debounce de 300ms (igual ao de home.js), mas aqui dispara
+ * searchCommunities() em vez de performSearch() — esta pesquisa só
+ * cobre comunidades, não itens (faz sentido, já que estamos na
+ * página dedicada a comunidades).
+ *
+ * @param {string} query
+ */
 function handleSearch(query) {
   const clearBtn = document.getElementById('search-clear');
   if (clearBtn) clearBtn.style.display = query ? 'block' : 'none';
@@ -352,6 +556,21 @@ function handleSearch(query) {
   _searchTimeout = setTimeout(() => searchCommunities(query.trim()), 300);
 }
 
+/**
+ * searchCommunities
+ * -------------------
+ * Pesquisa comunidades pelo nome (ilike, case-insensitive,
+ * substring), até 20 resultados. Note que, ao contrário das outras
+ * secções desta página, esta pesquisa NÃO filtra por is_private —
+ * mostra tanto públicas como privadas nos resultados (mas indica
+ * visualmente "🔒 Privada" / "🌐 Pública" em cada resultado).
+ *
+ * Depois de obter os resultados, faz mais um pedido para contar
+ * membros de todas as comunidades encontradas (memberMap, mesmo
+ * padrão de sempre) e desenha a lista de resultados clicáveis.
+ *
+ * @param {string} query
+ */
 async function searchCommunities(query) {
   const container = document.getElementById('search-results');
   container.innerHTML = '<p style="font-family:\'Berlin\',sans-serif;font-size:14px;color:rgba(255,255,255,0.5);text-align:center;padding:32px 0">A pesquisar...</p>';
@@ -401,4 +620,5 @@ async function searchCommunities(query) {
   `;
 }
 
+// Fechar overlay de pesquisa com ESC.
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSearch(); });
