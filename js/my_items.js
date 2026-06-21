@@ -48,7 +48,7 @@ async function loadMyItems(userId) {
             const image =
                 item.item_images?.length > 0
                     ? item.item_images.sort((a,b) => a.position - b.position)[0].image_url
-                    : 'images/placeholder-item.jpg';
+                    : 'images/Icons/add_circle.png';
 
             const card = document.createElement('div');
 
@@ -91,9 +91,23 @@ async function loadMyItems(userId) {
                             Editar
                         </button>
 
+                        ${item.status === 'doado' ? `
+                        <button
+                            class="btn-edit"
+                            style="background:rgba(23,42,58,0.08);color:var(--blue)"
+                            onclick="reactivateItem('${item.id}', this)">
+                            Reativar
+                        </button>` : `
+                        <button
+                            class="btn-edit"
+                            style="background:var(--dark-green)"
+                            onclick="markAsDonated('${item.id}', this)">
+                            ✓ Doado
+                        </button>`}
+
                         <button
                             class="btn-delete"
-                            onclick="deleteItem('${item.id}')">
+                            onclick="deleteItem('${item.id}', this)">
                             Remover
                         </button>
 
@@ -157,14 +171,75 @@ function getStatusClass(status) {
 
 function editItem(itemId) {
   window.location.href = `add_item.html?edit=${itemId}`;
-}                   
+}
 
-async function deleteItem(itemId) {
+async function markAsDonated(itemId, btn) {
+  if (!confirm('Confirmas que este item foi doado?')) return;
+
+  btn.disabled = true;
+  btn.textContent = 'A guardar...';
+
+  const { error } = await supabaseClient
+    .from('items').update({ status: 'doado' }).eq('id', itemId);
+
+  if (error) {
+    alert('Erro ao atualizar o item: ' + error.message);
+    btn.disabled = false;
+    btn.textContent = '✓ Doado';
+    return;
+  }
+
+  // Atualizar badge de estado e troca o botão para "Reativar"
+  const card = btn.closest('.item-card');
+  const statusBadge = card.querySelector('.item-status');
+  if (statusBadge) {
+    statusBadge.className = `item-status ${getStatusClass('doado')}`;
+    statusBadge.textContent = formatStatus('doado');
+  }
+  btn.outerHTML = `<button class="btn-edit" style="background:rgba(23,42,58,0.08);color:var(--blue)" onclick="reactivateItem('${itemId}', this)">Reativar</button>`;
+}
+
+async function reactivateItem(itemId, btn) {
+  if (!confirm('Queres tornar este item disponível novamente?')) return;
+
+  btn.disabled = true;
+  btn.textContent = 'A reativar...';
+
+  const { error } = await supabaseClient
+    .from('items').update({ status: 'disponivel' }).eq('id', itemId);
+
+  if (error) {
+    alert('Erro ao atualizar o item: ' + error.message);
+    btn.disabled = false;
+    btn.textContent = 'Reativar';
+    return;
+  }
+
+  const card = btn.closest('.item-card');
+  const statusBadge = card.querySelector('.item-status');
+  if (statusBadge) {
+    statusBadge.className = `item-status ${getStatusClass('disponivel')}`;
+    statusBadge.textContent = formatStatus('disponivel');
+  }
+  btn.outerHTML = `<button class="btn-edit" style="background:var(--dark-green)" onclick="markAsDonated('${itemId}', this)">✓ Doado</button>`;
+}
+
+async function deleteItem(itemId, btn) {
 
     const confirmDelete =
         confirm('Tens a certeza que queres remover este item?');
 
     if (!confirmDelete) return;
+
+    if (btn) { btn.disabled = true; btn.textContent = 'A remover...'; }
+
+    // Apagar dependências primeiro (FK constraints)
+    await supabaseClient.from('item_images').delete().eq('item_id', itemId);
+    await supabaseClient.from('favorites').delete().eq('item_id', itemId);
+    await supabaseClient.from('requests').delete().eq('item_id', itemId);
+    // Mensagens referenciam o item mas não devem ser apagadas (histórico de chat) —
+    // apenas desligamos a referência para não bloquear o delete
+    await supabaseClient.from('messages').update({ item_id: null }).eq('item_id', itemId);
 
     const { error } = await supabaseClient
         .from('items')
@@ -172,7 +247,9 @@ async function deleteItem(itemId) {
         .eq('id', itemId);
 
     if (error) {
-        alert('Erro ao remover item.');
+        console.error('[MyItems] Erro ao remover:', error);
+        alert('Erro ao remover item: ' + error.message);
+        if (btn) { btn.disabled = false; btn.textContent = 'Remover'; }
         return;
     }
 

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<link rel="manifest" href="manifest.json">
+<link rel="shortcut icon" href="images/Logo/favicon.ico" type="image/x-icon">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ShareBox">
+<link rel="apple-touch-icon" href="images/Logo/apple-touch-icon.png">
+<title>ShareBox — Sem ligação</title>
+<link rel="stylesheet" href="css/global.css">
+<style>
+.offline-screen {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 24px;
+  text-align: center;
+  background: var(--blue);
+  box-sizing: border-box;
+}
+
+.offline-icon {
+  width: 96px;
+  height: 96px;
+  margin-bottom: 28px;
+  opacity: 0.9;
+  animation: float 3s ease-in-out infinite;
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.offline-title {
+  font-family: "Berlin", sans-serif;
+  font-size: 24px;
+  color: var(--cream);
+  margin-bottom: 12px;
+}
+
+.offline-text {
+  font-family: "Berlin", sans-serif;
+  font-size: 15px;
+  color: rgba(255,255,255,0.6);
+  line-height: 1.6;
+  max-width: 320px;
+  margin-bottom: 32px;
+}
+
+.offline-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.08);
+  padding: 10px 18px;
+  border-radius: 50px;
+  margin-bottom: 28px;
+  font-family: "Berlin", sans-serif;
+  font-size: 13px;
+  color: rgba(255,255,255,0.7);
+}
+.offline-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #e74c3c;
+  flex-shrink: 0;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+.offline-dot.online {
+  background: #2ecc71;
+  animation: none;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.btn-retry {
+  width: 100%;
+  max-width: 280px;
+  padding: 16px 0;
+  background: var(--dark-green);
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  font-family: "Berlin", sans-serif;
+  font-size: 16px;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s;
+}
+.btn-retry:active { transform: scale(0.98); }
+.btn-retry:disabled { opacity: 0.5; cursor: default; }
+
+.offline-tips {
+  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: 320px;
+}
+.tip-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+  font-family: "Berlin", sans-serif;
+  font-size: 13px;
+  color: rgba(255,255,255,0.45);
+}
+.tip-row svg { flex-shrink: 0; opacity: 0.6; }
+</style>
+</head>
+<body>
+<main class="offline-screen">
+
+  <svg class="offline-icon" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5">
+    <path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9z" opacity="0.3"/>
+    <path d="M5 13l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.36 9.36 8.64 9.36 5 13z" opacity="0.5"/>
+    <path d="M9 17l2 2c.55-.55 1.45-.55 2 0l2-2c-1.66-1.66-4.34-1.66-6 0z"/>
+    <line x1="2" y1="2" x2="22" y2="22" stroke="#e74c3c" stroke-width="2"/>
+  </svg>
+
+  <h1 class="offline-title">Sem ligação à internet</h1>
+  <p class="offline-text">
+    Não foi possível carregar esta página. Verifica a tua ligação Wi-Fi ou dados móveis e tenta novamente.
+  </p>
+
+  <div class="offline-status">
+    <span class="offline-dot" id="status-dot"></span>
+    <span id="status-text">Sem ligação</span>
+  </div>
+
+  <button class="btn-retry" id="btn-retry" onclick="tryReconnect()">Tentar novamente</button>
+
+  <div class="offline-tips">
+    <div class="tip-row">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+      Algumas páginas já visitadas podem estar disponíveis offline
+    </div>
+    <div class="tip-row">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+      Os teus dados serão sincronizados quando a ligação voltar
+    </div>
+  </div>
+
+</main>
+
+<script>
+function updateStatus() {
+  const dot  = document.getElementById('status-dot');
+  const text = document.getElementById('status-text');
+  if (navigator.onLine) {
+    dot.classList.add('online');
+    text.textContent = 'Ligação restabelecida';
+    document.getElementById('btn-retry').disabled = false;
+  } else {
+    dot.classList.remove('online');
+    text.textContent = 'Sem ligação';
+  }
+}
+
+function tryReconnect() {
+  const btn = document.getElementById('btn-retry');
+  btn.disabled = true;
+  btn.textContent = 'A verificar...';
+
+  setTimeout(() => {
+    if (navigator.onLine) {
+      window.location.href = 'home.html';
+    } else {
+      btn.disabled = false;
+      btn.textContent = 'Tentar novamente';
+    }
+  }, 800);
+}
+
+window.addEventListener('online', updateStatus);
+window.addEventListener('offline', updateStatus);
+updateStatus();
+
+// Tentar reconectar automaticamente quando a ligação voltar
+window.addEventListener('online', () => {
+  setTimeout(() => window.location.href = 'home.html', 1000);
+});
+</script>
+</body>
+</html>

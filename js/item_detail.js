@@ -272,6 +272,30 @@ function showToast(msg) {
 }
 
 // ── Galeria ───────────────────────────────────────────
+// ── Partilhar item ────────────────────────────────────
+async function shareItem() {
+  const url = window.location.href;
+  const title = _itemTitle || 'ShareBox';
+  const text = `Vê este item no ShareBox: ${title}`;
+
+  if (navigator.share) {
+    try {
+      await navigator.share({ title, text, url });
+    } catch (err) {
+      // Utilizador cancelou ou erro — ignorar silenciosamente
+      if (err.name !== 'AbortError') console.warn('[Share]', err);
+    }
+  } else {
+    // Fallback: copiar link
+    try {
+      await navigator.clipboard.writeText(url);
+      showToast('🔗 Link copiado!');
+    } catch {
+      showToast('Não foi possível copiar o link.');
+    }
+  }
+}
+
 function switchImg(thumb, url) {
   document.getElementById('gallery-main-img').src = url;
   document.querySelectorAll('.gallery-thumb').forEach(t => t.classList.remove('active'));
