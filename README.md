@@ -11,10 +11,14 @@ Chat e mensagens entre utilizadores
 Notificações e perfil público/privado
 Denúncia de conteúdos (report) e painel de administração (utilizadores, itens, comunidades, denúncias)
 PWA instalável, com suporte offline básico (manifest.json, sw.js, offline.html)
+
+
 Tecnologias
 HTML, CSS e JavaScript (sem framework)
 Supabase para autenticação e base de dados (cliente em js/supabase.js)
 Service Worker + Web App Manifest para funcionalidade de PWA
+
+
 Estrutura
 ├── index.html, login.html, register.html ...   páginas da aplicação
 ├── admin/                                      painel de administração
